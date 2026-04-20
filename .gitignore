@@ -1,0 +1,30 @@
+
+#  config.php → aquí guardarás los datos de conexión a MySQL (usuario, contraseña, nombre de la base de datos). Nunca debe subirse a GitHub.
+# *.sql → los dumps de la base de datos tampoco deben subirse (aunque hay excepciones si quieres compartir la estructura).
+#  *.log → archivos de error que genera el servidor.
+
+# Archivos de configuración sensibles (credenciales de base de datos)
+config.php
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos de VS Code
+.vscode/
+
+# Logs de PHP/Apache
+*.log
+error_log
+
+# Archivos de XAMPP que no deben subirse
+.htaccess_bak
+
+# Dependencias (por si usas Node en algún momento)
+node_modules/
+
+# Archivos de backup
+*.bak
+*.sql
+*.zip
