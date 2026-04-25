@@ -25,7 +25,7 @@ if (!isset($_SESSION['user'])) {
 
 <header>
     <!-- Logo y título de la aplicación -->
-    <img src="https://placehold.co/80x80" alt="Logo TimeTrack">
+    <img src="/timetrack/img/logo_timetrack.png" alt="Logo TimeTrack">
     <h1>TimeTrack (<?php echo $_SESSION['user']; ?>)</h1>
 
     <!-- Menú de navegación -->
