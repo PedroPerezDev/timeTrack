@@ -19,18 +19,25 @@ if (!isset($_SESSION['user'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TimeTrack</title>
-    <link rel="stylesheet" href="/timetrack/css/style.css">
+   <link rel="stylesheet" href="/timetrack/css/style.css"> 
 </head>
 <body>
 
 <header>
-    <!-- Logo y título de la aplicación -->
-    <img src="/timetrack/img/logo_timetrack.png" alt="Logo TimeTrack">
-    <h1>TimeTrack (<?php echo $_SESSION['user']; ?>)</h1>
+
+    <!-- Logo y nombre de la aplicación en fila -->
+    <div class="header-logo">
+        <img src="/timetrack/img/logo_timetrack.png" alt="Logo TimeTrack">
+        <h1>TimeTrack</h1>
+    </div>
+
+    <!-- Usuario conectado -->
+    <span class="header-usuario"> <?php echo $_SESSION['user']; ?></span>
 
     <!-- Menú de navegación -->
     <nav>
-        <!-- Enlace de inicio común para todos los usuarios -->
+
+        <!-- Inicio común para todos -->
         <a href="/timetrack/index.php">Inicio</a>
 
         <?php
@@ -59,5 +66,7 @@ if (!isset($_SESSION['user'])) {
 
         <!-- Cerrar sesión visible para todos -->
         <a href="/timetrack/includes/cerrar_sesion.php">Cerrar sesión</a>
+
     </nav>
+
 </header>
