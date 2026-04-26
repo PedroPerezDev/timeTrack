@@ -83,7 +83,7 @@ if (isset($_SESSION['user'])) {
 <body>
 
 <!-- Contenedor centrado del login -->
-<div class="contenedor_login">
+<div class="contenedor-login">
  <img src="/timetrack/img/logo_timetrack.png" alt="Logo TimeTrack" style="width:100px;">
     <h1>TimeTrack</h1>
     <h2>Control horario de trabajadores</h2>
