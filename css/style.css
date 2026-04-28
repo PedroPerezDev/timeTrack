@@ -129,6 +129,33 @@ button:hover {
     background-color: var(--color-acento);
 }
 
+.btn-horario {
+    background-color: var(--color-informacion);
+    color:            var(--color-superficie);
+    border:           none;
+    border-radius:    var(--radio-pequeno);
+    padding:          6px 12px;
+    font-family:      var(--fuente-cuerpo);
+    font-size:        12px;
+    font-weight:      500;
+    cursor:           pointer;
+    margin-top:       0;
+    transition:       background-color 0.2s;
+}
+
+.btn-horario:hover {
+    background-color: var(--color-acento);
+}
+
+
+input[name="borrar"] {
+    background-color: var(--color-error);
+}
+
+input[name="borrar"]:hover {
+    background-color: #b91c1c;
+}
+
 
 
 /* ------------------------------------------------
@@ -224,4 +251,90 @@ footer p {
     font-family: var(--fuente-mono);
     font-size:   16px;
     color:       var(--color-texto-apagado);
+}
+
+
+/* ------------------------------------------------
+   TABLAS
+   ------------------------------------------------ */
+.contenedor-tabla {
+    display:    flex;
+    width:      100%;
+    overflow-x: auto;
+}
+
+table {
+    width:           100%;
+    border-collapse: collapse;
+    background:      var(--color-superficie);
+    font-size:       11px;
+    min-width:       600px;
+}
+
+table th {
+    background-color: var(--color-principal);
+    color:            var(--color-superficie);
+    padding:          10px 12px;
+    text-align:       left;
+    font-weight:      500;
+}
+
+table td {
+    padding:       8px 12px;
+    border-bottom: 1px solid var(--color-borde);
+    color:         var(--color-texto);
+}
+
+table td.acciones {
+    display:        flex;
+    flex-direction: row;
+    gap:            6px;
+    align-items:    center;
+}
+
+table tr:nth-child(even) td {
+    background-color: #f0f9f5;
+}
+
+table tr:hover td {
+    background-color: var(--color-acento-suave);
+    color:            var(--color-superficie);
+    transition:       background-color 0.15s;
+}
+
+
+/* ------------------------------------------------
+   PAGINACIÓN
+   ------------------------------------------------ */
+.paginacion {
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    gap:             8px;
+    margin-top:      16px;
+}
+
+.paginacion a {
+    color:            var(--color-principal);
+    text-decoration:  none;
+    font-size:        14px;
+    font-weight:      500;
+    padding:          6px 12px;
+    border-radius:    var(--radio-pequeno);
+    border:           1px solid var(--color-borde);
+    transition:       background-color 0.2s;
+}
+
+.paginacion a:hover {
+    background-color: var(--color-acento);
+    color:            var(--color-superficie);
+    border-color:     var(--color-acento);
+}
+
+
+/* ------------------------------------------------
+   ESPACIADO INFERIOR EN FIELDSET
+   ------------------------------------------------ */
+fieldset {
+    padding: 20px;
 }
