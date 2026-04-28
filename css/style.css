@@ -195,3 +195,33 @@ footer {
 footer p {
     margin: 0;
 }
+
+
+* ------------------------------------------------
+   RELOJ EN TIEMPO REAL
+   ------------------------------------------------ */
+.contenedor-reloj {
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    justify-content: center;
+    gap:             8px;
+    padding:         24px;
+    background:      var(--color-superficie);
+    border-radius:   var(--radio-grande);
+    border:          2px solid var(--color-borde);
+    max-width:       300px;
+}
+
+#reloj {
+    font-family: var(--fuente-mono);
+    font-size:   48px;
+    font-weight: 500;
+    color:       var(--color-principal);
+}
+
+#fecha {
+    font-family: var(--fuente-mono);
+    font-size:   16px;
+    color:       var(--color-texto-apagado);
+}

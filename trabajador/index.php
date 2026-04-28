@@ -13,7 +13,7 @@ include "../includes/header.php";
 
     <!-- Reloj en tiempo real -->
     <!-- El JS busca los ids 'reloj' y 'fecha' y los actualiza cada segundo -->
-    <div class="reloj-wrapper">
+    <div class="contenedor-reloj">
         <span id="reloj"></span>
         <span id="fecha"></span>
         <button type="button" id="btn-fichar">FICHAR</button>
