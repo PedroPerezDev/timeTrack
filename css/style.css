@@ -333,8 +333,129 @@ table tr:hover td {
 
 
 /* ------------------------------------------------
-   ESPACIADO INFERIOR EN FIELDSET
+   FORMULARIOS
+   Flex en columna para apilar los campos
    ------------------------------------------------ */
 fieldset {
-    padding: 20px;
+    border:        2px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    padding:       16px;
+    background:    var(--color-superficie);
+    width:         100%;
+    max-width:     440px;
+
+    display:        flex;
+    flex-direction: column;
+    gap:            4px;
+}
+
+legend {
+    font-weight: 500;
+    color:       var(--color-principal);
+    padding:     0 6px;
+}
+
+label {
+    font-size:  11px;
+    color:      var(--color-texto-apagado);
+    margin-top: 8px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="file"],
+select,
+textarea {
+    width:         100%;
+    padding:       7px 10px;
+    border:        1px solid var(--color-borde);
+    border-radius: var(--radio-pequeno);
+    font-family:   var(--fuente-cuerpo);
+    font-size:     12px;
+    color:         var(--color-texto);
+    background:    var(--color-fondo);
+    outline:       none;
+    transition:    border-color 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--color-acento);
+}
+
+
+/* ------------------------------------------------
+   PERFIL DEL TRABAJADOR
+   ------------------------------------------------ */
+.perfil-foto {
+    display:         flex;
+    justify-content: center;
+    margin-bottom:   24px;
+}
+
+.perfil-foto img {
+    width:         150px;
+    height:        150px;
+    border-radius: 50%;
+    object-fit:    cover;
+    border:        3px solid var(--color-principal);
+}
+
+.perfil-sin-foto {
+    width:            120px;
+    height:           120px;
+    border-radius:    50%;
+    background-color: var(--color-borde);
+    display:          flex;
+    align-items:      center;
+    justify-content:  center;
+    color:            var(--color-texto-apagado);
+    font-size:        12px;
+}
+
+.perfil-datos {
+    background:    var(--color-superficie);
+    border-radius: var(--radio-mediano);
+    border:        1px solid var(--color-borde);
+    padding:       24px;
+    max-width:     600px;
+    margin:        0 auto;
+}
+
+.perfil-datos h3 {
+    color:         var(--color-principal);
+    font-size:     14px;
+    font-weight:   500;
+    margin-top:    16px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.perfil-campo {
+    display:        flex;
+    flex-direction: row;
+    gap:            16px;
+    padding:        8px 0;
+    border-bottom:  1px solid var(--color-borde);
+}
+
+.perfil-campo:last-child {
+    border-bottom: none;
+}
+
+.perfil-label {
+    font-size:   11px;
+    color:       var(--color-texto-apagado);
+    min-width:   180px;
+    font-weight: 500;
+}
+
+.perfil-valor {
+    font-size: 12px;
+    color:     var(--color-texto);
 }
