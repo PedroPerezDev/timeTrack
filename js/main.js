@@ -45,3 +45,41 @@ actualizarReloj();
 
 // Repetimos cada 1000 milisegundos (1 segundo)
 setInterval(actualizarReloj, 1000);
+
+
+
+//-----------------------------------------------------|
+//------------------ SLIDESHOW ----------------------- |
+//-----------------------------------------------------|
+
+/*
+ * Slideshow de imágenes en la pantalla de login
+ * Usa fadeIn y fadeOut de jQuery
+ * Cambia de imagen cada 3000 milisegundos (3 segundos)
+ */
+$(document).ready(function() {
+
+    // Guardo todas las imágenes del slideshow en una variable
+    var slides      = $("#slideshow .slide");
+    var totalSlides = slides.length;   // número total de imágenes
+    var actual      = 0;               // índice de la imagen actual
+
+    // Repito la función cada 2000 milisegundos (2 segundos)
+    setInterval(function() {
+
+        // Calculo cuál es la siguiente imagen
+        // si llegamos a la última volvemos a la primera
+        var siguiente = (actual + 1) % totalSlides;
+
+        // Oculto la imagen actual con fadeOut
+        // y dentro del callback muestro la siguiente con fadeIn
+        $(slides[actual]).fadeOut("slow", function() {
+            $(slides[siguiente]).fadeIn("slow");
+        });
+
+        // Actualizo el índice de la imagen actual
+        actual = siguiente;
+
+    }, 3000);
+
+});

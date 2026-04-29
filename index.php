@@ -102,10 +102,28 @@ if (isset($_SESSION['user'])) {
             <input type="password" name="password" placeholder="Tu contraseña">
 
             <input type="submit" name="login" value="Iniciar Sesión">
+
+
+<!-- Slideshow de imágenes debajo del formulario -->
+    <!-- imágenes están ocultas con display:none -->
+    <!-- menos la primera que se muestra al cargar -->
+    <div id="slideshow">
+        <img src="/timetrack/img/slide1.jpg" class="slide" alt="Slide 1">
+        <img src="/timetrack/img/slide2.jpg" class="slide" alt="Slide 2">
+        <img src="/timetrack/img/slide3.jpg" class="slide" alt="Slide 3">
+    </div>
+
+
         </fieldset>
     </form>
 
 </div>
+ 
 
+</div>
+
+<!-- Llamamos a jQuery desde CDN  -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/timetrack/js/main.js"></script>
 </body>
 </html>
