@@ -83,3 +83,79 @@ $(document).ready(function() {
     }, 3000);
 
 });
+
+
+//-----------------------------------------------------|
+//------------------- FICHAJE AJAX ------------------- |
+//-----------------------------------------------------|
+
+/*
+ * Cuando el trabajador pulsa el botón FICHAR
+ * jQuery manda una petición AJAX a ajax/fichar.php
+ * sin recargar la página
+ * Siguiendo la sintaxis de los apuntes: $(selector).evento(function(){})
+ */
+$(document).ready(function() {
+
+    // Evento click sobre el botón fichar
+    $("#btn-fichar").click(function() {
+
+        // Recojo los datos del botón que pusimos con data-tipo y data-hora
+        var tipo = $(this).data("tipo");
+        var hora = $(this).data("hora");
+
+        // Deshabilito el botón para evitar doble clic mientras procesa
+        $(this).prop("disabled", true);
+        $(this).val("Procesando...");
+
+        // Petición AJAX a fichar.php
+        $.ajax({
+            url:    "/timetrack/ajax/fichar.php",
+            method: "POST",
+            data: {
+                tipo: tipo,
+                hora: hora
+            },
+            // Si la petición llega correctamente al servidor
+            success: function(respuesta) {
+
+                // Convierto la respuesta JSON a objeto JavaScript
+                var datos = JSON.parse(respuesta);
+
+                if (datos.ok) {
+
+                    // Muestro el mensaje de éxito en el div de respuesta
+                    // usando fadeIn de jQuery como indican los apuntes
+                    $("#respuesta-fichaje").hide().html(
+                        "<p style='color:green'>" + datos.mensaje + "</p>"
+                    ).fadeIn("slow");
+
+                    // Recargo la página después de 2 segundos
+                    // para actualizar el estado de los botones
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+
+                } else {
+                    // Muestro el error
+                    $("#respuesta-fichaje").hide().html(
+                        "<p style='color:red'>" + datos.error + "</p>"
+                    ).fadeIn("slow");
+
+                    // Reactivo el botón si hay error
+                    $("#btn-fichar").prop("disabled", false);
+                    $("#btn-fichar").val("FICHAR");
+                }
+            },
+            // Si hay error de conexión con el servidor
+            error: function() {
+                $("#respuesta-fichaje").hide().html(
+                    "<p style='color:red'>Error de conexión. Inténtalo de nuevo.</p>"
+                ).fadeIn("slow");
+
+                $("#btn-fichar").prop("disabled", false);
+            }
+        });
+    });
+
+});

@@ -224,35 +224,35 @@ footer p {
 }
 
 
-* ------------------------------------------------
-   RELOJ EN TIEMPO REAL
+/* ------------------------------------------------
+   PANEL JORNADA TRABAJADOR
    ------------------------------------------------ */
-.contenedor-reloj {
-    display:         flex;
-    flex-direction:  column;
-    align-items:     center;
-    justify-content: center;
-    gap:             8px;
-    padding:         24px;
-    background:      var(--color-superficie);
-    border-radius:   var(--radio-grande);
-    border:          2px solid var(--color-borde);
-    max-width:       300px;
+.jornada-wrapper {
+    display:          flex;
+    flex-direction:   column;
+    align-items:      center;
+    justify-content:  center;
+    gap:              20px;
+    padding:          24px;
+    background:       var(--color-superficie);
+    border-radius:    var(--radio-lg);
+    border:           1px solid var(--color-borde);
+    max-width:        600px;
+    margin:           0 auto;
 }
 
-#reloj {
+.jornada-fecha {
     font-family: var(--fuente-mono);
-    font-size:   48px;
-    font-weight: 500;
-    color:       var(--color-principal);
-}
-
-#fecha {
-    font-family: var(--fuente-mono);
-    font-size:   16px;
+    font-size:   14px;
     color:       var(--color-texto-apagado);
 }
 
+.jornada-hora {
+    font-family: var(--fuente-mono);
+    font-size:   36px;
+    font-weight: 500;
+    color:       var(--color-principal);
+}
 
 /* ------------------------------------------------
    TABLAS
@@ -518,4 +518,218 @@ header nav a:hover {
 
 #slideshow .slide:first-child {
     display: block;
+}
+
+/* ------------------------------------------------
+   MENSAJES DE ÉXITO Y ERROR
+   ------------------------------------------------ */
+p[style*="color:green"],
+.mensaje-ok {
+    background-color: #d1fae5;
+    color:            #065f46;
+    border:           1px solid #6ee7b7;
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 12px;
+    font-size:        12px;
+
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+}
+
+p[style*="color:red"],
+.mensaje-error {
+    background-color: #fee2e2;
+    color:            var(--color-error);
+    border:           1px solid #fca5a5;
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 12px;
+    font-size:        12px;
+
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+}
+
+
+
+
+
+/* ================================================
+   BREAKPOINTS - MOBILE FIRST
+   Tres tamaños: móvil (base), tablet, ordenador
+   ================================================ */
+
+/* TABLET >= 768px */
+@media (min-width: 768px) {
+
+    body {
+        font-size: 13px;
+    }
+
+    header {
+        flex-direction:  row;
+        justify-content: space-between;
+    }
+
+    header nav {
+        justify-content: flex-end;
+    }
+
+    main {
+        padding: 24px 32px;
+    }
+
+    main h2 {
+        font-size: 20px;
+    }
+
+    table {
+        font-size: 12px;
+    }
+}
+
+/* ORDENADOR >= 1024px */
+@media (min-width: 1024px) {
+
+    body {
+        font-size: 14px;
+    }
+
+    main {
+        padding:   32px 48px;
+        max-width: 1400px;
+        margin:    0 auto;
+    }
+
+    main h2 {
+        font-size: 22px;
+    }
+}
+
+/* ------------------------------------------------
+   QUITAR FLECHAS DE LOS INPUTS TIME
+   ------------------------------------------------ */
+input[type="time"]::-webkit-inner-spin-button,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+/* ------------------------------------------------
+   FICHAJES
+   ------------------------------------------------ */
+
+   #btn-fichar {
+    width:            120px;
+    padding:          8px 16px;
+    font-size:        13px;
+    font-weight:      500;
+    letter-spacing:   1px;
+    background-color: var(--color-principal);
+    color:            var(--color-superficie);
+    border-radius:    var(--radio-pequeno);
+    cursor:           pointer;
+    margin-top:       0;
+    border:           none;
+    transition:       background-color 0.2s;
+}
+
+#btn-fichar:hover {
+    background-color: var(--color-acento);
+}
+
+.btn-pendiente {
+    width:            120px;
+    background-color: var(--color-borde);
+    color:            var(--color-texto-apagado);
+    cursor:           not-allowed;
+    margin-top:       0;
+    border:           none;
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 16px;
+    font-size:        13px;
+}
+.fichajes-wrapper {
+    display:        flex;
+    flex-direction: column;
+    gap:            12px;
+    width:          100%;
+    margin-top:     16px;
+}
+
+.fichaje-item {
+    display:          flex;
+    flex-direction:   row;
+    align-items:      center;
+    gap:              16px;
+    padding:          12px 16px;
+    background:       var(--color-superficie);
+    border-radius:    var(--radio-mediano);
+    border:           1px solid var(--color-borde);
+}
+
+/* Fichaje ya completado con fondo verde suave */
+.fichaje-hecho {
+    background:   #d1fae5;
+    border-color: #6ee7b7;
+}
+
+.fichaje-nombre {
+    font-weight: 500;
+    font-size:   13px;
+    min-width:   140px;
+    color:       var(--color-texto);
+}
+
+.fichaje-hora-prevista {
+    font-family: var(--fuente-mono);
+    font-size:   12px;
+    color:       var(--color-texto-apagado);
+    min-width:   120px;
+}
+
+.fichaje-hora-real {
+    font-family: var(--fuente-mono);
+    font-size:   12px;
+    color:       var(--color-principal);
+    font-weight: 500;
+    min-width:   120px;
+}
+
+/* Llegó tarde */
+.fichaje-tarde {
+    font-size:  11px;
+    color:      var(--color-error);
+    font-weight: 500;
+}
+
+/* Llegó antes */
+.fichaje-pronto {
+    font-size:  11px;
+    color:      var(--color-informacion);
+    font-weight: 500;
+}
+
+/* Puntual */
+.fichaje-puntual {
+    font-size:  11px;
+    color:      var(--color-principal);
+    font-weight: 500;
+}
+
+/* Botón pendiente desactivado */
+.btn-pendiente {
+    background-color: var(--color-borde);
+    color:            var(--color-texto-apagado);
+    cursor:           not-allowed;
+    margin-top:       0;
+}
+
+/* Mensaje de jornada completada o fin de semana */
+.fichaje-mensaje {
+    font-size:   14px;
+    color:       var(--color-texto-apagado);
+    text-align:  center;
+    margin-top:  16px;
 }
