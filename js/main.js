@@ -18,6 +18,7 @@ function actualizarReloj() {
     var ahora = new Date();
 
     // padStart(2, '0') añade un cero delante si el número es de un dígito
+    // por ejemplo: 9 -> 09
     var horas    = String(ahora.getHours()).padStart(2, '0');
     var minutos  = String(ahora.getMinutes()).padStart(2, '0');
     var segundos = String(ahora.getSeconds()).padStart(2, '0');
@@ -31,7 +32,6 @@ function actualizarReloj() {
     var fechaFormateada = dia + '/' + mes + '/' + anyo;
 
     // Actualizamos el DOM solo si los elementos existen en la página
-    // así el script no da error en páginas que no tienen reloj
     if (document.getElementById('reloj')) {
         document.getElementById('reloj').textContent = horaFormateada;
     }
@@ -45,3 +45,275 @@ actualizarReloj();
 
 // Repetimos cada 1000 milisegundos (1 segundo)
 setInterval(actualizarReloj, 1000);
+
+
+//-----------------------------------------------------|
+//------------------ SLIDESHOW ----------------------- |
+//-----------------------------------------------------|
+
+/*
+ * Slideshow de imágenes en la pantalla de login
+ * Usa fadeIn y fadeOut de jQuery
+ * Cambia de imagen cada 2000 milisegundos (2 segundos)
+ */
+$(document).ready(function() {
+
+    // Solo ejecuto si hay imágenes en el slideshow
+    if ($("#slideshow .slide").length > 0) {
+
+        var slides      = $("#slideshow .slide");
+        var totalSlides = slides.length;
+        var actual      = 0;
+
+        setInterval(function() {
+
+            // Calculo cuál es la siguiente imagen
+            var siguiente = (actual + 1) % totalSlides;
+
+            // Oculto la actual y muestro la siguiente
+            $(slides[actual]).fadeOut("slow", function() {
+                $(slides[siguiente]).fadeIn("slow");
+            });
+
+            actual = siguiente;
+
+        }, 2000);
+    }
+});
+
+
+//-----------------------------------------------------|
+//------------------- FICHAJE AJAX ------------------- |
+//-----------------------------------------------------|
+
+/*
+ * Cuando el trabajador pulsa el botón FICHAR
+ * jQuery manda una petición AJAX a ajax/fichar.php
+ * sin recargar la página
+ */
+$(document).ready(function() {
+
+    $("#btn-fichar").click(function() {
+
+        // Recojo los datos del botón
+        var tipo = $(this).data("tipo");
+        var hora = $(this).data("hora");
+
+        // Deshabilito el botón para evitar doble clic
+        $(this).prop("disabled", true);
+        $(this).text("Procesando...");
+
+        $.ajax({
+            url:    "/timetrack/ajax/fichar.php",
+            method: "POST",
+            data: {
+                tipo: tipo,
+                hora: hora
+            },
+            success: function(respuesta) {
+
+                var datos = JSON.parse(respuesta);
+
+                if (datos.ok) {
+
+                    // Muestro el mensaje de éxito con fadeIn
+                    $("#respuesta-fichaje").hide().html(
+                        "<p style='color:green'>" + datos.mensaje + "</p>"
+                    ).fadeIn("slow");
+
+                    // Recargo la página después de 2 segundos
+                    setTimeout(function() {
+                        location.reload();
+                    }, 2000);
+
+                } else {
+                    $("#respuesta-fichaje").hide().html(
+                        "<p style='color:red'>" + datos.error + "</p>"
+                    ).fadeIn("slow");
+
+                    $("#btn-fichar").prop("disabled", false);
+                    $("#btn-fichar").text("FICHAR");
+                }
+            },
+
+            error: function() {
+                $("#respuesta-fichaje").hide().html(
+                    "<p style='color:red'>Error de conexión. Inténtalo de nuevo.</p>"
+                ).fadeIn("slow");
+
+                $("#btn-fichar").prop("disabled", false);
+            }
+        });
+    });
+
+});
+
+
+//-----------------------------------------------------|
+//---------- API FESTIVOS NACIONALES ----------------- |
+//-----------------------------------------------------|
+
+/*
+ * Carga los festivos nacionales de España
+ * usando la API Nager.Date mediante AJAX
+ * Solo se ejecuta si existe el contenedor #festivos en la página
+ */
+$(document).ready(function() {
+
+    if ($("#festivos").length > 0) {
+
+        $("#festivos").html("<p>Cargando festivos...</p>");
+
+        $.ajax({
+            url:    "/timetrack/ajax/get_festivos.php",
+            method: "GET",
+            success: function(respuesta) {
+
+                var festivos = JSON.parse(respuesta);
+
+                if (festivos.error) {
+                    $("#festivos").html("<p style='color:red'>" + festivos.error + "</p>");
+                    return;
+                }
+
+                // Construyo las tarjetas de calendario
+                var html = "<div class='festivos-grid'>";
+
+                $.each(festivos, function(i, festivo) {
+
+                    // Separo la fecha en partes
+                    var partes = festivo.date.split("-");
+                    var dia    = partes[2];
+                    var mes    = partes[1];
+
+                    // Nombres de los meses en español
+                    var meses = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+                                 "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+                    var nombre_mes = meses[parseInt(mes) - 1];
+
+                    html += "<div class='festivo-card'>" +
+                                "<div class='festivo-card-mes'>" + nombre_mes + "</div>" +
+                                "<div class='festivo-card-dia'>" + dia + "</div>" +
+                                "<div class='festivo-card-nombre'>" + festivo.localName + "</div>" +
+                            "</div>";
+                });
+
+                html += "</div>";
+
+                $("#festivos").hide().html(html).fadeIn("slow");
+            },
+
+            error: function() {
+                $("#festivos").html("<p style='color:red'>Error al cargar los festivos</p>");
+            }
+        });
+    }
+});
+
+
+//-----------------------------------------------------|
+//---------- LOGO RELOJ ------------------------------ |
+//-----------------------------------------------------|
+
+/*
+ * Slideshow del logo en la pantalla de login
+ * Cambia de imagen cada segundo sin efecto de fundido
+ * Simula el movimiento de las agujas de un reloj
+ */
+$(document).ready(function() {
+
+    if ($("#logo-reloj .logo-frame").length > 0) {
+
+        var frames      = $("#logo-reloj .logo-frame");
+        var totalFrames = frames.length;
+        var actual      = 0;
+
+        setInterval(function() {
+
+            var siguiente = (actual + 1) % totalFrames;
+
+            // Oculto la actual y muestro la siguiente sin fundido
+            $(frames[actual]).hide();
+            $(frames[siguiente]).show();
+
+            actual = siguiente;
+
+        }, 1000);
+    }
+});
+
+//-----------------------------------------------------|
+//---------- IMPORTAR FESTIVOS AUTO ------------------ |
+//-----------------------------------------------------|
+
+/*
+ * Se ejecuta al cargar el dashboard del admin
+ * Importa los festivos de la API a la BD automáticamente
+ * Solo actúa si existe el elemento #importar-festivos
+ */
+$(document).ready(function() {
+
+    if ($("#importar-festivos").length > 0) {
+
+        $.ajax({
+            url:    "/timetrack/ajax/importar_festivos.php",
+            method: "GET",
+            success: function(respuesta) {
+
+                var datos = JSON.parse(respuesta);
+
+                if (datos.importados > 0) {
+                    // Muestro el mensaje solo si ha importado algo nuevo
+                    $("#importar-festivos").hide().html(
+                        "<p style='color:green'>" + datos.mensaje + "</p>"
+                    ).fadeIn("slow");
+                }
+            }
+        });
+    }
+});
+
+
+
+//-----------------------------------------------------|
+//---------- MOSTRAR FORMULARIO DÍA ESPECIAL --------- |
+//-----------------------------------------------------|
+
+/*
+ * Al pulsar el botón muestra el formulario con slideDown
+ * Al volver a pulsar lo oculta con slideUp
+ */
+$(document).ready(function() {
+
+    $("#btn-mostrar-especial").click(function() {
+
+        if ($("#form-especial").is(":visible")) {
+            // Si está visible lo oculto con slideUp
+            $("#form-especial").slideUp("slow");
+            $(this).text("+ Añadir día especial");
+        } else {
+            // Si está oculto lo muestro con slideDown
+            $("#form-especial").slideDown("slow");
+            $(this).text("- Cerrar formulario");
+        }
+    });
+});
+
+
+//-----------------------------------------------------|
+//---------- MOSTRAR TABLA DÍAS ESPECIALES ----------- |
+//-----------------------------------------------------|
+
+$(document).ready(function() {
+
+    $("#btn-mostrar-especiales").click(function() {
+
+        if ($("#tabla-especiales").is(":visible")) {
+            $("#tabla-especiales").slideUp("slow");
+            $(this).text("Ver días especiales registrados");
+        } else {
+            $("#tabla-especiales").slideDown("slow");
+            $(this).text("- Ocultar días especiales");
+        }
+    });
+});

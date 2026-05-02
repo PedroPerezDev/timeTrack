@@ -84,7 +84,14 @@ if (isset($_SESSION['user'])) {
 
 <!-- Contenedor centrado del login -->
 <div class="contenedor-login">
- <img src="/timetrack/img/logo_timetrack.png" alt="Logo TimeTrack" style="width:100px;">
+  <!-- Slideshow del logo tipo reloj -->
+    <div id="logo-reloj">
+        <?php for($i = 1; $i <= 12; $i++): ?>
+            <img src="/timetrack/img/<?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?>.png"
+                 class="logo-frame"
+                 alt="TimeTrack">
+        <?php endfor; ?>
+    </div>
     <h1>TimeTrack</h1>
     <h2>Control horario de trabajadores</h2>
 
@@ -102,10 +109,28 @@ if (isset($_SESSION['user'])) {
             <input type="password" name="password" placeholder="Tu contraseña">
 
             <input type="submit" name="login" value="Iniciar Sesión">
+
+
+<!-- Slideshow de imágenes debajo del formulario -->
+    <!-- imágenes están ocultas con display:none -->
+    <!-- menos la primera que se muestra al cargar -->
+    <div id="slideshow">
+        <img src="/timetrack/img/slide1.jpg" class="slide" alt="Slide 1">
+        <img src="/timetrack/img/slide2.jpg" class="slide" alt="Slide 2">
+        <img src="/timetrack/img/slide3.jpg" class="slide" alt="Slide 3">
+    </div>
+
+
         </fieldset>
     </form>
 
 </div>
+ 
 
+</div>
+
+<!-- Llamamos a jQuery desde CDN  -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="/timetrack/js/main.js"></script>
 </body>
 </html>
