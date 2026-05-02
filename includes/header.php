@@ -46,7 +46,6 @@ if (!isset($_SESSION['user'])) {
         if ($_SESSION['rol'] === 'admin') {
             echo "
                 <a href='/timetrack/admin/trabajadores.php'>Trabajadores</a>
-                <a href='/timetrack/admin/horarios.php'>Horarios</a>
                 <a href='/timetrack/admin/informes.php'>Informes</a>
                 <a href='/timetrack/admin/mensajes.php'>Mensajes</a>
             ";

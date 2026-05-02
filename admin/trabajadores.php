@@ -62,11 +62,10 @@ function mostrarTabla($resultado) {
             <td>" . $fila['dias_vacaciones_totales'] . " días</td>
             <td class='acciones'>
 
-                <!-- Botón para ir a gestionar el horario de este trabajador -->
-                <form action='horarios.php' method='GET' style='display:inline'>
-                    <input type='hidden' name='id' value='" . $fila['id'] . "'>
-                    <input type='submit' name='horario' value='Horario' class='btn-horario'>
-                </form>
+               <!-- Botón para ir a gestionar el horario de este trabajador -->
+<a href='horarios.php?id=" . $fila['id'] . "'>
+    <input type='button' value='Horario' class='btn-horario'>
+</a>
 
                 <!-- Botón modificar -->
                 <form action='trabajadores.php' method='POST' style='display:inline'>
