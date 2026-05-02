@@ -84,7 +84,14 @@ if (isset($_SESSION['user'])) {
 
 <!-- Contenedor centrado del login -->
 <div class="contenedor-login">
- <img src="/timetrack/img/logo_timetrack.png" alt="Logo TimeTrack" style="width:100px;">
+  <!-- Slideshow del logo tipo reloj -->
+    <div id="logo-reloj">
+        <?php for($i = 1; $i <= 12; $i++): ?>
+            <img src="/timetrack/img/<?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?>.png"
+                 class="logo-frame"
+                 alt="TimeTrack">
+        <?php endfor; ?>
+    </div>
     <h1>TimeTrack</h1>
     <h2>Control horario de trabajadores</h2>
 

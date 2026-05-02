@@ -209,3 +209,111 @@ $(document).ready(function() {
         });
     }
 });
+
+
+//-----------------------------------------------------|
+//---------- LOGO RELOJ ------------------------------ |
+//-----------------------------------------------------|
+
+/*
+ * Slideshow del logo en la pantalla de login
+ * Cambia de imagen cada segundo sin efecto de fundido
+ * Simula el movimiento de las agujas de un reloj
+ */
+$(document).ready(function() {
+
+    if ($("#logo-reloj .logo-frame").length > 0) {
+
+        var frames      = $("#logo-reloj .logo-frame");
+        var totalFrames = frames.length;
+        var actual      = 0;
+
+        setInterval(function() {
+
+            var siguiente = (actual + 1) % totalFrames;
+
+            // Oculto la actual y muestro la siguiente sin fundido
+            $(frames[actual]).hide();
+            $(frames[siguiente]).show();
+
+            actual = siguiente;
+
+        }, 1000);
+    }
+});
+
+//-----------------------------------------------------|
+//---------- IMPORTAR FESTIVOS AUTO ------------------ |
+//-----------------------------------------------------|
+
+/*
+ * Se ejecuta al cargar el dashboard del admin
+ * Importa los festivos de la API a la BD automáticamente
+ * Solo actúa si existe el elemento #importar-festivos
+ */
+$(document).ready(function() {
+
+    if ($("#importar-festivos").length > 0) {
+
+        $.ajax({
+            url:    "/timetrack/ajax/importar_festivos.php",
+            method: "GET",
+            success: function(respuesta) {
+
+                var datos = JSON.parse(respuesta);
+
+                if (datos.importados > 0) {
+                    // Muestro el mensaje solo si ha importado algo nuevo
+                    $("#importar-festivos").hide().html(
+                        "<p style='color:green'>" + datos.mensaje + "</p>"
+                    ).fadeIn("slow");
+                }
+            }
+        });
+    }
+});
+
+
+
+//-----------------------------------------------------|
+//---------- MOSTRAR FORMULARIO DÍA ESPECIAL --------- |
+//-----------------------------------------------------|
+
+/*
+ * Al pulsar el botón muestra el formulario con slideDown
+ * Al volver a pulsar lo oculta con slideUp
+ */
+$(document).ready(function() {
+
+    $("#btn-mostrar-especial").click(function() {
+
+        if ($("#form-especial").is(":visible")) {
+            // Si está visible lo oculto con slideUp
+            $("#form-especial").slideUp("slow");
+            $(this).text("+ Añadir día especial");
+        } else {
+            // Si está oculto lo muestro con slideDown
+            $("#form-especial").slideDown("slow");
+            $(this).text("- Cerrar formulario");
+        }
+    });
+});
+
+
+//-----------------------------------------------------|
+//---------- MOSTRAR TABLA DÍAS ESPECIALES ----------- |
+//-----------------------------------------------------|
+
+$(document).ready(function() {
+
+    $("#btn-mostrar-especiales").click(function() {
+
+        if ($("#tabla-especiales").is(":visible")) {
+            $("#tabla-especiales").slideUp("slow");
+            $(this).text("Ver días especiales registrados");
+        } else {
+            $("#tabla-especiales").slideDown("slow");
+            $(this).text("- Ocultar días especiales");
+        }
+    });
+});

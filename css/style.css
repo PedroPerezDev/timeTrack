@@ -1,9 +1,15 @@
-/**IMPORTO LAS FUENTES**/
-
+/* Importo las fuentes - ha de ir primero */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono&display=swap');
 
+/* ================================================
+   TIMETRACK - Hoja de estilos principal
+   Autor: Pedro Pérez Alfonso
+   Estrategia: Mobile First + Flexbox
+   ================================================ */
+
+
 /* ------------------------------------------------
-   VARIABLES CSS 
+   VARIABLES CSS
    ------------------------------------------------ */
 :root {
     --color-principal:        #0F6E56;
@@ -28,8 +34,9 @@
     --radio-grande:           12px;
 }
 
+
 /* ------------------------------------------------
-   ESTILOS DE PARTIDA Y BODY
+   RESET Y BASE
    ------------------------------------------------ */
 * {
     margin:     0;
@@ -37,8 +44,7 @@
     box-sizing: border-box;
 }
 
-/* El body es un contenedor flex en columna
-   para que el footer quede siempre abajo */
+/* El body es flex en columna para que el footer quede siempre abajo */
 body {
     font-family:      var(--fuente-cuerpo);
     background-color: var(--color-fondo);
@@ -50,8 +56,93 @@ body {
     flex-direction: column;
 }
 
+
 /* ------------------------------------------------
-   ESTILOS DEL MAIN. HACEMOS QUE EL FOOTER ESTÉ SIEMPRE ABAJO
+   HEADER
+   Flex en columna en móvil, fila en desktop
+   ------------------------------------------------ */
+header {
+    background-color: var(--color-principal);
+    color:            var(--color-superficie);
+    padding:          12px 16px;
+
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    gap:            10px;
+}
+
+header .header-logo {
+    display:        flex;
+    flex-direction: row;
+    align-items:    center;
+    gap:            10px;
+}
+
+header .header-logo img {
+    width:         48px;
+    height:        48px;
+    border-radius: var(--radio-pequeno);
+    object-fit:    cover;
+    flex-shrink:   0;
+}
+
+header .header-logo h1 {
+    font-size:      20px;
+    font-weight:    500;
+    letter-spacing: 1px;
+    color:          var(--color-superficie);
+}
+
+header .header-usuario {
+    display:        flex;
+    flex-direction: row;
+    align-items:    center;
+    gap:            6px;
+}
+
+header .header-usuario-saludo {
+    font-size: 13px;
+    color:     var(--color-acento-suave);
+}
+
+header .header-usuario-nombre {
+    font-size:   16px;
+    font-weight: 500;
+    color:       var(--color-superficie);
+}
+
+header nav {
+    display:         flex;
+    flex-direction:  row;
+    flex-wrap:       wrap;
+    justify-content: center;
+    align-items:     center;
+    gap:             6px;
+}
+
+header nav a {
+    color:           var(--color-superficie);
+    text-decoration: none;
+    font-size:       11px;
+    padding:         6px 12px;
+    border-radius:   var(--radio-pequeno);
+    border:          1px solid var(--color-acento-suave);
+    transition:      background-color 0.2s;
+
+    display:     flex;
+    align-items: center;
+}
+
+header nav a:hover {
+    background-color: var(--color-acento);
+    border-color:     var(--color-acento);
+}
+
+
+/* ------------------------------------------------
+   MAIN
+   Crece para empujar el footer hacia abajo
    ------------------------------------------------ */
 main {
     flex:    1;
@@ -77,32 +168,90 @@ main h3 {
     color:       var(--color-texto);
 }
 
+
 /* ------------------------------------------------
-   LOGIN
+   FOOTER
    ------------------------------------------------ */
-.contenedor-login {
-    flex:             1;
-    display:          flex;
-    flex-direction:   column;
-    justify-content:  center;
-    align-items:      center;
-    gap:              16px;
-    padding:          24px;
-    background-color: var(--color-fondo);
+footer {
+    background-color: var(--color-principal);
+    color:            var(--color-acento-suave);
+    padding:          14px 16px;
+    font-size:        10px;
+    margin-top:       auto;
+
+    display:        flex;
+    flex-direction: column;
+    align-items:    center;
+    gap:            4px;
 }
 
-.contenedor-login h1 {
-    font-size:   28px;
+footer p {
+    margin: 0;
+}
+
+
+/* ------------------------------------------------
+   FORMULARIOS
+   ------------------------------------------------ */
+fieldset {
+    border:        2px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    padding:       16px;
+    padding-bottom: 20px;
+    background:    var(--color-superficie);
+    width:         100%;
+    max-width:     440px;
+
+    display:        flex;
+    flex-direction: column;
+    gap:            4px;
+}
+
+legend {
     font-weight: 500;
     color:       var(--color-principal);
+    padding:     0 6px;
 }
 
-.contenedor-login h2 {
-    font-size:   14px;
-    color:       var(--color-texto-apagado);
-    font-weight: 400;
+label {
+    font-size:  11px;
+    color:      var(--color-texto-apagado);
+    margin-top: 8px;
 }
 
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+input[type="file"],
+input[type="time"],
+select,
+textarea {
+    width:         100%;
+    padding:       7px 10px;
+    border:        1px solid var(--color-borde);
+    border-radius: var(--radio-pequeno);
+    font-family:   var(--fuente-cuerpo);
+    font-size:     12px;
+    color:         var(--color-texto);
+    background:    var(--color-fondo);
+    outline:       none;
+    transition:    border-color 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--color-acento);
+}
+
+/* Quitar flechas de los inputs time */
+input[type="time"]::-webkit-inner-spin-button,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    display:            none;
+    -webkit-appearance: none;
+}
 
 
 /* ------------------------------------------------
@@ -129,6 +278,16 @@ button:hover {
     background-color: var(--color-acento);
 }
 
+/* Botón borrar en rojo */
+input[name="borrar"] {
+    background-color: var(--color-error);
+}
+
+input[name="borrar"]:hover {
+    background-color: #b91c1c;
+}
+
+/* Botón horario en azul */
 .btn-horario {
     background-color: var(--color-informacion);
     color:            var(--color-superficie);
@@ -147,112 +306,39 @@ button:hover {
     background-color: var(--color-acento);
 }
 
-
-input[name="borrar"] {
-    background-color: var(--color-error);
-}
-
-input[name="borrar"]:hover {
-    background-color: #b91c1c;
-}
-
-
-
-/* ------------------------------------------------
-   HEADER
-   Flex en columna en móvil, fila en desktop
-   ------------------------------------------------ */
-header {
+/* Botón fichar */
+#btn-fichar {
+    width:            120px;
+    padding:          8px 16px;
+    font-size:        13px;
+    font-weight:      500;
+    letter-spacing:   1px;
     background-color: var(--color-principal);
     color:            var(--color-superficie);
-    padding:          12px 16px;
-
-    display:        flex;
-    flex-direction: column;
-    align-items:    center;
-    gap:            10px;
+    border-radius:    var(--radio-pequeno);
+    cursor:           pointer;
+    margin-top:       0;
+    border:           none;
+    transition:       background-color 0.2s;
 }
 
-/* Logo + nombre de la app en fila */
-header .header-logo {
-    display:        flex;
-    flex-direction: row;
-    align-items:    center;
-    gap:            10px;
+#btn-fichar:hover {
+    background-color: var(--color-acento);
 }
 
-header .header-logo img {
-    width:         48px;
-    height:        48px;
-    border-radius: var(--radio-pequeno);
-    object-fit:    cover;
-    flex-shrink:   0;
+/* Botón pendiente desactivado */
+.btn-pendiente {
+    width:            120px;
+    background-color: var(--color-borde);
+    color:            var(--color-texto-apagado);
+    cursor:           not-allowed;
+    margin-top:       0;
+    border:           none;
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 16px;
+    font-size:        13px;
 }
 
-header .header-logo h1 {
-    font-size:      20px;
-    font-weight:    500;
-    letter-spacing: 1px;
-    color:          var(--color-superficie);
-}
-
-header .header-usuario {
-    font-size: 11px;
-    color:     var(--color-acento-suave);
-}
-
-
-
-/* ------------------------------------------------
-   FOOTER
-   ------------------------------------------------ */
-footer {
-    background-color: var(--color-principal);
-    color:            var(--color-acento-suave);
-    padding:          14px 16px;
-    font-size:        10px;
-    margin-top:       auto;
-
-    display:        flex;
-    flex-direction: column;
-    align-items:    center;
-    gap:            4px;
-}
-
-footer p {
-    margin: 0;
-}
-
-
-/* ------------------------------------------------
-   PANEL JORNADA TRABAJADOR
-   ------------------------------------------------ */
-.jornada-wrapper {
-    display:          flex;
-    flex-direction:   column;
-    align-items:      center;
-    justify-content:  center;
-    gap:              20px;
-    padding:          24px;
-    background:       var(--color-superficie);
-    border-radius:    var(--radio-lg);
-    border:           1px solid var(--color-borde);
-    max-width:        600px;
-    margin:           0 auto;
-}
-
-.jornada-fecha {
-    font-family: var(--fuente-mono);
-    font-size:   14px;
-    color:       var(--color-texto-apagado);
-}
-
-.jornada-hora {
-    font-family: var(--fuente-mono);
-    font-size:   36px;
-    font-weight: 500;
-    color:       var(--color-principal);
-}
 
 /* ------------------------------------------------
    TABLAS
@@ -333,58 +419,114 @@ table tr:hover td {
 
 
 /* ------------------------------------------------
-   FORMULARIOS
-   Flex en columna para apilar los campos
+   MENSAJES DE ÉXITO Y ERROR
    ------------------------------------------------ */
-fieldset {
-    border:        2px solid var(--color-borde);
-    border-radius: var(--radio-mediano);
-    padding:       16px;
-    background:    var(--color-superficie);
-    width:         100%;
-    max-width:     440px;
+p[style*="color:green"],
+.mensaje-ok {
+    background-color: #d1fae5;
+    color:            #065f46;
+    border:           1px solid #6ee7b7;
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 12px;
+    font-size:        12px;
 
-    display:        flex;
-    flex-direction: column;
-    gap:            4px;
+    display:     flex;
+    align-items: center;
+    gap:         8px;
 }
 
-legend {
+p[style*="color:red"],
+.mensaje-error {
+    background-color: #fee2e2;
+    color:            var(--color-error);
+    border:           1px solid #fca5a5;
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 12px;
+    font-size:        12px;
+
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+}
+
+
+/* ------------------------------------------------
+   LOGIN
+   ------------------------------------------------ */
+.contenedor-login {
+    flex:             1;
+    display:          flex;
+    flex-direction:   column;
+    justify-content:  center;
+    align-items:      center;
+    gap:              16px;
+    padding:          24px;
+    background-color: var(--color-fondo);
+}
+
+.contenedor-login h1 {
+    font-size:   28px;
     font-weight: 500;
     color:       var(--color-principal);
-    padding:     0 6px;
 }
 
-label {
-    font-size:  11px;
-    color:      var(--color-texto-apagado);
-    margin-top: 8px;
+.contenedor-login h2 {
+    font-size:   14px;
+    color:       var(--color-texto-apagado);
+    font-weight: 400;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="date"],
-input[type="file"],
-select,
-textarea {
-    width:         100%;
-    padding:       7px 10px;
-    border:        1px solid var(--color-borde);
-    border-radius: var(--radio-pequeno);
-    font-family:   var(--fuente-cuerpo);
-    font-size:     12px;
-    color:         var(--color-texto);
-    background:    var(--color-fondo);
-    outline:       none;
-    transition:    border-color 0.2s;
+.contenedor-login input[type="submit"] {
+    align-self: center;
 }
 
-input:focus,
-select:focus,
-textarea:focus {
-    border-color: var(--color-acento);
+/* ------------------------------------------------
+   LOGO RELOJ LOGIN
+   ------------------------------------------------ */
+#logo-reloj {
+    position: relative;
+    width:     120px;
+    height:    120px;
+}
+
+#logo-reloj .logo-frame {
+    position: absolute;
+    top:      0;
+    left:     0;
+    width:    120px;
+    height:   120px;
+    display:  none;
+}
+
+#logo-reloj .logo-frame:first-child {
+    display: block;
+}
+
+
+/* ------------------------------------------------
+   SLIDESHOW
+   ------------------------------------------------ */
+#slideshow {
+    width:         300px;
+    height:        175px;
+    position:      relative;
+    overflow:      hidden;
+    border-radius: var(--radio-mediano);
+    margin:        16px auto 0 auto;
+}
+
+#slideshow .slide {
+    width:      300px;
+    height:     175px;
+    object-fit: cover;
+    position:   absolute;
+    top:        0;
+    left:       0;
+    display:    none;
+}
+
+#slideshow .slide:first-child {
+    display: block;
 }
 
 
@@ -427,13 +569,13 @@ textarea:focus {
 }
 
 .perfil-datos h3 {
-    color:         var(--color-principal);
-    font-size:     14px;
-    font-weight:   500;
-    margin-top:    16px;
-    margin-bottom: 12px;
+    color:          var(--color-principal);
+    font-size:      14px;
+    font-weight:    500;
+    margin-top:     16px;
+    margin-bottom:  12px;
     padding-bottom: 6px;
-    border-bottom: 1px solid var(--color-borde);
+    border-bottom:  1px solid var(--color-borde);
 }
 
 .perfil-campo {
@@ -462,97 +604,301 @@ textarea:focus {
 
 
 /* ------------------------------------------------
-   NAVEGACIÓN DEL HEADER
-   Flex en fila con wrap para que los enlaces
-   bajen de línea si no caben
+   PANEL JORNADA TRABAJADOR
    ------------------------------------------------ */
-header nav {
-    display:         flex;
-    flex-direction:  row;
-    flex-wrap:       wrap;
-    justify-content: center;
-    align-items:     center;
-    gap:             6px;
+.jornada-wrapper {
+    display:          flex;
+    flex-direction:   column;
+    align-items:      center;
+    justify-content:  center;
+    gap:              20px;
+    padding:          24px;
+    background:       var(--color-superficie);
+    border-radius:    var(--radio-grande);
+    border:           1px solid var(--color-borde);
+    max-width:        600px;
+    margin:           0 auto;
 }
 
-header nav a {
-    color:           var(--color-superficie);
-    text-decoration: none;
-    font-size:       11px;
-    padding:         6px 12px;
-    border-radius:   var(--radio-pequeno);
-    border:          1px solid var(--color-acento-suave);
-    transition:      background-color 0.2s;
-
-    display:     flex;
-    align-items: center;
+.jornada-fecha {
+    font-family: var(--fuente-mono);
+    font-size:   14px;
+    color:       var(--color-texto-apagado);
 }
 
-header nav a:hover {
-    background-color: var(--color-acento);
-    border-color:     var(--color-acento);
+.jornada-hora {
+    font-family: var(--fuente-mono);
+    font-size:   36px;
+    font-weight: 500;
+    color:       var(--color-principal);
 }
 
 
 /* ------------------------------------------------
-   SLIDESHOW
+   FICHAJES
    ------------------------------------------------ */
-#slideshow {
-    width:         300px;
-    height:        175px;
-    position:      relative;
-    overflow:      hidden;
+.fichajes-wrapper {
+    display:        flex;
+    flex-direction: column;
+    gap:            12px;
+    width:          100%;
+    margin-top:     16px;
+}
+
+.fichaje-item {
+    display:        flex;
+    flex-direction: row;
+    align-items:    center;
+    gap:            16px;
+    padding:        12px 16px;
+    background:     var(--color-superficie);
+    border-radius:  var(--radio-mediano);
+    border:         1px solid var(--color-borde);
+}
+
+.fichaje-hecho {
+    background:   #d1fae5;
+    border-color: #6ee7b7;
+}
+
+.fichaje-nombre {
+    font-weight: 500;
+    font-size:   13px;
+    min-width:   140px;
+    color:       var(--color-texto);
+}
+
+.fichaje-hora-prevista {
+    font-family: var(--fuente-mono);
+    font-size:   12px;
+    color:       var(--color-texto-apagado);
+    min-width:   120px;
+}
+
+.fichaje-hora-real {
+    font-family: var(--fuente-mono);
+    font-size:   12px;
+    color:       var(--color-principal);
+    font-weight: 500;
+    min-width:   120px;
+}
+
+.fichaje-tarde {
+    font-size:   11px;
+    color:       var(--color-error);
+    font-weight: 500;
+}
+
+.fichaje-pronto {
+    font-size:   11px;
+    color:       var(--color-informacion);
+    font-weight: 500;
+}
+
+.fichaje-puntual {
+    font-size:   11px;
+    color:       var(--color-principal);
+    font-weight: 500;
+}
+
+.fichaje-mensaje {
+    font-size:  14px;
+    color:      var(--color-texto-apagado);
+    text-align: center;
+    margin-top: 16px;
+}
+
+
+/* ------------------------------------------------
+   INFORME RESUMEN
+   ------------------------------------------------ */
+.informe-resumen {
+    background:    var(--color-superficie);
     border-radius: var(--radio-mediano);
-    margin:        16px auto 0 auto;   /* auto a los lados para centrar */
+    border:        1px solid var(--color-borde);
+    padding:       20px;
+    max-width:     600px;
+    margin-top:    20px;
 }
 
-#slideshow .slide {
-    width:      300px;
-    height:     175px;
-    object-fit: cover;
-    position:   absolute;
-    top:        0;
-    left:       0;
-    display:    none;
+.informe-resumen h3 {
+    color:          var(--color-principal);
+    font-size:      14px;
+    margin-bottom:  12px;
+    padding-bottom: 6px;
+    border-bottom:  1px solid var(--color-borde);
 }
 
-#slideshow .slide:first-child {
-    display: block;
+.informe-resumen-item {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    padding:         8px 0;
+    border-bottom:   1px solid var(--color-borde);
+    font-size:       13px;
 }
+
+.informe-resumen-item:last-child {
+    border-bottom: none;
+    font-weight:   500;
+}
+
 
 /* ------------------------------------------------
-   MENSAJES DE ÉXITO Y ERROR
+   DASHBOARD ADMIN
    ------------------------------------------------ */
-p[style*="color:green"],
-.mensaje-ok {
-    background-color: #d1fae5;
-    color:            #065f46;
-    border:           1px solid #6ee7b7;
-    border-radius:    var(--radio-pequeno);
-    padding:          8px 12px;
-    font-size:        12px;
-
-    display:     flex;
-    align-items: center;
-    gap:         8px;
+.dashboard-grid {
+    display:       flex;
+    flex-wrap:     wrap;
+    gap:           16px;
+    margin-bottom: 8px;
 }
 
-p[style*="color:red"],
-.mensaje-error {
+.dashboard-card {
+    display:          flex;
+    flex-direction:   column;
+    align-items:      center;
+    justify-content:  center;
+    gap:              8px;
+    padding:          24px 32px;
+    background:       var(--color-superficie);
+    border-radius:    var(--radio-mediano);
+    border:           2px solid var(--color-borde);
+    min-width:        140px;
+    flex:             1;
+}
+
+.dashboard-card-numero {
+    font-family: var(--fuente-mono);
+    font-size:   48px;
+    font-weight: 500;
+    color:       var(--color-principal);
+    line-height: 1;
+}
+
+.dashboard-card-label {
+    font-size:  11px;
+    color:      var(--color-texto-apagado);
+    text-align: center;
+}
+
+.dashboard-card-ok {
+    border-color: var(--color-acento);
+}
+
+.dashboard-card-ok .dashboard-card-numero {
+    color: var(--color-acento);
+}
+
+.dashboard-card-error {
+    border-color: var(--color-error);
+}
+
+.dashboard-card-error .dashboard-card-numero {
+    color: var(--color-error);
+}
+
+.dashboard-card-warning {
+    border-color: var(--color-advertencia);
+}
+
+.dashboard-card-warning .dashboard-card-numero {
+    color: var(--color-advertencia);
+}
+
+.dashboard-aviso {
+    background:    #fef3c7;
+    border:        1px solid var(--color-advertencia);
+    border-radius: var(--radio-pequeno);
+    padding:       10px 16px;
+    font-size:     12px;
+    color:         #92400e;
+}
+
+.estado-badge {
+    font-size:     10px;
+    font-weight:   500;
+    padding:       4px 8px;
+    border-radius: var(--radio-pequeno);
+}
+
+.estado-sin-fichar {
     background-color: #fee2e2;
     color:            var(--color-error);
-    border:           1px solid #fca5a5;
-    border-radius:    var(--radio-pequeno);
-    padding:          8px 12px;
-    font-size:        12px;
+}
 
-    display:     flex;
-    align-items: center;
-    gap:         8px;
+.estado-en-curso {
+    background-color: #fef3c7;
+    color:            #92400e;
+}
+
+.estado-completo {
+    background-color: #d1fae5;
+    color:            #065f46;
 }
 
 
+/* ------------------------------------------------
+   FESTIVOS - TARJETAS CALENDARIO
+   ------------------------------------------------ */
+#festivos {
+    background:  transparent;
+    border:      none;
+    padding:     0;
+    margin:      0;
+    overflow-x:  visible;
+}
 
+.festivos-grid {
+    display:    flex;
+    flex-wrap:  wrap;
+    gap:        16px;
+    margin-top: 16px;
+}
+
+.festivo-card {
+    display:          flex;
+    flex-direction:   column;
+    align-items:      center;
+    width:            90px;
+    border-radius:    var(--radio-mediano);
+    overflow:         hidden;
+    box-shadow:       0 2px 8px rgba(0,0,0,0.12);
+    background-color: var(--color-superficie);
+}
+
+.festivo-card-mes {
+    width:            100%;
+    background-color: #DC2626;
+    color:            #FFFFFF;
+    text-align:       center;
+    font-size:        11px;
+    font-weight:      500;
+    padding:          6px 0;
+    letter-spacing:   1px;
+}
+
+.festivo-card-dia {
+    width:            100%;
+    background-color: #FFFFFF;
+    color:            var(--color-texto);
+    text-align:       center;
+    font-size:        36px;
+    font-weight:      500;
+    padding:          8px 0;
+    font-family:      var(--fuente-mono);
+}
+
+.festivo-card-nombre {
+    width:            100%;
+    background-color: #FFFFFF;
+    color:            var(--color-texto-apagado);
+    text-align:       center;
+    font-size:        9px;
+    padding:          4px 6px 8px 6px;
+    border-top:       1px solid var(--color-borde);
+    line-height:      1.3;
+}
 
 
 /* ================================================
@@ -605,234 +951,4 @@ p[style*="color:red"],
     main h2 {
         font-size: 22px;
     }
-}
-
-/* ------------------------------------------------
-   QUITAR FLECHAS DE LOS INPUTS TIME
-   ------------------------------------------------ */
-input[type="time"]::-webkit-inner-spin-button,
-input[type="time"]::-webkit-calendar-picker-indicator {
-    display: none;
-    -webkit-appearance: none;
-}
-
-/* ------------------------------------------------
-   FICHAJES
-   ------------------------------------------------ */
-
-   #btn-fichar {
-    width:            120px;
-    padding:          8px 16px;
-    font-size:        13px;
-    font-weight:      500;
-    letter-spacing:   1px;
-    background-color: var(--color-principal);
-    color:            var(--color-superficie);
-    border-radius:    var(--radio-pequeno);
-    cursor:           pointer;
-    margin-top:       0;
-    border:           none;
-    transition:       background-color 0.2s;
-}
-
-#btn-fichar:hover {
-    background-color: var(--color-acento);
-}
-
-.btn-pendiente {
-    width:            120px;
-    background-color: var(--color-borde);
-    color:            var(--color-texto-apagado);
-    cursor:           not-allowed;
-    margin-top:       0;
-    border:           none;
-    border-radius:    var(--radio-pequeno);
-    padding:          8px 16px;
-    font-size:        13px;
-}
-.fichajes-wrapper {
-    display:        flex;
-    flex-direction: column;
-    gap:            12px;
-    width:          100%;
-    margin-top:     16px;
-}
-
-.fichaje-item {
-    display:          flex;
-    flex-direction:   row;
-    align-items:      center;
-    gap:              16px;
-    padding:          12px 16px;
-    background:       var(--color-superficie);
-    border-radius:    var(--radio-mediano);
-    border:           1px solid var(--color-borde);
-}
-
-/* Fichaje ya completado con fondo verde suave */
-.fichaje-hecho {
-    background:   #d1fae5;
-    border-color: #6ee7b7;
-}
-
-.fichaje-nombre {
-    font-weight: 500;
-    font-size:   13px;
-    min-width:   140px;
-    color:       var(--color-texto);
-}
-
-.fichaje-hora-prevista {
-    font-family: var(--fuente-mono);
-    font-size:   12px;
-    color:       var(--color-texto-apagado);
-    min-width:   120px;
-}
-
-.fichaje-hora-real {
-    font-family: var(--fuente-mono);
-    font-size:   12px;
-    color:       var(--color-principal);
-    font-weight: 500;
-    min-width:   120px;
-}
-
-/* Llegó tarde */
-.fichaje-tarde {
-    font-size:  11px;
-    color:      var(--color-error);
-    font-weight: 500;
-}
-
-/* Llegó antes */
-.fichaje-pronto {
-    font-size:  11px;
-    color:      var(--color-informacion);
-    font-weight: 500;
-}
-
-/* Puntual */
-.fichaje-puntual {
-    font-size:  11px;
-    color:      var(--color-principal);
-    font-weight: 500;
-}
-
-/* Botón pendiente desactivado */
-.btn-pendiente {
-    background-color: var(--color-borde);
-    color:            var(--color-texto-apagado);
-    cursor:           not-allowed;
-    margin-top:       0;
-}
-
-/* Mensaje de jornada completada o fin de semana */
-.fichaje-mensaje {
-    font-size:   14px;
-    color:       var(--color-texto-apagado);
-    text-align:  center;
-    margin-top:  16px;
-}
-
-/* ------------------------------------------------
-   INFORME RESUMEN
-   ------------------------------------------------ */
-.informe-resumen {
-    background:    var(--color-superficie);
-    border-radius: var(--radio-mediano);
-    border:        1px solid var(--color-borde);
-    padding:       20px;
-    max-width:     600px;
-    margin-top:    20px;
-}
-
-.informe-resumen h3 {
-    color:         var(--color-principal);
-    font-size:     14px;
-    margin-bottom: 12px;
-    padding-bottom: 6px;
-    border-bottom: 1px solid var(--color-borde);
-}
-
-.informe-resumen-item {
-    display:         flex;
-    justify-content: space-between;
-    align-items:     center;
-    padding:         8px 0;
-    border-bottom:   1px solid var(--color-borde);
-    font-size:       13px;
-}
-
-.informe-resumen-item:last-child {
-    border-bottom: none;
-    font-weight:   500;
-}
-
-/* ------------------------------------------------
-   CONTENEDOR FESTIVOS
-   ------------------------------------------------ */
-#festivos {
-    background:  transparent;
-    border:      none;
-    padding:     0;
-    margin:      0;
-    overflow-x:  visible;
-}
-
-
-/* ------------------------------------------------
-   FESTIVOS - TARJETAS CALENDARIO
-   ------------------------------------------------ */
-.festivos-grid {
-    display:         flex;
-    flex-wrap:       wrap;
-    gap:             16px;
-    margin-top:      16px;
-}
-
-.festivo-card {
-    display:          flex;
-    flex-direction:   column;
-    align-items:      center;
-    width:            90px;
-    border-radius:    var(--radio-mediano);
-    overflow:         hidden;
-    box-shadow:       0 2px 8px rgba(0,0,0,0.12);
-    background-color: var(--color-superficie); 
-}
-
-/* Franja roja superior con el mes */
-.festivo-card-mes {
-    width:            100%;
-    background-color: #DC2626;
-    color:            #FFFFFF;
-    text-align:       center;
-    font-size:        11px;
-    font-weight:      500;
-    padding:          6px 0;
-    letter-spacing:   1px;
-}
-
-/* Número del día grande */
-.festivo-card-dia {
-    width:            100%;
-    background-color: #FFFFFF;
-    color:            var(--color-texto);
-    text-align:       center;
-    font-size:        36px;
-    font-weight:      500;
-    padding:          8px 0;
-    font-family:      var(--fuente-mono);
-}
-
-/* Nombre del festivo debajo */
-.festivo-card-nombre {
-    width:            100%;
-    background-color: #FFFFFF;
-    color:            var(--color-texto-apagado);
-    text-align:       center;
-    font-size:        9px;
-    padding:          4px 6px 8px 6px;
-    border-top:       1px solid var(--color-borde);
-    line-height:      1.3;
 }

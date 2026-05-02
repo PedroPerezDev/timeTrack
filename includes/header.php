@@ -32,7 +32,10 @@ if (!isset($_SESSION['user'])) {
     </div>
 
     <!-- Usuario conectado -->
-    <span class="header-usuario"> <?php echo $_SESSION['user']; ?></span>
+<div class="header-usuario">
+    <span class="header-usuario-saludo">Hola,</span>
+    <span class="header-usuario-nombre"><?php echo $_SESSION['user']; ?></span>
+</div>
 
     <!-- Menú de navegación -->
     <nav>
