@@ -43,9 +43,9 @@ Tiene su propio layout centrado verticalmente en pantalla completa.
 ## 2. Color
 
 ### Colores principales
-
+<div align="center">
 <img src="timetrack_coloresprincipales.png" alt="Paleta de colores TimeTrack" width="600">
-
+</div>
 La aplicación usa una gama de verdes oscuros como color corporativo,
 transmitiendo seriedad y confianza. Se definen tres niveles:
 
@@ -59,6 +59,10 @@ transmitiendo seriedad y confianza. Se definen tres niveles:
 
 ### Colores de fondo y superficie
 
+<div align="center">
+<img src="timetrack_colores_fondo_superficie.png" alt="Paleta de colores de fondo de TimeTrack" width="600">
+</div>
+
 Se distinguen dos niveles de fondo para crear profundidad visual:
 
 - **Color fondo** (`#F4F7F5`): fondo general de toda la aplicación.
@@ -69,17 +73,21 @@ Se distinguen dos niveles de fondo para crear profundidad visual:
 
 ### Colores de texto
 
+<div align="center">
+<img src="timetrack_colores_texto.png" alt="Paleta de colores para los textos en TimeTrack" width="600">
+</div>
+
 - **Color texto** (`#1A2E26`): texto principal. Es un negro verdoso
   oscuro, más suave que el negro puro.
 - **Color texto apagado** (`#6A8F82`): texto secundario, etiquetas de
   formulario y placeholders.
 
-### Color de borde
-
-- **Color borde** (`#C8DDD5`): usado en los bordes de inputs, tablas
-  y tarjetas. Mantiene la coherencia cromática con el resto de la paleta.
 
 ### Colores de estado
+
+<div align="center">
+<img src="timetrack_colores_estado.png" alt="Paleta de colores de estados de TimeTrack" width="600">
+</div>
 
 Para comunicar el resultado de las acciones del usuario se usan cuatro
 colores de estado estándar, independientes de la paleta corporativa:
