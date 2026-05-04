@@ -70,5 +70,6 @@ if (!isset($_SESSION['user'])) {
         <a href="/timetrack/includes/cerrar_sesion.php">Cerrar sesión</a>
 
     </nav>
-
+<!-- Botón modo oscuro/claro -->
+<button id="btn-modo" onclick="toggleModo()"> Modo oscuro</button>
 </header>

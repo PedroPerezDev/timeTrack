@@ -952,3 +952,20 @@ p[style*="color:red"],
         font-size: 22px;
     }
 }
+
+
+/* ------------------------------------------------
+   MODO OSCURO
+   Se activa añadiendo la clase .modo-oscuro al body
+   con classList.toggle desde el botón del header
+   ------------------------------------------------ */
+body.modo-oscuro {
+    --color-principal:        #1D9E75;
+    --color-acento:           #5DCAA5;
+    --color-acento-suave:     #0F6E56;
+    --color-fondo:            #1A2E26;
+    --color-superficie:       #243D33;
+    --color-texto:            #F4F7F5;
+    --color-texto-apagado:    #9ABFB3;
+    --color-borde:            #2E5045;
+}
