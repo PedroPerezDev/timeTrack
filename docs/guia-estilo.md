@@ -42,12 +42,9 @@ Tiene su propio layout centrado verticalmente en pantalla completa.
 
 ## 2. Color
 
-La paleta de colores de TimeTrack está definida mediante variables CSS
-en el selector `:root` del archivo `css/style.css`. Usar variables
-permite cambiar un color en un solo lugar y que el cambio se aplique
-en toda la aplicación.
-
 ### Colores principales
+
+<img src="timetrack_coloresprincipales.png" alt="Paleta de colores TimeTrack" width="600">
 
 La aplicación usa una gama de verdes oscuros como color corporativo,
 transmitiendo seriedad y confianza. Se definen tres niveles:
