@@ -99,3 +99,81 @@ colores de estado estándar, independientes de la paleta corporativa:
 - **Error** (`#DC2626`): errores de validación, mensajes negativos
   y el botón de borrar trabajadores.
 - **Neutro** (`#6B7280`): estados desactivados o sin relevancia.
+
+## 3. Tipografía
+
+TimeTrack usa dos fuentes cargadas desde Google Fonts, declaradas al
+inicio de `css/style.css` mediante `@import`:
+
+### Fuentes utilizadas
+
+**Inter** es la fuente principal de la aplicación. Se usa en todo el
+texto de la interfaz: menús, formularios, tablas, botones y párrafos.
+Es una fuente sans-serif diseñada específicamente para pantallas,
+con una legibilidad muy alta en tamaños pequeños. Se cargan los pesos
+400 (normal) y 500 (medio).
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono&display=swap');
+</style>
+
+<div style="padding: 1.5rem; background: #F4F7F5; border-radius: 8px; margin-bottom: 16px;">
+
+  <p style="font-size: 11px; color: #6A8F82; letter-spacing: 1px; margin-bottom: 12px;">INTER — PESO 400 · TEXTO GENERAL</p>
+  <p style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 22px; color: #1A2E26; margin: 0 0 6px;">El control horario de tu empresa</p>
+  <p style="font-family: 'Inter', sans-serif; font-weight: 400; font-size: 13px; color: #6A8F82; margin: 0;">Texto secundario · etiquetas · descripciones de formulario</p>
+
+  <hr style="border: none; border-top: 1px solid #C8DDD5; margin: 1.5rem 0;">
+
+  <p style="font-size: 11px; color: #6A8F82; letter-spacing: 1px; margin-bottom: 12px;">INTER — PESO 500 · TÍTULOS Y BOTONES</p>
+  <p style="font-family: 'Inter', sans-serif; font-weight: 500; font-size: 22px; color: #1A2E26; margin: 0 0 6px;">Trabajadores · Informes · Horarios</p>
+  <p style="font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px; color: #6A8F82; margin: 0;">Cabeceras de tabla · navegación · botones de acción</p>
+
+</div>
+
+**JetBrains Mono** Se usa en el reloj en
+tiempo real, las horas de fichaje y los números del dashboard. Se eligió
+porque sus dígitos tienen un aspecto similar al de un reloj digital,
+lo que encaja visualmente con el propósito de la aplicación.
+
+<div style="padding: 1.5rem; background: #F4F7F5; border-radius: 8px;">
+
+  <p style="font-size: 11px; color: #6A8F82; letter-spacing: 1px; margin-bottom: 12px;">JETBRAINS MONO · DATOS NUMÉRICOS Y RELOJ</p>
+  <p style="font-family: 'JetBrains Mono', monospace; font-size: 36px; color: #1A2E26; margin: 0 0 6px;">08:32:47</p>
+  <p style="font-family: 'JetBrains Mono', monospace; font-size: 16px; color: #1A2E26; margin: 0 0 6px;">09:00 · 14:00 · 18:30</p>
+  <p style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #6A8F82; margin: 0;">Horas de fichaje · números del dashboard · datos de jornada</p>
+
+</div>
+
+
+
+### Tamaño base
+
+El tamaño de texto base se define en el `body` y varía según el
+dispositivo siguiendo la estrategia Mobile First:
+
+- **Móvil:** 12px
+- **Tablet** (desde 768px): 13px
+- **Escritorio** (desde 1024px): 14px
+
+El resto de elementos usan tamaños relativos (`rem` o `px`) partiendo
+de esta base, de forma que toda la tipografía escala proporcionalmente
+según el dispositivo.
+
+### Pesos tipográficos
+
+Se usan únicamente dos pesos para mantener la coherencia visual:
+
+- **400 (normal):** texto general, descripciones, contenido de tablas.
+- **500 (medio):** títulos, etiquetas importantes, botones y datos
+  destacados. Aporta jerarquía sin necesidad de usar negrita completa.
+
+### Variables CSS
+
+Las fuentes están referenciadas mediante variables para facilitar
+posibles cambios futuros:
+
+- `--fuente-cuerpo`: aplicada al `body` y heredada por todos los
+  elementos de la interfaz.
+- `--fuente-mono`: aplicada explícitamente a los elementos que
+  muestran datos numéricos o de tiempo.
