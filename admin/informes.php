@@ -17,6 +17,12 @@ include "../config.php";
 
 $conexion = conectar();
 
+// Si se pulsa el botón de PDF redirijo antes de mostrar HTML
+if (isset($_POST['pdf'])) {
+    header("Location: pdf.php");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -45,12 +51,10 @@ $conexion = conectar();
         <fieldset>
             <legend>Seleccionar trabajador y rango de fechas</legend>
 
-            <!-- Búsqueda por nombre -->
             <label>Buscar por nombre</label>
             <input type="text" name="buscar_nombre" placeholder="Escribe el nombre..."
                 value="<?php echo isset($_POST['buscar_nombre']) ? $_POST['buscar_nombre'] : ''; ?>">
 
-            <!-- Seleccionar del desplegable -->
             <label>O selecciona de la lista</label>
             <select name="buscar_id">
                 <option value="">-- Selecciona un trabajador --</option>
@@ -64,7 +68,6 @@ $conexion = conectar();
                 ?>
             </select>
 
-            <!-- Rango de fechas -->
             <label>Fecha inicio</label>
             <input type="date" name="fecha_inicio" 
                 value="<?php echo isset($_POST['fecha_inicio']) ? $_POST['fecha_inicio'] : date('Y-m-01'); ?>">
@@ -87,7 +90,6 @@ $conexion = conectar();
 
         $id_trabajador = null;
 
-        // Busco por desplegable o por nombre
         if (!empty($_POST['buscar_id'])) {
             $id_trabajador = $_POST['buscar_id'];
 
@@ -109,9 +111,14 @@ $conexion = conectar();
             $fecha_inicio = $_POST['fecha_inicio'];
             $fecha_fin    = $_POST['fecha_fin'];
 
-            // Recupero los datos del trabajador
             $trabajador = $conexion->query("SELECT nombre, apellidos FROM usuarios 
                 WHERE id = '$id_trabajador'")->fetch_assoc();
+
+            // Guardo los datos en sesión para recuperarlos en pdf.php
+            $_SESSION['pdf_trabajador_id']     = $id_trabajador;
+            $_SESSION['pdf_trabajador_nombre'] = $trabajador['nombre'] . " " . $trabajador['apellidos'];
+            $_SESSION['pdf_fecha_inicio']      = $fecha_inicio;
+            $_SESSION['pdf_fecha_fin']         = $fecha_fin;
 
             echo "<h3>Informe de " . $trabajador['nombre'] . " " . $trabajador['apellidos'] . "</h3>";
             echo "<p>Período: " . date('d/m/Y', strtotime($fecha_inicio)) . " — " . date('d/m/Y', strtotime($fecha_fin)) . "</p>";
@@ -120,23 +127,16 @@ $conexion = conectar();
             //------------ FICHAJES DEL PERÍODO ------------------- |
             //-----------------------------------------------------|
 
-            /*
-             * Recupero todos los fichajes del trabajador
-             * en el rango de fechas seleccionado
-             * Los agrupo por fecha para mostrarlos por días
-             */
             $fichajes = $conexion->query("SELECT * FROM fichajes 
                 WHERE usuario_id = '$id_trabajador'
                 AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'
                 ORDER BY fecha ASC, tipo ASC");
 
-            // Agrupo los fichajes por fecha
             $fichajes_por_dia = [];
             while ($f = $fichajes->fetch_assoc()) {
                 $fichajes_por_dia[$f['fecha']][$f['tipo']] = $f;
             }
 
-            // Nombres de los tipos de fichaje
             $nombres_tipo = [
                 'entrada_1' => 'Entrada mañana',
                 'salida_1'  => 'Salida mañana',
@@ -149,7 +149,6 @@ $conexion = conectar();
 
             } else {
 
-                // Variables para el resumen total
                 $total_minutos_extra = 0;
                 $total_minutos_menos = 0;
 
@@ -165,16 +164,15 @@ $conexion = conectar();
                 foreach ($fichajes_por_dia as $fecha => $fichajes_dia) {
 
                     $fecha_formateada = date('d/m/Y', strtotime($fecha));
-                    $primer_fichaje   = true; // para mostrar la fecha solo en la primera fila del día
+                    $primer_fichaje   = true;
 
                     foreach (['entrada_1', 'salida_1', 'entrada_2', 'salida_2'] as $tipo) {
 
                         if (!isset($fichajes_dia[$tipo])) continue;
 
-                        $f = $fichajes_dia[$tipo];
-
-                        // Calculo el color de la diferencia
+                        $f   = $fichajes_dia[$tipo];
                         $dif = $f['minutos_diferencia'];
+
                         if ($dif > 0) {
                             $dif_html = "<span style='color:var(--color-error)'>+" . $dif . " min</span>";
                             $total_minutos_menos += $dif;
@@ -185,13 +183,12 @@ $conexion = conectar();
                             $dif_html = "<span style='color:var(--color-principal)'>Puntual ✓</span>";
                         }
 
-                        // Recupero la hora prevista del horario
-                        $dia_semana   = date('N', strtotime($fecha));
-                        $horario_dia  = $conexion->query("SELECT * FROM horarios 
+                        $dia_semana  = date('N', strtotime($fecha));
+                        $horario_dia = $conexion->query("SELECT * FROM horarios 
                             WHERE usuario_id = '$id_trabajador' 
                             AND dia_semana = '$dia_semana'")->fetch_assoc();
 
-                        $campo_hora = 'hora_' . $tipo;
+                        $campo_hora    = 'hora_' . $tipo;
                         $hora_prevista = $horario_dia ? substr($horario_dia[$campo_hora], 0, 5) : '--:--';
 
                         echo "<tr>
@@ -268,6 +265,11 @@ $conexion = conectar();
 
                     echo "</table></div>";
                 }
+
+                // Botón para generar el PDF
+                echo "<form action='informes.php' method='POST'>
+                    <input type='submit' name='pdf' value='Generar PDF'>
+                </form>";
             }
         }
     }

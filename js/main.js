@@ -65,7 +65,7 @@ $(document).ready(function() {
 
             actual = siguiente;
 
-        }, 2000);
+        }, 5000);
     }
 });
 
