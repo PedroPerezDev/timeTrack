@@ -20,11 +20,6 @@ $conexion = conectar();
 //------- FUNCIÓN PARA PINTAR LA TABLA --------------- |
 //-----------------------------------------------------|
 
-/*
- * Función reutilizable para mostrar la tabla de trabajadores
- * La uso tanto en la búsqueda como en el listado paginado
- * Recibe el resultado de la consulta como parámetro
- */
 function mostrarTabla($resultado) {
 
     echo "<div class='tabla-wrapper'>
@@ -62,18 +57,15 @@ function mostrarTabla($resultado) {
             <td>" . $fila['dias_vacaciones_totales'] . " días</td>
             <td class='acciones'>
 
-               <!-- Botón para ir a gestionar el horario de este trabajador -->
-<a href='horarios.php?id=" . $fila['id'] . "'>
-    <input type='button' value='Horario' class='btn-horario'>
-</a>
+                <a href='horarios.php?id=" . $fila['id'] . "'>
+                    <input type='button' value='Horario' class='btn-horario'>
+                </a>
 
-                <!-- Botón modificar -->
                 <form action='trabajadores.php' method='POST' style='display:inline'>
                     <input type='hidden' name='id_modificar' value='" . $fila['id'] . "'>
                     <input type='submit' name='ver_modificar' value='Modificar'>
                 </form>
 
-                <!-- Botón borrar con confirmación -->
                 <form action='trabajadores.php' method='POST' style='display:inline'>
                     <input type='hidden' name='id' value='" . $fila['id'] . "'>
                     <input type='submit' name='borrar' value='Borrar'
@@ -138,7 +130,6 @@ function mostrarTabla($resultado) {
 
                 $foto = "";
                 if (!empty($_FILES['foto']['name'])) {
-                    // Añado timestamp al nombre para evitar duplicados
                     $nombre_foto = time() . "_" . $_FILES['foto']['name'];
                     $ruta_foto   = "../uploads/fotos_trabajadores/" . $nombre_foto;
                     if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta_foto)) {
@@ -172,7 +163,6 @@ function mostrarTabla($resultado) {
 
         $id = $_POST['id'];
 
-        // Recupero la foto para borrarla del servidor también
         $resultado_foto = $conexion->query("SELECT foto FROM usuarios WHERE id = '$id'");
         $fila_foto      = $resultado_foto->fetch_assoc();
 
@@ -213,7 +203,6 @@ function mostrarTabla($resultado) {
 
         } else {
 
-            // Si se sube foto nueva la proceso y borro la antigua
             $sql_foto = "";
             if (!empty($_FILES['foto']['name'])) {
 
@@ -261,25 +250,20 @@ function mostrarTabla($resultado) {
 
     ?>
 
-    <!-- Formulario de búsqueda -->
     <form action="trabajadores.php" method="POST">
         <fieldset>
             <legend>Buscar trabajador</legend>
 
-            <!-- Búsqueda escribiendo el nombre -->
             <label>Buscar por nombre</label>
             <input type="text" name="buscar_nombre" placeholder="Escribe el nombre..."
                 value="<?php echo isset($_POST['buscar_nombre']) ? $_POST['buscar_nombre'] : ''; ?>">
 
-            <!-- Seleccionar del desplegable -->
             <label>O selecciona de la lista</label>
             <select name="buscar_id">
                 <option value="">-- Selecciona un trabajador --</option>
                 <?php
-                // Cargo todos los trabajadores en el desplegable ordenados por apellido
                 $todos = $conexion->query("SELECT id, nombre, apellidos FROM usuarios WHERE rol = 'trabajador' ORDER BY apellidos ASC");
                 while ($t = $todos->fetch_assoc()) {
-                    // Mantengo la selección después de buscar
                     $selected = (isset($_POST['buscar_id']) && $_POST['buscar_id'] == $t['id']) ? "selected" : "";
                     echo "<option value='" . $t['id'] . "' $selected>" . $t['apellidos'] . ", " . $t['nombre'] . "</option>";
                 }
@@ -297,21 +281,15 @@ function mostrarTabla($resultado) {
     //------------ RESULTADO DE LA BÚSQUEDA --------------|
     //-----------------------------------------------------|
 
-    /*
-     * Solo muestro resultados si se ha pulsado buscar
-     * Busco por nombre O por id según lo que haya rellenado el admin
-     */
     if (isset($_POST['buscar'])) {
 
         $resultado = null;
 
-        // Si ha seleccionado del desplegable busco por id
         if (!empty($_POST['buscar_id'])) {
             $id_buscar = $_POST['buscar_id'];
             $resultado = $conexion->query("SELECT * FROM usuarios 
                 WHERE id = '$id_buscar' AND rol = 'trabajador'");
 
-        // Si ha escrito un nombre busco por nombre o apellidos
         } elseif (!empty($_POST['buscar_nombre'])) {
             $nombre_buscar = $_POST['buscar_nombre'];
             $resultado = $conexion->query("SELECT * FROM usuarios 
@@ -333,33 +311,22 @@ function mostrarTabla($resultado) {
     //------------- VER TODOS PAGINADO -------------------|
     //-----------------------------------------------------|
 
-    /*
-     * Al pulsar "Ver todos" muestra todos los trabajadores
-     * paginados de 5 en 5, siguiendo el patrón de los apuntes
-     */
     if (isset($_POST['ver_todos']) || isset($_GET['pagina'])) {
 
-        $regxpag = 5; // registros por página
+        $regxpag = 5;
 
-        // Cuento el total de trabajadores para calcular las páginas
         $total          = $conexion->query("SELECT * FROM usuarios WHERE rol = 'trabajador'");
         $totalRegistros = $total->num_rows;
+        $totalPaginas   = ceil($totalRegistros / $regxpag);
 
-        // Calculo el número de páginas redondeando hacia arriba
-        // para no perder registros que no completan una página entera
-        $totalPaginas = ceil($totalRegistros / $regxpag);
-
-        // Si ya se ha seleccionado una página la recojo, sino muestro la 1
         if (isset($_GET['pagina'])) {
             $pagina = intval($_GET['pagina']);
         } else {
             $pagina = 1;
         }
 
-        // Calculo desde qué registro empiezo a mostrar
         $posInicial = ($pagina - 1) * $regxpag;
 
-        // Consulta con LIMIT para traer solo los de esta página
         $resultado = $conexion->query("SELECT * FROM usuarios 
             WHERE rol = 'trabajador' 
             ORDER BY apellidos ASC
@@ -371,23 +338,19 @@ function mostrarTabla($resultado) {
             echo "<p style='color:red'>No hay trabajadores registrados</p>";
         }
 
-        // Enlace anterior - si estás en la primera va a la última
         if ($pagina <= 1) {
             $anterior = $totalPaginas;
         } else {
             $anterior = $pagina - 1;
         }
 
-        // Envuelvo la paginación en un div centrado
         echo "<div class='paginacion'>";
         echo "<a href='trabajadores.php?pagina=" . $anterior . "'> &lt; </a>";
 
-        // Enlaces de páginas numeradas
         for ($i = 1; $i <= $totalPaginas; $i++) {
             echo "<a href='trabajadores.php?pagina=" . $i . "'>" . $i . "</a>";
         }
 
-        // Enlace siguiente - si estás en la última va a la primera
         if ($pagina >= $totalPaginas) {
             $siguiente = 1;
         } else {
@@ -402,10 +365,6 @@ function mostrarTabla($resultado) {
     //--------- FORMULARIO DE MODIFICACIÓN ---------------|
     //-----------------------------------------------------|
 
-    /*
-     * Cuando se pulsa 'Modificar' en la tabla
-     * cargo los datos del trabajador en un formulario
-     */
     if (isset($_POST['ver_modificar'])) {
 
         $id            = $_POST['id_modificar'];
@@ -421,7 +380,6 @@ function mostrarTabla($resultado) {
             <fieldset>
             <legend>MODIFICAR TRABAJADOR</legend>
 
-            <!-- Campo hidden para no perder el id al actualizar -->
             <input type='hidden' name='id' value='" . $fila['id'] . "'>
 
             <label>Nombre *</label>
@@ -479,65 +437,60 @@ function mostrarTabla($resultado) {
     //--------- FORMULARIO DE ALTA (AL FINAL) ------------|
     //-----------------------------------------------------|
 
-    /*
-     * El formulario de alta solo aparece cuando se pulsa
-     * el botón 'Nuevo trabajador' que está al final
-     * Uso GET para controlarlo: ?nuevo=1
-     */
-    if (isset($_GET['nuevo'])) {
-
-        echo "
-        <h3>Nuevo trabajador</h3>
-        <form action='trabajadores.php' method='POST' enctype='multipart/form-data'>
-        <fieldset>
-        <legend>NUEVO TRABAJADOR</legend>
-
-        <label>Nombre *</label>
-        <input type='text' name='nombre' placeholder='Nombre'>
-
-        <label>Apellidos *</label>
-        <input type='text' name='apellidos' placeholder='Apellidos'>
-
-        <label>Email *</label>
-        <input type='email' name='email' placeholder='email@ejemplo.com'>
-
-        <label>Contraseña *</label>
-        <input type='password' name='password' placeholder='Contraseña'>
-
-        <label>DNI</label>
-        <input type='text' name='dni' placeholder='12345678A'>
-
-        <label>Teléfono</label>
-        <input type='text' name='telefono' placeholder='600000000'>
-
-        <label>Dirección</label>
-        <input type='text' name='direccion' placeholder='Calle, número, ciudad'>
-
-        <label>Fecha de nacimiento</label>
-        <input type='date' name='fecha_nacimiento'>
-
-        <label>Fecha de incorporación</label>
-        <input type='date' name='fecha_incorporacion'>
-
-        <label>Departamento</label>
-        <input type='text' name='departamento' placeholder='Departamento'>
-
-        <label>Puesto</label>
-        <input type='text' name='puesto' placeholder='Puesto de trabajo'>
-
-        <label>Días de vacaciones</label>
-        <input type='number' name='dias_vacaciones_totales' value='22'>
-
-        <label>Foto</label>
-        <input type='file' name='foto' accept='image/*'>
-
-        <input type='submit' name='alta' value='Dar de alta'>
-        </fieldset>
-        </form>";
-    }
-
     desconectar($conexion);
     ?>
+
+    <?php if (isset($_GET['nuevo'])): ?>
+
+        <h3>Nuevo trabajador</h3>
+        <form id="form-alta" action="trabajadores.php" method="POST" enctype="multipart/form-data">
+        <fieldset>
+            <legend>NUEVO TRABAJADOR</legend>
+
+            <label>Nombre *</label>
+            <input type="text" name="nombre" placeholder="Nombre">
+
+            <label>Apellidos *</label>
+            <input type="text" name="apellidos" placeholder="Apellidos">
+
+            <label>Email *</label>
+            <input type="email" name="email" placeholder="email@ejemplo.com">
+
+            <label>Contraseña *</label>
+            <input type="password" name="password" placeholder="Contraseña">
+
+            <label>DNI</label>
+            <input type="text" name="dni" placeholder="12345678A">
+
+            <label>Teléfono</label>
+            <input type="text" name="telefono" placeholder="600000000">
+
+            <label>Dirección</label>
+            <input type="text" name="direccion" placeholder="Calle, número, ciudad">
+
+            <label>Fecha de nacimiento</label>
+            <input type="date" name="fecha_nacimiento">
+
+            <label>Fecha de incorporación</label>
+            <input type="date" name="fecha_incorporacion">
+
+            <label>Departamento</label>
+            <input type="text" name="departamento" placeholder="Departamento">
+
+            <label>Puesto</label>
+            <input type="text" name="puesto" placeholder="Puesto de trabajo">
+
+            <label>Días de vacaciones</label>
+            <input type="number" name="dias_vacaciones_totales" value="22">
+
+            <label>Foto</label>
+            <input type="file" name="foto" accept="image/*">
+
+            <input type="submit" name="alta" value="Dar de alta">
+        </fieldset>
+        </form>
+
+    <?php endif; ?>
 
     <!-- Botón de nuevo trabajador al final de la página -->
     <a href="trabajadores.php?nuevo=1">

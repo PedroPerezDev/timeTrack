@@ -316,8 +316,8 @@ desconectar($conexion);
 
 </main>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="/timetrack/js/main.js"></script>
+
+
 
 <?php include "../includes/footer.php"; ?>
 

@@ -953,6 +953,101 @@ p[style*="color:red"],
     }
 }
 
+/* ------------------------------------------------
+   MENSAJES
+   ------------------------------------------------ */
+.mensaje-item {
+    padding:       16px;
+    border-radius: var(--radio-mediano);
+    border:        1px solid var(--color-borde);
+    background:    var(--color-superficie);
+}
+
+.mensaje-enviado {
+    border-left: 4px solid var(--color-principal);
+}
+
+.mensaje-recibido {
+    border-left: 4px solid var(--color-informacion);
+}
+
+.mensaje-cabecera {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    margin-bottom:   8px;
+}
+
+.mensaje-etiqueta {
+    font-size:   10px;
+    font-weight: 500;
+    color:       var(--color-texto-apagado);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.mensaje-fecha {
+    font-family: var(--fuente-mono);
+    font-size:   10px;
+    color:       var(--color-texto-apagado);
+}
+
+.mensaje-asunto {
+    font-size:     13px;
+    font-weight:   500;
+    color:         var(--color-texto);
+    margin-bottom: 6px;
+}
+
+.mensaje-texto {
+    font-size:   12px;
+    color:       var(--color-texto-apagado);
+    line-height: 1.5;
+}
+
+
+/* ------------------------------------------------
+   BADGE MENSAJE NUEVO
+   ------------------------------------------------ */
+.mensaje-no-leido {
+    border-left: 4px solid var(--color-advertencia);
+    background:  #fffbeb;
+}
+
+.mensaje-badge-nuevo {
+    font-size:        9px;
+    font-weight:      500;
+    background-color: var(--color-advertencia);
+    color:            #FFFFFF;
+    padding:          2px 6px;
+    border-radius:    var(--radio-pequeno);
+    margin-left:      6px;
+}
+
+.form-respuesta {
+    margin-top: 12px;
+}
+
+.form-respuesta textarea {
+    width:         100%;
+    margin-bottom: 8px;
+}
+
+
+/* ------------------------------------------------
+   VALIDACIÓN DE FORMULARIOS
+   ------------------------------------------------ */
+.error-campo {
+    font-size:   10px;
+    color:       var(--color-error);
+    margin-top:  2px;
+    display:     block;
+}
+
+input.input-error {
+    border-color: var(--color-error);
+}
+
 
 /* ------------------------------------------------
    MODO OSCURO

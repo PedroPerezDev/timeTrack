@@ -7,31 +7,19 @@
 //------------------- RELOJ --------------------------|
 //-----------------------------------------------------|
 
-/*
- * Función que actualiza la hora y fecha en pantalla
- * Usa el objeto Date de JavaScript
- * Se llama cada segundo con setInterval
- */
 function actualizarReloj() {
 
-    // Creamos un objeto Date con la fecha y hora actual
-    var ahora = new Date();
-
-    // padStart(2, '0') añade un cero delante si el número es de un dígito
-    // por ejemplo: 9 -> 09
+    var ahora    = new Date();
     var horas    = String(ahora.getHours()).padStart(2, '0');
     var minutos  = String(ahora.getMinutes()).padStart(2, '0');
     var segundos = String(ahora.getSeconds()).padStart(2, '0');
-
-    // getMonth() empieza en 0 por eso sumamos 1
-    var dia  = String(ahora.getDate()).padStart(2, '0');
-    var mes  = String(ahora.getMonth() + 1).padStart(2, '0');
-    var anyo = ahora.getFullYear();
+    var dia      = String(ahora.getDate()).padStart(2, '0');
+    var mes      = String(ahora.getMonth() + 1).padStart(2, '0');
+    var anyo     = ahora.getFullYear();
 
     var horaFormateada  = horas + ':' + minutos + ':' + segundos;
     var fechaFormateada = dia + '/' + mes + '/' + anyo;
 
-    // Actualizamos el DOM solo si los elementos existen en la página
     if (document.getElementById('reloj')) {
         document.getElementById('reloj').textContent = horaFormateada;
     }
@@ -40,11 +28,11 @@ function actualizarReloj() {
     }
 }
 
-// Llamamos una vez al cargar para que no haya retraso de 1 segundo
-actualizarReloj();
-
-// Repetimos cada 1000 milisegundos (1 segundo)
-setInterval(actualizarReloj, 1000);
+// Espero a que el DOM esté listo antes de llamar al reloj
+$(document).ready(function() {
+    actualizarReloj();
+    setInterval(actualizarReloj, 1000);
+});
 
 
 //-----------------------------------------------------|
@@ -317,3 +305,120 @@ $(document).ready(function() {
         }
     });
 });
+
+
+//-----------------------------------------------------|
+//---------- MOSTRAR FORMULARIO NUEVO MENSAJE -------- |
+//-----------------------------------------------------|
+
+$(document).ready(function() {
+
+    $("#btn-nuevo-mensaje").click(function() {
+
+        if ($("#form-mensaje").is(":visible")) {
+            $("#form-mensaje").slideUp("slow");
+            $(this).text("+ Nuevo mensaje");
+        } else {
+            $("#form-mensaje").slideDown("slow");
+            $(this).text("- Cerrar");
+        }
+    });
+});
+
+//-----------------------------------------------------|
+//---------- RESPONDER MENSAJE ADMIN ----------------- |
+//-----------------------------------------------------|
+
+$(document).ready(function() {
+
+    $(".btn-responder").click(function() {
+
+        var id = $(this).data("id");
+        var div = $("#respuesta-" + id);
+
+        if (div.is(":visible")) {
+            div.slideUp("slow");
+            $(this).text("Responder");
+        } else {
+            // Cierro todos los formularios abiertos primero
+            $(".form-respuesta").slideUp("slow");
+            $(".btn-responder").text("Responder");
+            // Abro el de este mensaje
+            div.slideDown("slow");
+            $(this).text("- Cerrar");
+        }
+    });
+});
+
+//-----------------------------------------------------|
+//---------- VALIDACIÓN ALTA TRABAJADOR -------------- |
+//-----------------------------------------------------|
+
+$(document).ready(function() {
+
+    $(document).on("click", "input[name='alta']", function(e) {
+
+        console.log("click interceptado");
+
+        $(".error-campo").remove();
+
+        var hayErrores = false;
+
+        var regexNombre    = /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/;
+        var regexEmail     = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        var regexDni       = /^[0-9]{8}[A-Za-z]$/;
+        var regexTelefono  = /^[679][0-9]{8}$/;
+        var regexPassword  = /^.{8,}$/;
+
+        var nombre = $("input[name='nombre']").val().trim();
+        if (nombre === "" || !regexNombre.test(nombre)) {
+            mostrarError("input[name='nombre']", "El nombre solo puede contener letras y espacios");
+            hayErrores = true;
+        }
+
+        var apellidos = $("input[name='apellidos']").val().trim();
+        if (apellidos === "" || !regexNombre.test(apellidos)) {
+            mostrarError("input[name='apellidos']", "Los apellidos solo pueden contener letras y espacios");
+            hayErrores = true;
+        }
+
+        var email = $("input[name='email']").val().trim();
+        if (email === "" || !regexEmail.test(email)) {
+            mostrarError("input[name='email']", "Introduce un email válido");
+            hayErrores = true;
+        }
+
+        var password = $("input[name='password']").val();
+        if (password === "" || !regexPassword.test(password)) {
+            mostrarError("input[name='password']", "La contraseña debe tener al menos 8 caracteres");
+            hayErrores = true;
+        }
+
+        var dni = $("input[name='dni']").val().trim();
+        if (dni !== "" && !regexDni.test(dni)) {
+            mostrarError("input[name='dni']", "El DNI debe tener 8 números seguidos de una letra");
+            hayErrores = true;
+        }
+
+        var telefono = $("input[name='telefono']").val().trim();
+        if (telefono !== "" && !regexTelefono.test(telefono)) {
+            mostrarError("input[name='telefono']", "El teléfono debe tener 9 dígitos y empezar por 6, 7 o 9");
+            hayErrores = true;
+        }
+
+        if (hayErrores) {
+            e.preventDefault();
+        }
+    });
+});
+/*
+ * Función auxiliar para mostrar un mensaje de error
+ * debajo del campo que no ha pasado la validación
+ * selector: el selector jQuery del campo
+ * mensaje: el texto del error a mostrar
+ */
+function mostrarError(selector, mensaje) {
+    $(selector).after(
+        "<span class='error-campo'>" + mensaje + "</span>"
+    );
+}

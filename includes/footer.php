@@ -10,9 +10,8 @@
     <p>Aplicación de control horario para empresas</p>
 </footer>
 
-<!-- jQuery desde CDN -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<script src="/timetrack/js/main.js"></script>
 <script>
     /* ------------------------------------------------
        MODO OSCURO / CLARO
@@ -25,9 +24,9 @@
 
         // Cambia el texto del botón según el estado actual
         if ($('body').hasClass('modo-oscuro')) {
-            $('#btn-modo').text('☀️ Modo claro');
+            $('#btn-modo').text('Modo claro');
         } else {
-            $('#btn-modo').text('🌙 Modo oscuro');
+            $('#btn-modo').text('Modo oscuro');
         }
     }
 </script>
