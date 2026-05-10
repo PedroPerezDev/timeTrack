@@ -17,12 +17,6 @@ include "../config.php";
 
 $conexion = conectar();
 
-// Si se pulsa el botón de PDF redirijo antes de mostrar HTML
-if (isset($_POST['pdf'])) {
-    header("Location: pdf.php");
-    exit;
-}
-
 ?>
 
 <!DOCTYPE html>
@@ -124,6 +118,39 @@ if (isset($_POST['pdf'])) {
             echo "<p>Período: " . date('d/m/Y', strtotime($fecha_inicio)) . " — " . date('d/m/Y', strtotime($fecha_fin)) . "</p>";
 
             //-----------------------------------------------------|
+            //-------- CÁLCULO HORAS SEMANALES PREVISTAS ----------|
+            //-----------------------------------------------------|
+
+            /*
+             * Calculo las horas semanales que debería hacer el trabajador
+             * sumando la diferencia entre entrada y salida de cada día
+             * Resto 30 minutos por día de descanso para almorzar
+             * que no cuenta como tiempo trabajado
+             */
+            $horarios_semana   = $conexion->query("SELECT * FROM horarios 
+                WHERE usuario_id = '$id_trabajador'");
+            $minutos_semanales = 0;
+
+            while ($h = $horarios_semana->fetch_assoc()) {
+
+                // Minutos de la mañana
+                $entrada_1 = strtotime($h['hora_entrada_1']);
+                $salida_1  = strtotime($h['hora_salida_1']);
+                $minutos_semanales += ($salida_1 - $entrada_1) / 60;
+
+                // Minutos de la tarde
+                $entrada_2 = strtotime($h['hora_entrada_2']);
+                $salida_2  = strtotime($h['hora_salida_2']);
+                $minutos_semanales += ($salida_2 - $entrada_2) / 60;
+
+                // Resto 30 minutos de descanso por día
+                $minutos_semanales -= 30;
+            }
+
+            $horas_semanales   = floor($minutos_semanales / 60);
+            $minutos_restantes = $minutos_semanales % 60;
+
+            //-----------------------------------------------------|
             //------------ FICHAJES DEL PERÍODO ------------------- |
             //-----------------------------------------------------|
 
@@ -151,6 +178,7 @@ if (isset($_POST['pdf'])) {
 
                 $total_minutos_extra = 0;
                 $total_minutos_menos = 0;
+                $dias_trabajados     = 0;
 
                 echo "<div class='tabla-wrapper'><table>
                     <tr>
@@ -165,6 +193,7 @@ if (isset($_POST['pdf'])) {
 
                     $fecha_formateada = date('d/m/Y', strtotime($fecha));
                     $primer_fichaje   = true;
+                    $dias_trabajados++;
 
                     foreach (['entrada_1', 'salida_1', 'entrada_2', 'salida_2'] as $tipo) {
 
@@ -173,14 +202,18 @@ if (isset($_POST['pdf'])) {
                         $f   = $fichajes_dia[$tipo];
                         $dif = $f['minutos_diferencia'];
 
+                        /*
+                         * Positivo = minutos a favor del trabajador
+                         * Negativo = minutos en contra del trabajador
+                         */
                         if ($dif > 0) {
-                            $dif_html = "<span style='color:var(--color-error)'>+" . $dif . " min</span>";
-                            $total_minutos_menos += $dif;
+                            $dif_html = "<span style='color:var(--color-informacion)'>+" . $dif . " min</span>";
+                            $total_minutos_extra += $dif;
                         } elseif ($dif < 0) {
-                            $dif_html = "<span style='color:var(--color-informacion)'>" . $dif . " min</span>";
-                            $total_minutos_extra += abs($dif);
+                            $dif_html = "<span style='color:var(--color-error)'>" . $dif . " min</span>";
+                            $total_minutos_menos += abs($dif);
                         } else {
-                            $dif_html = "<span style='color:var(--color-principal)'>Puntual ✓</span>";
+                            $dif_html = "<span style='color:var(--color-principal)'>Puntual</span>";
                         }
 
                         $dia_semana  = date('N', strtotime($fecha));
@@ -209,26 +242,51 @@ if (isset($_POST['pdf'])) {
                 //------------ RESUMEN TOTAL -------------------------- |
                 //-----------------------------------------------------|
 
+                /*
+                 * Calculo las semanas del período para saber
+                 * cuántas horas debería haber trabajado en total
+                 */
+                $semanas_periodo       = $dias_trabajados / 5;
+                $minutos_previstos     = $minutos_semanales * $semanas_periodo;
+                $horas_previstas_total = floor($minutos_previstos / 60);
+                $min_previstos_resto   = $minutos_previstos % 60;
+
+                $balance         = $total_minutos_extra - $total_minutos_menos;
+                $balance_horas   = floor(abs($balance) / 60);
+                $balance_minutos = abs($balance) % 60;
+
                 echo "<div class='informe-resumen'>
                     <h3>Resumen del período</h3>
+
                     <div class='informe-resumen-item'>
-                        <span>Minutos de más trabajados</span>
-                        <span style='color:var(--color-informacion)'>" . $total_minutos_extra . " min (" . floor($total_minutos_extra/60) . "h " . ($total_minutos_extra%60) . "min)</span>
+                        <span>Horas semanales previstas</span>
+                        <span>" . $horas_semanales . "h " . $minutos_restantes . "min por semana</span>
                     </div>
+
                     <div class='informe-resumen-item'>
-                        <span>Minutos de menos trabajados</span>
-                        <span style='color:var(--color-error)'>" . $total_minutos_menos . " min (" . floor($total_minutos_menos/60) . "h " . ($total_minutos_menos%60) . "min)</span>
+                        <span>Horas totales previstas en el período</span>
+                        <span>" . $horas_previstas_total . "h " . $min_previstos_resto . "min</span>
                     </div>
+
+                    <div class='informe-resumen-item'>
+                        <span>Minutos a favor del trabajador</span>
+                        <span style='color:var(--color-informacion)'>+" . $total_minutos_extra . " min (" . floor($total_minutos_extra/60) . "h " . ($total_minutos_extra%60) . "min)</span>
+                    </div>
+
+                    <div class='informe-resumen-item'>
+                        <span>Minutos en contra del trabajador</span>
+                        <span style='color:var(--color-error)'>-" . $total_minutos_menos . " min (" . floor($total_minutos_menos/60) . "h " . ($total_minutos_menos%60) . "min)</span>
+                    </div>
+
                     <div class='informe-resumen-item'>
                         <span>Balance total</span>";
 
-                $balance = $total_minutos_extra - $total_minutos_menos;
                 if ($balance > 0) {
-                    echo "<span style='color:var(--color-informacion)'>+" . $balance . " min a favor del trabajador</span>";
+                    echo "<span style='color:var(--color-informacion)'>+" . $balance_horas . "h " . $balance_minutos . "min a favor del trabajador</span>";
                 } elseif ($balance < 0) {
-                    echo "<span style='color:var(--color-error)'>" . $balance . " min a favor de la empresa</span>";
+                    echo "<span style='color:var(--color-error)'>-" . $balance_horas . "h " . $balance_minutos . "min en contra del trabajador</span>";
                 } else {
-                    echo "<span style='color:var(--color-principal)'>Balance equilibrado ✓</span>";
+                    echo "<span style='color:var(--color-principal)'>Balance equilibrado</span>";
                 }
 
                 echo "  </div>
@@ -266,8 +324,8 @@ if (isset($_POST['pdf'])) {
                     echo "</table></div>";
                 }
 
-                // Botón para generar el PDF
-                echo "<form action='informes.php' method='POST'>
+                // Botón para generar el PDF en nueva pestaña
+                echo "<form action='pdf.php' method='POST' target='_blank'>
                     <input type='submit' name='pdf' value='Generar PDF'>
                 </form>";
             }

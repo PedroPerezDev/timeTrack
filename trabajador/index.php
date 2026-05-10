@@ -67,7 +67,7 @@ desconectar($conexion);
  * Determino cuál es el siguiente fichaje pendiente
  * El orden siempre es: entrada_1 -> salida_1 -> entrada_2 -> salida_2
  */
-$orden_fichajes = ['entrada_1', 'salida_1', 'entrada_2', 'salida_2'];
+$orden_fichajes    = ['entrada_1', 'salida_1', 'entrada_2', 'salida_2'];
 $siguiente_fichaje = null;
 
 foreach ($orden_fichajes as $tipo) {
@@ -170,11 +170,18 @@ if ($horario) {
                     <span class="fichaje-hora-real">
                         Fichada: <?php echo substr($fichajes_hoy[$tipo]['hora_fichaje'], 0, 5); ?>
                     </span>
-                    <!-- Muestro si ha llegado antes o después -->
-                    <?php if ($fichajes_hoy[$tipo]['minutos_diferencia'] > 0): ?>
-                        <span class="fichaje-tarde">+<?php echo $fichajes_hoy[$tipo]['minutos_diferencia']; ?> min</span>
-                    <?php elseif ($fichajes_hoy[$tipo]['minutos_diferencia'] < 0): ?>
-                        <span class="fichaje-pronto"><?php echo $fichajes_hoy[$tipo]['minutos_diferencia']; ?> min</span>
+
+                    <?php
+                    /*
+                     * Muestro los minutos de diferencia
+                     * Positivo = minutos a favor del trabajador (verde/azul)
+                     * Negativo = minutos en contra del trabajador (rojo)
+                     */
+                    $dif = $fichajes_hoy[$tipo]['minutos_diferencia'];
+                    if ($dif > 0): ?>
+                        <span class="fichaje-pronto">+<?php echo $dif; ?> min a favor</span>
+                    <?php elseif ($dif < 0): ?>
+                        <span class="fichaje-tarde"><?php echo $dif; ?> min</span>
                     <?php else: ?>
                         <span class="fichaje-puntual">Puntual ✓</span>
                     <?php endif; ?>
@@ -206,9 +213,6 @@ if ($horario) {
     </div>
 
 </main>
-
-
-
 
 <?php include "../includes/footer.php"; ?>
 

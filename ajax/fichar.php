@@ -19,10 +19,10 @@ include "../config.php";
 $conexion = conectar();
 
 // Recojo los datos que manda jQuery por POST
-$tipo         = $_POST['tipo'];         // entrada_1, salida_1, entrada_2, salida_2
-$hora_prevista = $_POST['hora'];        // hora prevista según el horario
-$fecha_hoy    = date('Y-m-d');
-$hora_actual  = date('H:i:s');          // hora exacta en que pulsa el botón
+$tipo          = $_POST['tipo'];
+$hora_prevista = $_POST['hora'];
+$fecha_hoy     = date('Y-m-d');
+$hora_actual   = date('H:i:s');
 
 //-----------------------------------------------------|
 //---------- COMPRUEBO QUE NO EXISTE YA --------------|
@@ -50,19 +50,31 @@ if ($check->num_rows > 0) {
 /*
  * Calculo cuántos minutos de diferencia hay entre
  * la hora prevista y la hora real del fichaje
- * Positivo = ha llegado tarde o salido antes
- * Negativo = ha llegado antes o salido después (horas extra)
+ *
+ * En entradas: llegar tarde es negativo (trabaja menos)
+ *              llegar antes es positivo (trabaja más)
+ * En salidas:  salir antes es negativo (trabaja menos)
+ *              salir tarde es positivo (trabaja más)
+ *
+ * Por eso invertimos el signo en las entradas
  */
 $minutos_diferencia = 0;
 
 if (!empty($hora_prevista)) {
 
-    // Convierto las horas a minutos para poder restarlas
-    // strtotime convierte la hora a segundos desde 1970
-    // la diferencia en segundos la divido entre 60 para tener minutos
     $prevista_minutos = strtotime($hora_prevista);
     $actual_minutos   = strtotime($hora_actual);
-    $minutos_diferencia = round(($actual_minutos - $prevista_minutos) / 60);
+    $diferencia       = round(($actual_minutos - $prevista_minutos) / 60);
+
+    if ($tipo == 'entrada_1' || $tipo == 'entrada_2') {
+        // En entradas invertimos el signo
+        // llegar tarde = negativo, llegar antes = positivo
+        $minutos_diferencia = -$diferencia;
+    } else {
+        // En salidas el signo es directo
+        // salir tarde = positivo, salir antes = negativo
+        $minutos_diferencia = $diferencia;
+    }
 }
 
 //-----------------------------------------------------|
@@ -86,16 +98,15 @@ if (!$insertar) {
 /*
  * Si hay diferencia de más de 5 minutos genero una incidencia
  * automática para que el admin pueda verla en los informes
- * Uso 5 minutos de margen para no generar incidencias por pequeños retrasos
+ * Positivo = minutos a favor del trabajador
+ * Negativo = minutos en contra del trabajador
  */
 if (abs($minutos_diferencia) > 5) {
 
-    // Determino el tipo de incidencia según si es entrada o salida
-    // y si los minutos son positivos o negativos
-    if ($tipo == 'entrada_1' || $tipo == 'entrada_2') {
-        $tipo_incidencia = $minutos_diferencia > 0 ? 'retraso' : 'horas_extra';
+    if ($minutos_diferencia > 0) {
+        $tipo_incidencia = 'horas_extra';
     } else {
-        $tipo_incidencia = $minutos_diferencia < 0 ? 'horas_extra' : 'retraso';
+        $tipo_incidencia = 'retraso';
     }
 
     $observacion = "Fichaje automático. Diferencia de " . abs($minutos_diferencia) . " minutos en " . $tipo;
@@ -113,17 +124,12 @@ desconectar($conexion);
 //---------- DEVUELVO RESPUESTA JSON -----------------|
 //-----------------------------------------------------|
 
-/*
- * Devuelvo un JSON con el resultado del fichaje
- * jQuery lo recibirá y mostrará el mensaje en pantalla
- * sin recargar la página
- */
 $respuesta = [
-    'ok'                  => true,
-    'tipo'                => $tipo,
-    'hora_fichaje'        => substr($hora_actual, 0, 5),
-    'minutos_diferencia'  => $minutos_diferencia,
-    'mensaje'             => 'Fichaje registrado a las ' . substr($hora_actual, 0, 5)
+    'ok'                 => true,
+    'tipo'               => $tipo,
+    'hora_fichaje'       => substr($hora_actual, 0, 5),
+    'minutos_diferencia' => $minutos_diferencia,
+    'mensaje'            => 'Fichaje registrado a las ' . substr($hora_actual, 0, 5)
 ];
 
 echo json_encode($respuesta);
