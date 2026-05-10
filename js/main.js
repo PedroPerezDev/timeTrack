@@ -422,3 +422,29 @@ function mostrarError(selector, mensaje) {
         "<span class='error-campo'>" + mensaje + "</span>"
     );
 }
+
+//-----------------------------------------------------|
+//---------- MENÚ HAMBURGUESA ----------------------- |
+//-----------------------------------------------------|
+
+/*
+ * Abre y cierra el menú de navegación en móvil y tablet
+ * al pulsar el botón hamburguesa
+ */
+$(document).ready(function() {
+
+    $("#btn-menu").click(function() {
+
+        // Añade o quita la clase activo en el nav
+        $("#nav-menu").toggleClass("nav-activo");
+
+        // Cambia el aspecto del botón hamburguesa a X
+        $(this).toggleClass("btn-menu-activo");
+    });
+
+    // Cierra el menú al pulsar cualquier enlace
+    $("#nav-menu a").click(function() {
+        $("#nav-menu").removeClass("nav-activo");
+        $("#btn-menu").removeClass("btn-menu-activo");
+    });
+});

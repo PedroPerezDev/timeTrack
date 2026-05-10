@@ -183,7 +183,8 @@ desconectar($conexion);
 
     <form action="horarios.php?id=<?php echo $id_trabajador; ?>" method="POST">
     <div class="tabla-wrapper">
-    <table>
+    <table class="tabla-apilable">
+        <thead>
         <tr>
             <th>Día</th>
             <th>Entrada mañana</th>
@@ -191,6 +192,8 @@ desconectar($conexion);
             <th>Entrada tarde</th>
             <th>Salida tarde</th>
         </tr>
+        </thead>
+        <tbody>
 
         <?php foreach ($dias as $num => $nombre):
             $e1 = isset($horario_actual[$num]) ? $horario_actual[$num]['hora_entrada_1'] : "";
@@ -198,14 +201,15 @@ desconectar($conexion);
             $e2 = isset($horario_actual[$num]) ? $horario_actual[$num]['hora_entrada_2'] : "";
             $s2 = isset($horario_actual[$num]) ? $horario_actual[$num]['hora_salida_2']  : "";
             echo "<tr>
-                <td><b>" . $nombre . "</b></td>
-                <td><input type='time' name='entrada_1_" . $num . "' value='" . $e1 . "'></td>
-                <td><input type='time' name='salida_1_"  . $num . "' value='" . $s1 . "'></td>
-                <td><input type='time' name='entrada_2_" . $num . "' value='" . $e2 . "'></td>
-                <td><input type='time' name='salida_2_"  . $num . "' value='" . $s2 . "'></td>
+                <td data-label='Día'><b>" . $nombre . "</b></td>
+                <td data-label='Entrada mañana'><input type='time' name='entrada_1_" . $num . "' value='" . $e1 . "'></td>
+                <td data-label='Salida mañana'><input type='time' name='salida_1_"  . $num . "' value='" . $s1 . "'></td>
+                <td data-label='Entrada tarde'><input type='time' name='entrada_2_" . $num . "' value='" . $e2 . "'></td>
+                <td data-label='Salida tarde'><input type='time' name='salida_2_"  . $num . "' value='" . $s2 . "'></td>
             </tr>";
         endforeach; ?>
 
+        </tbody>
     </table>
     </div>
     <input type="submit" name="guardar_horario" value="Guardar horario">
@@ -267,7 +271,8 @@ desconectar($conexion);
         // Tabla oculta por defecto
         echo "<div id='tabla-especiales' style='display:none'>";
         echo "<h3>Días especiales registrados</h3>";
-        echo "<div class='tabla-wrapper'><table>
+        echo "<div class='tabla-wrapper'><table class='tabla-apilable'>
+            <thead>
             <tr>
                 <th>Fecha</th>
                 <th>Tipo</th>
@@ -277,21 +282,23 @@ desconectar($conexion);
                 <th>Salida tarde</th>
                 <th>Observaciones</th>
                 <th>Acciones</th>
-            </tr>";
+            </tr>
+            </thead>
+            <tbody>";
 
         while ($esp = $especiales->fetch_assoc()) {
 
             $fecha_formateada = date('d/m/Y', strtotime($esp['fecha']));
 
             echo "<tr>
-                <td>" . $fecha_formateada . "</td>
-                <td>" . ucfirst(str_replace('_', ' ', $esp['tipo'])) . "</td>
-                <td>" . ($esp['hora_entrada_1'] ?? '-') . "</td>
-                <td>" . ($esp['hora_salida_1']  ?? '-') . "</td>
-                <td>" . ($esp['hora_entrada_2'] ?? '-') . "</td>
-                <td>" . ($esp['hora_salida_2']  ?? '-') . "</td>
-                <td>" . $esp['observaciones'] . "</td>
-                <td>
+                <td data-label='Fecha'>" . $fecha_formateada . "</td>
+                <td data-label='Tipo'>" . ucfirst(str_replace('_', ' ', $esp['tipo'])) . "</td>
+                <td data-label='Entrada mañana'>" . ($esp['hora_entrada_1'] ?? '-') . "</td>
+                <td data-label='Salida mañana'>"  . ($esp['hora_salida_1']  ?? '-') . "</td>
+                <td data-label='Entrada tarde'>"  . ($esp['hora_entrada_2'] ?? '-') . "</td>
+                <td data-label='Salida tarde'>"   . ($esp['hora_salida_2']  ?? '-') . "</td>
+                <td data-label='Observaciones'>"  . $esp['observaciones'] . "</td>
+                <td data-label='Acciones'>
                     <form action='horarios.php?id=" . $id_trabajador . "' method='POST' style='display:inline'>
                         <input type='hidden' name='id_especial' value='" . $esp['id'] . "'>
                         <input type='submit' name='borrar_especial' value='Borrar'
@@ -301,7 +308,7 @@ desconectar($conexion);
             </tr>";
         }
 
-        echo "</table></div>";
+        echo "</tbody></table></div>";
         echo "</div>";
 
     } else {

@@ -180,14 +180,17 @@ $conexion = conectar();
                 $total_minutos_menos = 0;
                 $dias_trabajados     = 0;
 
-                echo "<div class='tabla-wrapper'><table>
+                echo "<div class='tabla-wrapper'><table class='tabla-apilable'>
+                    <thead>
                     <tr>
                         <th>Fecha</th>
                         <th>Fichaje</th>
                         <th>Hora prevista</th>
                         <th>Hora fichada</th>
                         <th>Diferencia</th>
-                    </tr>";
+                    </tr>
+                    </thead>
+                    <tbody>";
 
                 foreach ($fichajes_por_dia as $fecha => $fichajes_dia) {
 
@@ -225,18 +228,18 @@ $conexion = conectar();
                         $hora_prevista = $horario_dia ? substr($horario_dia[$campo_hora], 0, 5) : '--:--';
 
                         echo "<tr>
-                            <td>" . ($primer_fichaje ? $fecha_formateada : '') . "</td>
-                            <td>" . $nombres_tipo[$tipo] . "</td>
-                            <td>" . $hora_prevista . "</td>
-                            <td>" . substr($f['hora_fichaje'], 0, 5) . "</td>
-                            <td>" . $dif_html . "</td>
+                            <td data-label='Fecha'>" . ($primer_fichaje ? $fecha_formateada : '') . "</td>
+                            <td data-label='Fichaje'>" . $nombres_tipo[$tipo] . "</td>
+                            <td data-label='Hora prevista'>" . $hora_prevista . "</td>
+                            <td data-label='Hora fichada'>" . substr($f['hora_fichaje'], 0, 5) . "</td>
+                            <td data-label='Diferencia'>" . $dif_html . "</td>
                         </tr>";
 
                         $primer_fichaje = false;
                     }
                 }
 
-                echo "</table></div>";
+                echo "</tbody></table></div>";
 
                 //-----------------------------------------------------|
                 //------------ RESUMEN TOTAL -------------------------- |
@@ -304,24 +307,27 @@ $conexion = conectar();
                 if ($incidencias->num_rows > 0) {
 
                     echo "<h3>Incidencias del período</h3>";
-                    echo "<div class='tabla-wrapper'><table>
+                    echo "<div class='tabla-wrapper'><table class='tabla-apilable'>
+                        <thead>
                         <tr>
                             <th>Fecha</th>
                             <th>Tipo</th>
                             <th>Minutos</th>
                             <th>Observaciones</th>
-                        </tr>";
+                        </tr>
+                        </thead>
+                        <tbody>";
 
                     while ($inc = $incidencias->fetch_assoc()) {
                         echo "<tr>
-                            <td>" . date('d/m/Y', strtotime($inc['fecha'])) . "</td>
-                            <td>" . ucfirst(str_replace('_', ' ', $inc['tipo'])) . "</td>
-                            <td>" . $inc['minutos'] . " min</td>
-                            <td>" . $inc['observaciones'] . "</td>
+                            <td data-label='Fecha'>" . date('d/m/Y', strtotime($inc['fecha'])) . "</td>
+                            <td data-label='Tipo'>" . ucfirst(str_replace('_', ' ', $inc['tipo'])) . "</td>
+                            <td data-label='Minutos'>" . $inc['minutos'] . " min</td>
+                            <td data-label='Observaciones'>" . $inc['observaciones'] . "</td>
                         </tr>";
                     }
 
-                    echo "</table></div>";
+                    echo "</tbody></table></div>";
                 }
 
                 // Botón para generar el PDF en nueva pestaña

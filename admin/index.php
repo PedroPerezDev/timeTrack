@@ -127,7 +127,8 @@ desconectar($conexion);
     <h3>Estado de fichajes de hoy</h3>
 
     <div class="tabla-wrapper">
-    <table>
+    <table class="tabla-apilable">
+        <thead>
         <tr>
             <th>Trabajador</th>
             <th>Entrada mañana</th>
@@ -136,6 +137,8 @@ desconectar($conexion);
             <th>Salida tarde</th>
             <th>Estado</th>
         </tr>
+        </thead>
+        <tbody>
 
         <?php while ($t = $trabajadores->fetch_assoc()):
 
@@ -160,15 +163,16 @@ desconectar($conexion);
                 : "";
         ?>
         <tr>
-            <td><?php echo $foto_html . $t['apellidos'] . ", " . $t['nombre']; ?></td>
-            <td><?php echo isset($f['entrada_1']) ? substr($f['entrada_1'], 0, 5) : '-'; ?></td>
-            <td><?php echo isset($f['salida_1'])  ? substr($f['salida_1'],  0, 5) : '-'; ?></td>
-            <td><?php echo isset($f['entrada_2']) ? substr($f['entrada_2'], 0, 5) : '-'; ?></td>
-            <td><?php echo isset($f['salida_2'])  ? substr($f['salida_2'],  0, 5) : '-'; ?></td>
-            <td><span class="estado-badge <?php echo $estado_css; ?>"><?php echo $estado; ?></span></td>
+            <td data-label="Trabajador"><?php echo $foto_html . $t['apellidos'] . ", " . $t['nombre']; ?></td>
+            <td data-label="Entrada mañana"><?php echo isset($f['entrada_1']) ? substr($f['entrada_1'], 0, 5) : '-'; ?></td>
+            <td data-label="Salida mañana"><?php echo isset($f['salida_1'])  ? substr($f['salida_1'],  0, 5) : '-'; ?></td>
+            <td data-label="Entrada tarde"><?php echo isset($f['entrada_2']) ? substr($f['entrada_2'], 0, 5) : '-'; ?></td>
+            <td data-label="Salida tarde"><?php echo isset($f['salida_2'])  ? substr($f['salida_2'],  0, 5) : '-'; ?></td>
+            <td data-label="Estado"><span class="estado-badge <?php echo $estado_css; ?>"><?php echo $estado; ?></span></td>
         </tr>
         <?php endwhile; ?>
 
+        </tbody>
     </table>
     </div>
 

@@ -23,7 +23,8 @@ $conexion = conectar();
 function mostrarTabla($resultado) {
 
     echo "<div class='tabla-wrapper'>
-    <table>
+    <table class='tabla-apilable'>
+        <thead>
         <tr>
             <th>ID</th>
             <th>Foto</th>
@@ -36,7 +37,9 @@ function mostrarTabla($resultado) {
             <th>Puesto</th>
             <th>Vacaciones</th>
             <th>Acciones</th>
-        </tr>";
+        </tr>
+        </thead>
+        <tbody>";
 
     while ($fila = $resultado->fetch_assoc()) {
 
@@ -45,17 +48,17 @@ function mostrarTabla($resultado) {
             : "Sin foto";
 
         echo "<tr>
-            <td>" . $fila['id'] . "</td>
-            <td>" . $foto_html . "</td>
-            <td>" . $fila['nombre'] . "</td>
-            <td>" . $fila['apellidos'] . "</td>
-            <td>" . $fila['email'] . "</td>
-            <td>" . $fila['dni'] . "</td>
-            <td>" . $fila['telefono'] . "</td>
-            <td>" . $fila['departamento'] . "</td>
-            <td>" . $fila['puesto'] . "</td>
-            <td>" . $fila['dias_vacaciones_totales'] . " días</td>
-            <td class='acciones'>
+            <td data-label='ID'>" . $fila['id'] . "</td>
+            <td data-label='Foto'>" . $foto_html . "</td>
+            <td data-label='Nombre'>" . $fila['nombre'] . "</td>
+            <td data-label='Apellidos'>" . $fila['apellidos'] . "</td>
+            <td data-label='Email'>" . $fila['email'] . "</td>
+            <td data-label='DNI'>" . $fila['dni'] . "</td>
+            <td data-label='Teléfono'>" . $fila['telefono'] . "</td>
+            <td data-label='Departamento'>" . $fila['departamento'] . "</td>
+            <td data-label='Puesto'>" . $fila['puesto'] . "</td>
+            <td data-label='Vacaciones'>" . $fila['dias_vacaciones_totales'] . " días</td>
+            <td data-label='Acciones' class='acciones'>
 
                 <a href='horarios.php?id=" . $fila['id'] . "'>
                     <input type='button' value='Horario' class='btn-horario'>
@@ -76,7 +79,7 @@ function mostrarTabla($resultado) {
         </tr>";
     }
 
-    echo "</table></div>";
+    echo "</tbody></table></div>";
 }
 
 ?>
