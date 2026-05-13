@@ -75,21 +75,28 @@ $(document).ready(function() {
 //-----------------------------------------------------|
 
 /*
- * Cuando el trabajador pulsa el botón FICHAR
+ * Cuando el trabajador pulsa cualquier botón FICHAR
  * jQuery manda una petición AJAX a ajax/fichar.php
- * sin recargar la página
+ * sin recargar la página.
+ * Ahora hay 4 botones con clase .btn-fichar (uno por tipo)
+ * por eso usamos clase en lugar de ID
  */
 $(document).ready(function() {
 
-    $("#btn-fichar").click(function() {
+    // Uso .on() para capturar el click en cualquier .btn-fichar
+    $(document).on("click", ".btn-fichar", function() {
 
-        // Recojo los datos del botón
-        var tipo = $(this).data("tipo");
-        var hora = $(this).data("hora");
+        // Guardo referencia al botón pulsado para poder
+        // rehabilitarlo si hay error
+        var $boton = $(this);
 
-        // Deshabilito el botón para evitar doble clic
-        $(this).prop("disabled", true);
-        $(this).text("Procesando...");
+        // Recojo los datos del botón pulsado
+        var tipo = $boton.data("tipo");
+        var hora = $boton.data("hora");
+
+        // Deshabilito solo este botón para evitar doble clic
+        $boton.prop("disabled", true);
+        $boton.text("Procesando...");
 
         $.ajax({
             url:    "/timetrack/ajax/fichar.php",
@@ -110,6 +117,7 @@ $(document).ready(function() {
                     ).fadeIn("slow");
 
                     // Recargo la página después de 2 segundos
+                    // para que el botón pase a mostrar la hora fichada
                     setTimeout(function() {
                         location.reload();
                     }, 2000);
@@ -119,8 +127,9 @@ $(document).ready(function() {
                         "<p style='color:red'>" + datos.error + "</p>"
                     ).fadeIn("slow");
 
-                    $("#btn-fichar").prop("disabled", false);
-                    $("#btn-fichar").text("FICHAR");
+                    // Rehabilito el botón si hay error
+                    $boton.prop("disabled", false);
+                    $boton.text("FICHAR");
                 }
             },
 
@@ -129,7 +138,9 @@ $(document).ready(function() {
                     "<p style='color:red'>Error de conexión. Inténtalo de nuevo.</p>"
                 ).fadeIn("slow");
 
-                $("#btn-fichar").prop("disabled", false);
+                // Rehabilito el botón si hay error de red
+                $boton.prop("disabled", false);
+                $boton.text("FICHAR");
             }
         });
     });

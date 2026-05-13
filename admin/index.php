@@ -16,7 +16,80 @@ include "../config.php";
 
 $conexion = conectar();
 
-$fecha_hoy = date('Y-m-d');
+$fecha_hoy  = date('Y-m-d');
+$fecha_ayer = date('Y-m-d', strtotime('-1 day'));
+
+//-----------------------------------------------------|
+//---------- INCIDENCIAS POR FICHAJES INCOMPLETOS ----|
+//-----------------------------------------------------|
+
+/*
+ * Al cargar el panel del admin compruebo si ayer hubo
+ * trabajadores que no completaron algún fichaje.
+ * Por cada tipo no fichado genero una incidencia automática,
+ * pero solo si no existe ya (para no duplicar en cada login).
+ */
+$tipos_fichaje = ['entrada_1', 'salida_1', 'entrada_2', 'salida_2'];
+
+$nombres_tipo_inc = [
+    'entrada_1' => 'Entrada mañana',
+    'salida_1'  => 'Salida mañana',
+    'entrada_2' => 'Entrada tarde',
+    'salida_2'  => 'Salida tarde'
+];
+
+$trabajadores_check = $conexion->query("SELECT id FROM usuarios 
+    WHERE rol = 'trabajador' AND activo = 1");
+
+while ($t = $trabajadores_check->fetch_assoc()) {
+
+    $id_t = $t['id'];
+
+    // Solo proceso días laborables (lunes a viernes)
+    $dia_ayer = date('N', strtotime($fecha_ayer));
+    if ($dia_ayer > 5) continue;
+
+    // Si tenía día especial ayer no proceso
+    $especial_ayer = $conexion->query("SELECT tipo FROM horarios_especiales 
+        WHERE usuario_id = '$id_t' 
+        AND fecha = '$fecha_ayer'
+        AND tipo != 'cambio_horario'")->fetch_assoc();
+    if ($especial_ayer) continue;
+
+    // Si no tenía horario asignado tampoco proceso
+    $horario_ayer = $conexion->query("SELECT id FROM horarios 
+        WHERE usuario_id = '$id_t' 
+        AND dia_semana = '$dia_ayer'")->fetch_assoc();
+    if (!$horario_ayer) continue;
+
+    // Para cada tipo compruebo si fichó ayer
+    foreach ($tipos_fichaje as $tipo) {
+
+        $fichaje_check = $conexion->query("SELECT id FROM fichajes 
+            WHERE usuario_id = '$id_t' 
+            AND fecha = '$fecha_ayer' 
+            AND tipo = '$tipo'")->fetch_assoc();
+
+        if (!$fichaje_check) {
+
+            // No fichó. Compruebo que no exista ya la incidencia
+            $ya_existe = $conexion->query("SELECT id FROM incidencias 
+                WHERE usuario_id = '$id_t' 
+                AND fecha = '$fecha_ayer' 
+                AND tipo = 'fichaje_no_realizado'
+                AND observaciones LIKE '%$tipo%'")->fetch_assoc();
+
+            if (!$ya_existe) {
+                $obs = "Fichaje no realizado: " . $nombres_tipo_inc[$tipo];
+                $conexion->query("INSERT INTO incidencias 
+                    (usuario_id, fecha, tipo, minutos, observaciones, creado_por)
+                    VALUES 
+                    ('$id_t', '$fecha_ayer', 'fichaje_no_realizado', 
+                    0, '$obs', '" . $_SESSION['id'] . "')");
+            }
+        }
+    }
+}
 
 //-----------------------------------------------------|
 //---------- DATOS PARA EL DASHBOARD -----------------|

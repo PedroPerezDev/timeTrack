@@ -64,19 +64,11 @@ while ($f = $resultado_fichajes->fetch_assoc()) {
 desconectar($conexion);
 
 /*
- * Determino cuál es el siguiente fichaje pendiente
- * El orden siempre es: entrada_1 -> salida_1 -> entrada_2 -> salida_2
+ * Los 4 botones están siempre operativos
+ * Cada uno se activa o desactiva según si ya ha sido pulsado hoy
+ * El orden se mantiene solo para mostrarlo en pantalla
  */
-$orden_fichajes    = ['entrada_1', 'salida_1', 'entrada_2', 'salida_2'];
-$siguiente_fichaje = null;
-
-foreach ($orden_fichajes as $tipo) {
-    if (!isset($fichajes_hoy[$tipo])) {
-        // Este fichaje no está hecho, es el siguiente pendiente
-        $siguiente_fichaje = $tipo;
-        break;
-    }
-}
+$orden_fichajes = ['entrada_1', 'salida_1', 'entrada_2', 'salida_2'];
 
 // Nombres legibles para mostrar en pantalla
 $nombres_fichaje = [
@@ -145,7 +137,7 @@ if ($horario) {
             echo "<p class='fichaje-mensaje'>No tienes horario asignado para hoy. Contacta con el administrador.</p>";
 
         // Si ha completado todos los fichajes del día
-        } elseif ($siguiente_fichaje === null) {
+        } elseif (count($fichajes_hoy) === 4) {
             echo "<p class='fichaje-mensaje'>¡Jornada completada, hasta mañana!</p>";
 
         // Muestra los 4 botones de fichaje
@@ -186,19 +178,15 @@ if ($horario) {
                         <span class="fichaje-puntual">Puntual ✓</span>
                     <?php endif; ?>
 
-                <!-- Botón de fichar si es el siguiente pendiente -->
-                <?php elseif ($tipo === $siguiente_fichaje): ?>
+                <!-- Botón de fichar siempre operativo si no se ha fichado aún -->
+                <?php else: ?>
                     <!-- El tipo se manda por AJAX a fichar.php con data-tipo -->
                     <!-- La hora prevista se manda con data-hora para calcular diferencia -->
-                    <button type="button" id="btn-fichar"
+                    <button type="button" class="btn-fichar"
                         data-tipo="<?php echo $tipo; ?>"
                         data-hora="<?php echo isset($horas_previstas[$tipo]) ? $horas_previstas[$tipo] : ''; ?>">
                         FICHAR
                     </button>
-
-                <!-- Botones pendientes desactivados -->
-                <?php else: ?>
-                    <button type="button" disabled class="btn-pendiente">Pendiente</button>
                 <?php endif; ?>
 
             </div>

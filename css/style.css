@@ -1,11 +1,11 @@
 /* Importo las fuentes - ha de ir primero */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono&display=swap');
- 
+
 /* ================================================
    TIMETRACK - Hoja de estilos principal
    ================================================ */
- 
- 
+
+
 /* ------------------------------------------------
    VARIABLES CSS
    ------------------------------------------------ */
@@ -18,21 +18,21 @@
     --color-texto:            #1A2E26;
     --color-texto-apagado:    #6A8F82;
     --color-borde:            #C8DDD5;
- 
+
     --color-informacion:      #2563EB;
     --color-advertencia:      #D97706;
     --color-error:            #DC2626;
     --color-neutro:           #6B7280;
- 
+
     --fuente-cuerpo:          'Inter', sans-serif;
     --fuente-mono:            'JetBrains Mono', monospace;
- 
+
     --radio-pequeno:          4px;
     --radio-mediano:          8px;
     --radio-grande:           12px;
 }
- 
- 
+
+
 /* ------------------------------------------------
    RESET Y BASE
    ------------------------------------------------ */
@@ -41,7 +41,7 @@
     padding:    0;
     box-sizing: border-box;
 }
- 
+
 /* El body es flex en columna para que el footer quede siempre abajo */
 body {
     font-family:      var(--fuente-cuerpo);
@@ -49,12 +49,12 @@ body {
     color:            var(--color-texto);
     font-size:        12px;
     min-height:       100vh;
- 
+
     display:        flex;
     flex-direction: column;
 }
- 
- 
+
+
 /* ------------------------------------------------
    HEADER - Mobile First
    En móvil y tablet: logo + hamburguesa en fila,
@@ -69,8 +69,8 @@ header {
     flex-direction:   column;
     gap:              0;
 }
- 
-/* Fila superior: logo a la izquierda, derecha a la derecha */
+
+/* Fila superior: logo a la izquierda, controles a la derecha */
 .header-top {
     display:         flex;
     flex-direction:  row;
@@ -78,14 +78,14 @@ header {
     align-items:     center;
     width:           100%;
 }
- 
+
 .header-logo {
     display:        flex;
     flex-direction: row;
     align-items:    center;
     gap:            10px;
 }
- 
+
 .header-logo img {
     width:         40px;
     height:        40px;
@@ -93,14 +93,14 @@ header {
     object-fit:    cover;
     flex-shrink:   0;
 }
- 
+
 .header-logo h1 {
     font-size:      18px;
     font-weight:    500;
     letter-spacing: 1px;
     color:          var(--color-superficie);
 }
- 
+
 /* Contenedor derecho: usuario + modo oscuro + hamburguesa */
 .header-derecha {
     display:        flex;
@@ -108,25 +108,25 @@ header {
     align-items:    center;
     gap:            10px;
 }
- 
+
 .header-usuario {
     display:        flex;
     flex-direction: row;
     align-items:    center;
     gap:            4px;
 }
- 
+
 .header-usuario-saludo {
     font-size: 11px;
     color:     var(--color-acento-suave);
 }
- 
+
 .header-usuario-nombre {
     font-size:   13px;
     font-weight: 500;
     color:       var(--color-superficie);
 }
- 
+
 /* Menú oculto por defecto en móvil y tablet */
 header nav {
     display:        none;
@@ -137,12 +137,12 @@ header nav {
     border-top:     1px solid var(--color-acento);
     margin-top:     10px;
 }
- 
+
 /* Cuando tiene la clase nav-activo se despliega */
 header nav.nav-activo {
     display: flex;
 }
- 
+
 header nav a {
     color:           var(--color-superficie);
     text-decoration: none;
@@ -154,28 +154,28 @@ header nav a {
     display:         flex;
     align-items:     center;
 }
- 
+
 header nav a:hover {
     background-color: var(--color-acento);
     border-color:     var(--color-acento);
 }
- 
+
 /* Botón hamburguesa */
 #btn-menu {
-    display:          flex;
-    flex-direction:   column;
-    justify-content:  center;
-    gap:              5px;
-    background:       transparent;
-    border:           none;
-    cursor:           pointer;
-    padding:          4px;
-    margin-top:       0;
-    width:            32px;
-    height:           32px;
-    align-self:       center;
+    display:         flex;
+    flex-direction:  column;
+    justify-content: center;
+    gap:             5px;
+    background:      transparent;
+    border:          none;
+    cursor:          pointer;
+    padding:         4px;
+    margin-top:      0;
+    width:           32px;
+    height:          32px;
+    align-self:      center;
 }
- 
+
 /* Las tres líneas del hamburguesa */
 #btn-menu span {
     display:          block;
@@ -185,20 +185,20 @@ header nav a:hover {
     border-radius:    2px;
     transition:       all 0.3s;
 }
- 
+
 /* Animación a X cuando está activo */
 #btn-menu.btn-menu-activo span:nth-child(1) {
     transform: rotate(45deg) translate(5px, 5px);
 }
- 
+
 #btn-menu.btn-menu-activo span:nth-child(2) {
     opacity: 0;
 }
- 
+
 #btn-menu.btn-menu-activo span:nth-child(3) {
     transform: rotate(-45deg) translate(5px, -5px);
 }
- 
+
 /* Botón modo oscuro en header */
 #btn-modo {
     font-size:        10px;
@@ -209,13 +209,13 @@ header nav a:hover {
     color:            var(--color-superficie);
     white-space:      nowrap;
 }
- 
+
 #btn-modo:hover {
     background-color: var(--color-acento);
     border-color:     var(--color-acento);
 }
- 
- 
+
+
 /* ------------------------------------------------
    MAIN
    Crece para empujar el footer hacia abajo
@@ -224,12 +224,12 @@ main {
     flex:    1;
     padding: 16px;
     width:   100%;
- 
+
     display:        flex;
     flex-direction: column;
     gap:            16px;
 }
- 
+
 main h2 {
     font-size:      18px;
     font-weight:    500;
@@ -237,14 +237,14 @@ main h2 {
     border-bottom:  2px solid var(--color-borde);
     padding-bottom: 6px;
 }
- 
+
 main h3 {
     font-size:   14px;
     font-weight: 500;
     color:       var(--color-texto);
 }
- 
- 
+
+
 /* ------------------------------------------------
    FOOTER
    ------------------------------------------------ */
@@ -254,18 +254,18 @@ footer {
     padding:          14px 16px;
     font-size:        10px;
     margin-top:       auto;
- 
+
     display:        flex;
     flex-direction: column;
     align-items:    center;
     gap:            4px;
 }
- 
+
 footer p {
     margin: 0;
 }
- 
- 
+
+
 /* ------------------------------------------------
    FORMULARIOS
    ------------------------------------------------ */
@@ -274,7 +274,7 @@ form {
     flex-direction: column;
     align-items:    center;
 }
- 
+
 fieldset {
     border:         2px solid var(--color-borde);
     border-radius:  var(--radio-mediano);
@@ -283,24 +283,24 @@ fieldset {
     background:     var(--color-superficie);
     width:          100%;
     max-width:      440px;
- 
+
     display:        flex;
     flex-direction: column;
     gap:            4px;
 }
- 
+
 legend {
     font-weight: 500;
     color:       var(--color-principal);
     padding:     0 6px;
 }
- 
+
 label {
     font-size:  11px;
     color:      var(--color-texto-apagado);
     margin-top: 8px;
 }
- 
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
@@ -321,26 +321,26 @@ textarea {
     outline:       none;
     transition:    border-color 0.2s;
 }
- 
+
 input:focus,
 select:focus,
 textarea:focus {
     border-color: var(--color-acento);
 }
- 
-/* Textarea con resize vertical y margen superior */
+
+/* Textarea con resize vertical */
 textarea {
     resize:     vertical;
     margin-top: 4px;
 }
- 
+
 /* Quitar flechas de los inputs time */
 input[type="time"]::-webkit-inner-spin-button,
 input[type="time"]::-webkit-calendar-picker-indicator {
     display:            none;
     -webkit-appearance: none;
 }
- 
+
 /* Inputs time dentro de tabla más compactos */
 table input[type="time"] {
     padding:   4px 6px;
@@ -348,8 +348,16 @@ table input[type="time"] {
     width:     auto;
     min-width: 90px;
 }
- 
- 
+
+/* Validación de formularios */
+.error-campo {
+    font-size:  10px;
+    color:      var(--color-error);
+    margin-top: 2px;
+    display:    block;
+}
+
+
 /* ------------------------------------------------
    BOTONES
    ------------------------------------------------ */
@@ -368,36 +376,36 @@ button {
     transition:       background-color 0.2s;
     align-self:       flex-start;
 }
- 
+
 input[type="submit"]:hover,
 button:hover {
     background-color: var(--color-acento);
 }
- 
-/* Botones dentro de tabla y celdas sin margin-top */
+
+/* Botones dentro de tabla sin margin-top */
 table input[type="submit"],
 table button,
 td input[type="submit"],
 td button {
     margin-top: 0;
 }
- 
+
 /* Botón login centrado */
 .contenedor-login input[type="submit"] {
     align-self: center;
 }
- 
+
 /* Botón borrar en rojo */
 input[name="borrar"] {
     background-color: var(--color-error);
     margin-top:       0;
 }
- 
+
 input[name="borrar"]:hover {
     background-color: #b91c1c;
 }
- 
-/* Botón horario verde */
+
+/* Botón horario */
 .btn-horario {
     background-color: var(--color-principal);
     color:            var(--color-superficie);
@@ -411,13 +419,13 @@ input[name="borrar"]:hover {
     margin-top:       0;
     transition:       background-color 0.2s;
 }
- 
+
 .btn-horario:hover {
     background-color: var(--color-acento);
 }
- 
+
 /* Botón fichar */
-#btn-fichar {
+.btn-fichar {
     width:            120px;
     padding:          8px 16px;
     font-size:        13px;
@@ -431,130 +439,12 @@ input[name="borrar"]:hover {
     border:           none;
     transition:       background-color 0.2s;
 }
- 
-#btn-fichar:hover {
+
+.btn-fichar:hover {
     background-color: var(--color-acento);
 }
- 
-/* Botón pendiente desactivado */
-.btn-pendiente {
-    width:            120px;
-    background-color: var(--color-borde);
-    color:            var(--color-texto-apagado);
-    cursor:           not-allowed;
-    margin-top:       0;
-    border:           none;
-    border-radius:    var(--radio-pequeno);
-    padding:          8px 16px;
-    font-size:        13px;
-}
- 
- 
-/* ------------------------------------------------
-   TABLAS
-   ------------------------------------------------ */
-.tabla-wrapper {
-    width:      100%;
-    overflow-x: auto;
-}
- 
-table {
-    width:           100%;
-    border-collapse: collapse;
-    background:      var(--color-superficie);
-    font-size:       11px;
-    min-width:       600px;
-}
- 
-table th {
-    background-color: var(--color-principal);
-    color:            var(--color-superficie);
-    padding:          10px 12px;
-    text-align:       left;
-    font-weight:      500;
-}
- 
-table td {
-    padding:        8px 12px;
-    border-bottom:  1px solid var(--color-borde);
-    color:          var(--color-texto);
-    vertical-align: middle;
-}
- 
-table td.acciones {
-    white-space: nowrap;
-}
- 
-table td.acciones input,
-table td.acciones a,
-table td.acciones form {
-    display:        inline-block;
-    vertical-align: middle;
-    margin:         0 2px;
-}
- 
-table td.acciones a {
-    text-decoration: none;
-}
- 
-table td.acciones a input {
-    background-color: var(--color-principal);
-    color:            var(--color-superficie);
-    border:           none;
-    border-radius:    var(--radio-pequeno);
-    padding:          8px 18px;
-    font-family:      var(--fuente-cuerpo);
-    font-size:        12px;
-    font-weight:      500;
-    cursor:           pointer;
-    margin-top:       0;
-    transition:       background-color 0.2s;
-}
- 
-table td.acciones a input:hover {
-    background-color: var(--color-acento);
-}
- 
-table tr:nth-child(even) td {
-    background-color: #f0f9f5;
-}
- 
-table tr:hover td {
-    background-color: var(--color-acento-suave);
-    color:            var(--color-superficie);
-    transition:       background-color 0.15s;
-}
- 
- 
-/* ------------------------------------------------
-   PAGINACIÓN
-   ------------------------------------------------ */
-.paginacion {
-    display:         flex;
-    justify-content: center;
-    align-items:     center;
-    gap:             8px;
-    margin-top:      16px;
-}
- 
-.paginacion a {
-    color:            var(--color-principal);
-    text-decoration:  none;
-    font-size:        14px;
-    font-weight:      500;
-    padding:          6px 12px;
-    border-radius:    var(--radio-pequeno);
-    border:           1px solid var(--color-borde);
-    transition:       background-color 0.2s;
-}
- 
-.paginacion a:hover {
-    background-color: var(--color-acento);
-    color:            var(--color-superficie);
-    border-color:     var(--color-acento);
-}
- 
- 
+
+
 /* ------------------------------------------------
    MENSAJES DE ÉXITO Y ERROR
    ------------------------------------------------ */
@@ -570,7 +460,7 @@ p[style*="color:green"],
     align-items:      center;
     gap:              8px;
 }
- 
+
 p[style*="color:red"],
 .mensaje-error {
     background-color: #fee2e2;
@@ -583,12 +473,117 @@ p[style*="color:red"],
     align-items:      center;
     gap:              8px;
 }
- 
+
 .mensaje-item + .mensaje-item {
     margin-top: 8px;
 }
- 
- 
+
+
+/* ------------------------------------------------
+   TABLAS
+   ------------------------------------------------ */
+.tabla-wrapper {
+    width:      100%;
+    overflow-x: auto;
+}
+
+table {
+    width:           100%;
+    border-collapse: collapse;
+    background:      var(--color-superficie);
+    font-size:       11px;
+    min-width:       600px;
+}
+
+table th {
+    background-color: var(--color-principal);
+    color:            var(--color-superficie);
+    padding:          10px 12px;
+    text-align:       left;
+    font-weight:      500;
+}
+
+table td {
+    padding:        8px 12px;
+    border-bottom:  1px solid var(--color-borde);
+    color:          var(--color-texto);
+    vertical-align: middle;
+}
+
+table td.acciones {
+    white-space: nowrap;
+}
+
+table td.acciones input,
+table td.acciones a,
+table td.acciones form {
+    display:        inline-block;
+    vertical-align: middle;
+    margin:         0 2px;
+}
+
+table td.acciones a {
+    text-decoration: none;
+}
+
+table td.acciones a input {
+    background-color: var(--color-principal);
+    color:            var(--color-superficie);
+    border:           none;
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 18px;
+    font-family:      var(--fuente-cuerpo);
+    font-size:        12px;
+    font-weight:      500;
+    cursor:           pointer;
+    margin-top:       0;
+    transition:       background-color 0.2s;
+}
+
+table td.acciones a input:hover {
+    background-color: var(--color-acento);
+}
+
+table tr:nth-child(even) td {
+    background-color: #f0f9f5;
+}
+
+table tr:hover td {
+    background-color: var(--color-acento-suave);
+    color:            var(--color-superficie);
+    transition:       background-color 0.15s;
+}
+
+
+/* ------------------------------------------------
+   PAGINACIÓN
+   ------------------------------------------------ */
+.paginacion {
+    display:         flex;
+    justify-content: center;
+    align-items:     center;
+    gap:             8px;
+    margin-top:      16px;
+}
+
+.paginacion a {
+    color:           var(--color-principal);
+    text-decoration: none;
+    font-size:       14px;
+    font-weight:     500;
+    padding:         6px 12px;
+    border-radius:   var(--radio-pequeno);
+    border:          1px solid var(--color-borde);
+    transition:      background-color 0.2s;
+}
+
+.paginacion a:hover {
+    background-color: var(--color-acento);
+    color:            var(--color-superficie);
+    border-color:     var(--color-acento);
+}
+
+
 /* ------------------------------------------------
    LOGIN
    ------------------------------------------------ */
@@ -602,20 +597,20 @@ p[style*="color:red"],
     padding:          24px;
     background-color: var(--color-fondo);
 }
- 
+
 .contenedor-login h1 {
     font-size:   28px;
     font-weight: 500;
     color:       var(--color-principal);
 }
- 
+
 .contenedor-login h2 {
     font-size:   14px;
     color:       var(--color-texto-apagado);
     font-weight: 400;
 }
- 
- 
+
+
 /* ------------------------------------------------
    LOGO RELOJ LOGIN
    ------------------------------------------------ */
@@ -624,7 +619,7 @@ p[style*="color:red"],
     width:     120px;
     height:    120px;
 }
- 
+
 #logo-reloj .logo-frame {
     position: absolute;
     top:      0;
@@ -633,12 +628,12 @@ p[style*="color:red"],
     height:   120px;
     display:  none;
 }
- 
+
 #logo-reloj .logo-frame:first-child {
     display: block;
 }
- 
- 
+
+
 /* ------------------------------------------------
    SLIDESHOW
    ------------------------------------------------ */
@@ -650,7 +645,7 @@ p[style*="color:red"],
     border-radius: var(--radio-mediano);
     margin:        16px auto 0 auto;
 }
- 
+
 #slideshow .slide {
     width:      300px;
     height:     175px;
@@ -660,12 +655,237 @@ p[style*="color:red"],
     left:       0;
     display:    none;
 }
- 
+
 #slideshow .slide:first-child {
     display: block;
 }
- 
- 
+
+
+/* ------------------------------------------------
+   DASHBOARD ADMIN
+   ------------------------------------------------ */
+.dashboard-grid {
+    display:               grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:                   12px;
+}
+
+.dashboard-card {
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    justify-content: center;
+    gap:             8px;
+    padding:         16px 8px;
+    background:      var(--color-superficie);
+    border-radius:   var(--radio-mediano);
+    border:          2px solid var(--color-borde);
+}
+
+.dashboard-card-numero {
+    font-family: var(--fuente-mono);
+    font-size:   36px;
+    font-weight: 500;
+    color:       var(--color-principal);
+    line-height: 1;
+}
+
+.dashboard-card-label {
+    font-size:  10px;
+    color:      var(--color-texto-apagado);
+    text-align: center;
+}
+
+.dashboard-card-ok {
+    border-color: var(--color-acento);
+}
+
+.dashboard-card-ok .dashboard-card-numero {
+    color: var(--color-acento);
+}
+
+.dashboard-card-error {
+    border-color: var(--color-error);
+}
+
+.dashboard-card-error .dashboard-card-numero {
+    color: var(--color-error);
+}
+
+.dashboard-card-warning {
+    border-color: var(--color-advertencia);
+}
+
+.dashboard-card-warning .dashboard-card-numero {
+    color: var(--color-advertencia);
+}
+
+.dashboard-aviso {
+    background:    #fef3c7;
+    border:        1px solid var(--color-advertencia);
+    border-radius: var(--radio-pequeno);
+    padding:       10px 16px;
+    font-size:     12px;
+    color:         #92400e;
+}
+
+.estado-badge {
+    font-size:     10px;
+    font-weight:   500;
+    padding:       4px 8px;
+    border-radius: var(--radio-pequeno);
+}
+
+.estado-sin-fichar {
+    background-color: #fee2e2;
+    color:            var(--color-error);
+}
+
+.estado-en-curso {
+    background-color: #fef3c7;
+    color:            #92400e;
+}
+
+.estado-completo {
+    background-color: #d1fae5;
+    color:            #065f46;
+}
+
+
+/* ------------------------------------------------
+   PANEL JORNADA TRABAJADOR
+   ------------------------------------------------ */
+.jornada-wrapper {
+    display:         flex;
+    flex-direction:  column;
+    align-items:     center;
+    justify-content: center;
+    gap:             20px;
+    padding:         24px;
+    background:      var(--color-superficie);
+    border-radius:   var(--radio-grande);
+    border:          1px solid var(--color-borde);
+    width:           100%;
+    margin:          0 auto;
+}
+
+.jornada-fecha {
+    font-family: var(--fuente-mono);
+    font-size:   14px;
+    color:       var(--color-texto-apagado);
+}
+
+.jornada-hora {
+    font-family: var(--fuente-mono);
+    font-size:   32px;
+    font-weight: 500;
+    color:       var(--color-principal);
+}
+
+
+/* ------------------------------------------------
+   FICHAJES
+   ------------------------------------------------ */
+.fichajes-wrapper {
+    display:        flex;
+    flex-direction: column;
+    gap:            12px;
+    width:          100%;
+}
+
+.fichaje-item {
+    display:        flex;
+    flex-direction: column;
+    gap:            6px;
+    padding:        12px 16px;
+    background:     var(--color-superficie);
+    border-radius:  var(--radio-mediano);
+    border:         1px solid var(--color-borde);
+}
+
+.fichaje-hecho {
+    background:   #d1fae5;
+    border-color: #6ee7b7;
+}
+
+.fichaje-nombre {
+    font-weight: 500;
+    font-size:   13px;
+    color:       var(--color-texto);
+}
+
+.fichaje-hora-prevista {
+    font-family: var(--fuente-mono);
+    font-size:   12px;
+    color:       var(--color-texto-apagado);
+}
+
+.fichaje-hora-real {
+    font-family: var(--fuente-mono);
+    font-size:   12px;
+    color:       var(--color-principal);
+    font-weight: 500;
+}
+
+.fichaje-tarde {
+    font-size:   11px;
+    color:       var(--color-error);
+    font-weight: 500;
+}
+
+.fichaje-pronto {
+    font-size:   11px;
+    color:       var(--color-informacion);
+    font-weight: 500;
+}
+
+.fichaje-puntual {
+    font-size:   11px;
+    color:       var(--color-principal);
+    font-weight: 500;
+}
+
+.fichaje-mensaje {
+    font-size:  14px;
+    color:      var(--color-texto-apagado);
+    text-align: center;
+}
+
+
+/* ------------------------------------------------
+   INFORME RESUMEN
+   ------------------------------------------------ */
+.informe-resumen {
+    background:    var(--color-superficie);
+    border-radius: var(--radio-mediano);
+    border:        1px solid var(--color-borde);
+    padding:       20px;
+    width:         100%;
+}
+
+.informe-resumen h3 {
+    color:          var(--color-principal);
+    font-size:      14px;
+    margin-bottom:  12px;
+    padding-bottom: 6px;
+    border-bottom:  1px solid var(--color-borde);
+}
+
+.informe-resumen-item {
+    display:        flex;
+    flex-direction: column;
+    gap:            4px;
+    padding:        8px 0;
+    border-bottom:  1px solid var(--color-borde);
+    font-size:      12px;
+}
+
+.informe-resumen-item:last-child {
+    border-bottom: none;
+    font-weight:   500;
+}
+
+
 /* ------------------------------------------------
    PERFIL DEL TRABAJADOR
    ------------------------------------------------ */
@@ -674,7 +894,7 @@ p[style*="color:red"],
     justify-content: center;
     margin-bottom:   8px;
 }
- 
+
 .perfil-foto img {
     width:         150px;
     height:        150px;
@@ -682,7 +902,7 @@ p[style*="color:red"],
     object-fit:    cover;
     border:        3px solid var(--color-principal);
 }
- 
+
 .perfil-sin-foto {
     width:            120px;
     height:           120px;
@@ -694,7 +914,7 @@ p[style*="color:red"],
     color:            var(--color-texto-apagado);
     font-size:        12px;
 }
- 
+
 .perfil-datos {
     background:    var(--color-superficie);
     border-radius: var(--radio-mediano);
@@ -703,7 +923,7 @@ p[style*="color:red"],
     width:         100%;
     margin:        0 auto;
 }
- 
+
 .perfil-datos h3 {
     color:          var(--color-principal);
     font-size:      14px;
@@ -713,8 +933,7 @@ p[style*="color:red"],
     padding-bottom: 6px;
     border-bottom:  1px solid var(--color-borde);
 }
- 
-/* En móvil los campos del perfil se apilan */
+
 .perfil-campo {
     display:        flex;
     flex-direction: column;
@@ -722,252 +941,23 @@ p[style*="color:red"],
     padding:        8px 0;
     border-bottom:  1px solid var(--color-borde);
 }
- 
+
 .perfil-campo:last-child {
     border-bottom: none;
 }
- 
+
 .perfil-label {
     font-size:   11px;
     color:       var(--color-texto-apagado);
     font-weight: 500;
 }
- 
+
 .perfil-valor {
     font-size: 12px;
     color:     var(--color-texto);
 }
- 
- 
-/* ------------------------------------------------
-   PANEL JORNADA TRABAJADOR
-   ------------------------------------------------ */
-.jornada-wrapper {
-    display:          flex;
-    flex-direction:   column;
-    align-items:      center;
-    justify-content:  center;
-    gap:              20px;
-    padding:          24px;
-    background:       var(--color-superficie);
-    border-radius:    var(--radio-grande);
-    border:           1px solid var(--color-borde);
-    width:            100%;
-    margin:           0 auto;
-}
- 
-.jornada-fecha {
-    font-family: var(--fuente-mono);
-    font-size:   14px;
-    color:       var(--color-texto-apagado);
-}
- 
-.jornada-hora {
-    font-family: var(--fuente-mono);
-    font-size:   32px;
-    font-weight: 500;
-    color:       var(--color-principal);
-}
- 
- 
-/* ------------------------------------------------
-   FICHAJES
-   ------------------------------------------------ */
-.fichajes-wrapper {
-    display:        flex;
-    flex-direction: column;
-    gap:            12px;
-    width:          100%;
-}
- 
-/* En móvil los fichajes se apilan verticalmente */
-.fichaje-item {
-    display:        flex;
-    flex-direction: column;
-    gap:            6px;
-    padding:        12px 16px;
-    background:     var(--color-superficie);
-    border-radius:  var(--radio-mediano);
-    border:         1px solid var(--color-borde);
-}
- 
-.fichaje-hecho {
-    background:   #d1fae5;
-    border-color: #6ee7b7;
-}
- 
-.fichaje-nombre {
-    font-weight: 500;
-    font-size:   13px;
-    color:       var(--color-texto);
-}
- 
-.fichaje-hora-prevista {
-    font-family: var(--fuente-mono);
-    font-size:   12px;
-    color:       var(--color-texto-apagado);
-}
- 
-.fichaje-hora-real {
-    font-family: var(--fuente-mono);
-    font-size:   12px;
-    color:       var(--color-principal);
-    font-weight: 500;
-}
- 
-.fichaje-tarde {
-    font-size:   11px;
-    color:       var(--color-error);
-    font-weight: 500;
-}
- 
-.fichaje-pronto {
-    font-size:   11px;
-    color:       var(--color-informacion);
-    font-weight: 500;
-}
- 
-.fichaje-puntual {
-    font-size:   11px;
-    color:       var(--color-principal);
-    font-weight: 500;
-}
- 
-.fichaje-mensaje {
-    font-size:  14px;
-    color:      var(--color-texto-apagado);
-    text-align: center;
-}
- 
- 
-/* ------------------------------------------------
-   INFORME RESUMEN
-   ------------------------------------------------ */
-.informe-resumen {
-    background:    var(--color-superficie);
-    border-radius: var(--radio-mediano);
-    border:        1px solid var(--color-borde);
-    padding:       20px;
-    width:         100%;
-}
- 
-.informe-resumen h3 {
-    color:          var(--color-principal);
-    font-size:      14px;
-    margin-bottom:  12px;
-    padding-bottom: 6px;
-    border-bottom:  1px solid var(--color-borde);
-}
- 
-/* En móvil los items del resumen se apilan */
-.informe-resumen-item {
-    display:        flex;
-    flex-direction: column;
-    gap:            4px;
-    padding:        8px 0;
-    border-bottom:  1px solid var(--color-borde);
-    font-size:      12px;
-}
- 
-.informe-resumen-item:last-child {
-    border-bottom: none;
-    font-weight:   500;
-}
- 
- 
-/* ------------------------------------------------
-   DASHBOARD ADMIN
-   ------------------------------------------------ */
- 
-/* En móvil las tarjetas son 2 por fila */
-.dashboard-grid {
-    display:               grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:                   12px;
-}
- 
-.dashboard-card {
-    display:          flex;
-    flex-direction:   column;
-    align-items:      center;
-    justify-content:  center;
-    gap:              8px;
-    padding:          16px 8px;
-    background:       var(--color-superficie);
-    border-radius:    var(--radio-mediano);
-    border:           2px solid var(--color-borde);
-}
- 
-.dashboard-card-numero {
-    font-family: var(--fuente-mono);
-    font-size:   36px;
-    font-weight: 500;
-    color:       var(--color-principal);
-    line-height: 1;
-}
- 
-.dashboard-card-label {
-    font-size:  10px;
-    color:      var(--color-texto-apagado);
-    text-align: center;
-}
- 
-.dashboard-card-ok {
-    border-color: var(--color-acento);
-}
- 
-.dashboard-card-ok .dashboard-card-numero {
-    color: var(--color-acento);
-}
- 
-.dashboard-card-error {
-    border-color: var(--color-error);
-}
- 
-.dashboard-card-error .dashboard-card-numero {
-    color: var(--color-error);
-}
- 
-.dashboard-card-warning {
-    border-color: var(--color-advertencia);
-}
- 
-.dashboard-card-warning .dashboard-card-numero {
-    color: var(--color-advertencia);
-}
- 
-.dashboard-aviso {
-    background:    #fef3c7;
-    border:        1px solid var(--color-advertencia);
-    border-radius: var(--radio-pequeno);
-    padding:       10px 16px;
-    font-size:     12px;
-    color:         #92400e;
-}
- 
-.estado-badge {
-    font-size:     10px;
-    font-weight:   500;
-    padding:       4px 8px;
-    border-radius: var(--radio-pequeno);
-}
- 
-.estado-sin-fichar {
-    background-color: #fee2e2;
-    color:            var(--color-error);
-}
- 
-.estado-en-curso {
-    background-color: #fef3c7;
-    color:            #92400e;
-}
- 
-.estado-completo {
-    background-color: #d1fae5;
-    color:            #065f46;
-}
- 
- 
+
+
 /* ------------------------------------------------
    FESTIVOS - TARJETAS CALENDARIO
    ------------------------------------------------ */
@@ -976,27 +966,25 @@ p[style*="color:red"],
     border:     none;
     padding:    0;
     margin:     0;
-    overflow-x: visible;
 }
- 
+
 .festivos-grid {
-    display:    flex;
-    flex-wrap:  wrap;
-    gap:        12px;
-    margin-top: 16px;
+    display:               grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap:                   12px;
+    margin-top:            16px;
 }
- 
+
 .festivo-card {
     display:          flex;
     flex-direction:   column;
     align-items:      center;
-    width:            80px;
     border-radius:    var(--radio-mediano);
     overflow:         hidden;
     box-shadow:       0 2px 8px rgba(0,0,0,0.12);
     background-color: var(--color-superficie);
 }
- 
+
 .festivo-card-mes {
     width:            100%;
     background-color: #DC2626;
@@ -1007,7 +995,7 @@ p[style*="color:red"],
     padding:          5px 0;
     letter-spacing:   1px;
 }
- 
+
 .festivo-card-dia {
     width:            100%;
     background-color: #FFFFFF;
@@ -1018,7 +1006,7 @@ p[style*="color:red"],
     padding:          6px 0;
     font-family:      var(--fuente-mono);
 }
- 
+
 .festivo-card-nombre {
     width:            100%;
     background-color: #FFFFFF;
@@ -1029,8 +1017,8 @@ p[style*="color:red"],
     border-top:       1px solid var(--color-borde);
     line-height:      1.3;
 }
- 
- 
+
+
 /* ------------------------------------------------
    MENSAJES ADMIN - TRABAJADOR
    ------------------------------------------------ */
@@ -1040,20 +1028,20 @@ p[style*="color:red"],
     border:        1px solid var(--color-borde);
     background:    var(--color-superficie);
 }
- 
+
 .mensaje-enviado {
     border-left: 4px solid var(--color-principal);
 }
- 
+
 .mensaje-recibido {
     border-left: 4px solid var(--color-informacion);
 }
- 
+
 .mensaje-no-leido {
     border-left: 4px solid var(--color-advertencia);
     background:  #fffbeb;
 }
- 
+
 .mensaje-cabecera {
     display:         flex;
     justify-content: space-between;
@@ -1062,7 +1050,7 @@ p[style*="color:red"],
     flex-wrap:       wrap;
     gap:             4px;
 }
- 
+
 .mensaje-etiqueta {
     font-size:      10px;
     font-weight:    500;
@@ -1070,26 +1058,26 @@ p[style*="color:red"],
     text-transform: uppercase;
     letter-spacing: 1px;
 }
- 
+
 .mensaje-fecha {
     font-family: var(--fuente-mono);
     font-size:   10px;
     color:       var(--color-texto-apagado);
 }
- 
+
 .mensaje-asunto {
     font-size:     13px;
     font-weight:   500;
     color:         var(--color-texto);
     margin-bottom: 6px;
 }
- 
+
 .mensaje-texto {
     font-size:   12px;
     color:       var(--color-texto-apagado);
     line-height: 1.5;
 }
- 
+
 .mensaje-badge-nuevo {
     font-size:        9px;
     font-weight:      500;
@@ -1099,158 +1087,141 @@ p[style*="color:red"],
     border-radius:    var(--radio-pequeno);
     margin-left:      6px;
 }
- 
+
 .form-respuesta {
     margin-top: 12px;
 }
- 
+
 .form-respuesta fieldset {
     max-width: 100%;
 }
- 
+
 .form-respuesta textarea {
     width:         100%;
     margin-bottom: 8px;
 }
- 
- 
-/* ------------------------------------------------
-   VALIDACIÓN DE FORMULARIOS
-   ------------------------------------------------ */
-.error-campo {
-    font-size:  10px;
-    color:      var(--color-error);
-    margin-top: 2px;
-    display:    block;
-}
- 
- 
+
+
 /* ================================================
    BREAKPOINTS - MOBILE FIRST
    Base: móvil
    768px: tablet
    1024px: ordenador
    ================================================ */
- 
+
 /* TABLET >= 768px */
 @media (min-width: 768px) {
- 
+
     body {
         font-size: 13px;
     }
- 
+
     main {
         padding: 24px 32px;
     }
- 
+
     main h2 {
         font-size: 20px;
     }
- 
+
     table {
         font-size: 12px;
     }
- 
-    /* En tablet los campos del perfil vuelven a ser en fila */
+
     .perfil-campo {
         flex-direction: row;
         gap:            16px;
     }
- 
+
     .perfil-label {
         min-width: 180px;
     }
- 
+
     .perfil-datos {
         max-width: 600px;
     }
- 
-    /* En tablet los fichajes vuelven a ser en fila */
+
     .fichaje-item {
         flex-direction: row;
         align-items:    center;
         gap:            16px;
     }
- 
+
     .fichaje-nombre {
         min-width: 140px;
     }
- 
+
     .fichaje-hora-prevista {
         min-width: 120px;
     }
- 
+
     .fichaje-hora-real {
         min-width: 120px;
     }
- 
-    /* En tablet el resumen en fila */
+
     .informe-resumen-item {
         flex-direction:  row;
         justify-content: space-between;
         align-items:     center;
         font-size:       13px;
     }
- 
+
     .informe-resumen {
         max-width: 600px;
     }
- 
-    /* En tablet las tarjetas del dashboard 4 en fila */
+
     .dashboard-grid {
         grid-template-columns: repeat(4, 1fr);
     }
- 
+
     .dashboard-card-numero {
         font-size: 48px;
     }
- 
+
     .jornada-wrapper {
         max-width: 600px;
     }
- 
+
     .jornada-hora {
         font-size: 36px;
     }
 }
- 
+
 /* ORDENADOR >= 1024px */
 @media (min-width: 1024px) {
- 
+
     body {
         font-size: 14px;
     }
- 
-    /* En ordenador el header en fila */
+
     header {
         flex-direction:  row;
         justify-content: space-between;
         align-items:     center;
         gap:             16px;
     }
- 
+
     .header-top {
         width: auto;
     }
- 
+
     .header-logo img {
         width:  48px;
         height: 48px;
     }
- 
+
     .header-logo h1 {
         font-size: 20px;
     }
- 
+
     .header-usuario-saludo {
         font-size: 13px;
     }
- 
+
     .header-usuario-nombre {
         font-size: 16px;
     }
- 
-    /* En ordenador el menú siempre visible en fila */
+
     header nav {
         display:        flex;
         flex-direction: row;
@@ -1261,29 +1232,84 @@ p[style*="color:red"],
         margin-top:     0;
         width:          auto;
     }
- 
+
     header nav a {
         font-size: 11px;
         padding:   6px 12px;
     }
- 
-    /* Ocultamos el botón hamburguesa en ordenador */
+
     #btn-menu {
         display: none;
     }
- 
+
     main {
         padding:   32px 48px;
         max-width: 1400px;
         margin:    0 auto;
     }
- 
+
     main h2 {
         font-size: 22px;
     }
 }
- 
- 
+
+
+/* ------------------------------------------------
+   TABLA APILADA - Móvil (max-width: 768px)
+   Cada fila se convierte en una card con etiquetas
+   Requiere data-label en cada <td>
+   ------------------------------------------------ */
+@media (max-width: 768px) {
+
+    /* Anulo el min-width:600px de la regla general de table
+       para que la tabla apilada no desborde la pantalla */
+    .tabla-apilable {
+        min-width: 0 !important;
+        width:     100% !important;
+    }
+
+    .tabla-apilable thead {
+        display: none;
+    }
+
+    .tabla-apilable tr {
+        display:       block;
+        margin-bottom: 16px;
+        border:        1px solid var(--color-borde);
+        border-radius: var(--radio-mediano);
+        padding:       8px;
+        background:    var(--color-superficie);
+    }
+
+    .tabla-apilable td {
+        display:     flex;
+        align-items: center;
+        gap:         8px;
+        padding:     6px 4px;
+        border:      none;
+        font-size:   11px;
+    }
+
+    .tabla-apilable td::before {
+        content:     attr(data-label);
+        font-weight: 600;
+        color:       var(--color-texto-apagado);
+        min-width:   110px;
+        flex-shrink: 0;
+        font-size:   11px;
+    }
+
+    .tabla-apilable td + td {
+        border-top: 1px solid var(--color-borde);
+    }
+
+    .tabla-apilable td input[type="time"] {
+        flex:      1;
+        min-width: 0;
+    }
+}
+
+
 /* ------------------------------------------------
    MODO OSCURO
    Se activa añadiendo la clase .modo-oscuro al body
@@ -1297,66 +1323,4 @@ body.modo-oscuro {
     --color-texto:         #F4F7F5;
     --color-texto-apagado: #9ABFB3;
     --color-borde:         #2E5045;
-}
- 
-
-/*=====================================================
-  TABLA APILADA - Responsive móvil y tablet
-  En pantallas pequeñas (< 768px) cada fila de tabla
-  se convierte en una tarjeta apilada con etiquetas.
-  Requiere que cada <td> tenga el atributo data-label.
-======================================================*/
-
-@media (max-width: 768px) {
-
-    /* Oculto la cabecera de la tabla, las etiquetas
-       vienen del data-label de cada celda */
-    .tabla-apilable thead {
-        display: none;
-    }
-
-    /* Cada fila se convierte en un bloque independiente
-       con borde y separación entre filas */
-    .tabla-apilable tr {
-        display:       block;
-        margin-bottom: var(--espacio-medio);
-        border:        1px solid var(--color-borde);
-        border-radius: var(--radio-mediano);
-        padding:       var(--espacio-pequeno);
-        background:    var(--color-superficie);
-    }
-
-    /* Cada celda ocupa toda la anchura y se apila
-       Uso flex para poner etiqueta y valor en línea */
-    .tabla-apilable td {
-        display:     flex;
-        align-items: center;
-        gap:         var(--espacio-pequeno);
-        padding:     6px 4px;
-        border:      none;
-        font-size:   var(--fuente-tamano-pequeno);
-    }
-
-    /* La etiqueta se genera desde el atributo data-label
-       del HTML con el pseudo-elemento ::before */
-    .tabla-apilable td::before {
-        content:     attr(data-label);
-        font-weight: 600;
-        color:       var(--color-texto-apagado);
-        min-width:   110px;
-        flex-shrink: 0;
-        font-size:   var(--fuente-tamano-pequeno);
-    }
-
-    /* Línea separadora entre celdas dentro de la card */
-    .tabla-apilable td + td {
-        border-top: 1px solid var(--color-borde);
-    }
-
-    /* En horarios los inputs de hora dentro de la tabla
-       deben ocupar el espacio disponible */
-    .tabla-apilable td input[type="time"] {
-        flex: 1;
-        min-width: 0;
-    }
 }
