@@ -199,20 +199,34 @@ header nav a:hover {
     transform: rotate(-45deg) translate(5px, -5px);
 }
 
-/* Botón modo oscuro en header */
+/* Botón modo oscuro: flotante en esquina inferior derecha */
 #btn-modo {
-    font-size:        10px;
-    padding:          6px 10px;
+    position:         fixed;
+    bottom:           24px;
+    right:            24px;
+    z-index:          999;
+    font-size:        20px;
+    padding:          0;
     margin-top:       0;
-    background-color: transparent;
-    border:           1px solid var(--color-acento-suave);
+    background-color: var(--color-principal);
+    border:           2px solid var(--color-acento-suave);
+    border-radius:    50%;
     color:            var(--color-superficie);
-    white-space:      nowrap;
+    width:            48px;
+    height:           48px;
+    display:          flex;
+    align-items:      center;
+    justify-content:  center;
+    line-height:      1;
+    cursor:           pointer;
+    box-shadow:       0 4px 12px rgba(0,0,0,0.25);
+    transition:       background-color 0.2s, transform 0.2s;
 }
 
 #btn-modo:hover {
     background-color: var(--color-acento);
     border-color:     var(--color-acento);
+    transform:        scale(1.1);
 }
 
 
@@ -545,7 +559,7 @@ table td.acciones a input:hover {
 }
 
 table tr:nth-child(even) td {
-    background-color: #f0f9f5;
+    background-color: var(--color-fondo);
 }
 
 table tr:hover td {
@@ -998,7 +1012,7 @@ table tr:hover td {
 
 .festivo-card-dia {
     width:            100%;
-    background-color: #FFFFFF;
+    background-color: var(--color-superficie);
     color:            var(--color-texto);
     text-align:       center;
     font-size:        30px;
@@ -1009,7 +1023,7 @@ table tr:hover td {
 
 .festivo-card-nombre {
     width:            100%;
-    background-color: #FFFFFF;
+    background-color: var(--color-superficie);
     color:            var(--color-texto-apagado);
     text-align:       center;
     font-size:        8px;
@@ -1194,15 +1208,18 @@ table tr:hover td {
         font-size: 14px;
     }
 
+    /* En desktop: header-top a la izquierda, nav a la derecha */
     header {
         flex-direction:  row;
         justify-content: space-between;
         align-items:     center;
-        gap:             16px;
+        gap:             24px;
     }
 
     .header-top {
-        width: auto;
+        width:           auto;
+        flex:            1;
+        justify-content: space-between;
     }
 
     .header-logo img {
@@ -1226,6 +1243,7 @@ table tr:hover td {
         display:        flex;
         flex-direction: row;
         flex-wrap:      wrap;
+        align-items:    center;
         gap:            6px;
         border-top:     none;
         padding:        0;
@@ -1323,4 +1341,114 @@ body.modo-oscuro {
     --color-texto:         #F4F7F5;
     --color-texto-apagado: #9ABFB3;
     --color-borde:         #2E5045;
+}
+
+
+/* ------------------------------------------------
+   TABLA APILADA - Móvil (max-width: 768px)
+   Cada fila se convierte en una card con etiquetas
+   Requiere data-label en cada <td>
+   ------------------------------------------------ */
+@media (max-width: 768px) {
+
+    .tabla-apilable {
+        min-width: 0 !important;
+        width:     100% !important;
+    }
+
+    .tabla-apilable thead {
+        display: none;
+    }
+
+    .tabla-apilable tr {
+        display:       block;
+        margin-bottom: 16px;
+        border:        1px solid var(--color-borde);
+        border-radius: var(--radio-mediano);
+        padding:       8px;
+        background:    var(--color-superficie);
+    }
+
+    .tabla-apilable td {
+        display:     flex;
+        align-items: center;
+        gap:         8px;
+        padding:     6px 4px;
+        border:      none;
+        font-size:   11px;
+    }
+
+    .tabla-apilable td::before {
+        content:     attr(data-label);
+        font-weight: 600;
+        color:       var(--color-texto-apagado);
+        min-width:   110px;
+        flex-shrink: 0;
+        font-size:   11px;
+    }
+
+    .tabla-apilable td + td {
+        border-top: 1px solid var(--color-borde);
+    }
+
+    .tabla-apilable td input[type="time"] {
+        flex:      1;
+        min-width: 0;
+    }
+
+    .festivos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+
+
+
+
+/* Overrides adicionales para modo oscuro
+   Corrijo colores hardcodeados que no usan variables */
+body.modo-oscuro table tr:nth-child(even) td {
+    background-color: #1e3829;
+}
+
+body.modo-oscuro table tr:hover td {
+    background-color: var(--color-acento-suave);
+    color:            var(--color-texto);
+}
+
+body.modo-oscuro .fichaje-hecho {
+    background:   #1a3d2b;
+    border-color: #2e6644;
+}
+
+body.modo-oscuro .estado-sin-fichar {
+    background-color: #3d1a1a;
+    color:            #f87171;
+}
+
+body.modo-oscuro .estado-en-curso {
+    background-color: #3d2e0a;
+    color:            #fbbf24;
+}
+
+body.modo-oscuro .estado-completo {
+    background-color: #1a3d2b;
+    color:            #6ee7b7;
+}
+
+body.modo-oscuro .dashboard-aviso {
+    background: #3d2e0a;
+    color:      #fbbf24;
+}
+
+body.modo-oscuro p[style*="color:green"] {
+    background-color: #1a3d2b;
+    color:            #6ee7b7;
+    border-color:     #2e6644;
+}
+
+body.modo-oscuro p[style*="color:red"] {
+    background-color: #3d1a1a;
+    color:            #f87171;
+    border-color:     #7f1d1d;
 }

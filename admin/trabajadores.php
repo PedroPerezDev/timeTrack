@@ -377,6 +377,8 @@ function mostrarTabla($resultado) {
 
             $fila = $resultado_mod->fetch_assoc();
 
+            // El formulario aparece con slideDown al pulsar Modificar
+            echo "<div id='form-modificar' style='display:none'>";
             echo "
             <h3>Modificar trabajador</h3>
             <form action='trabajadores.php' method='POST' enctype='multipart/form-data'>
@@ -433,6 +435,7 @@ function mostrarTabla($resultado) {
             <input type='submit' name='actualizar' value='Actualizar trabajador'>
             </fieldset>
             </form>";
+            echo "</div>"; // cierre div#form-modificar
         }
     }
 
@@ -443,8 +446,8 @@ function mostrarTabla($resultado) {
     desconectar($conexion);
     ?>
 
-    <?php if (isset($_GET['nuevo'])): ?>
-
+    <!-- Formulario de alta oculto por defecto, se despliega con slideDown -->
+    <div id="form-nuevo" style="display:none">
         <h3>Nuevo trabajador</h3>
         <form id="form-alta" action="trabajadores.php" method="POST" enctype="multipart/form-data">
         <fieldset>
@@ -493,12 +496,10 @@ function mostrarTabla($resultado) {
         </fieldset>
         </form>
 
-    <?php endif; ?>
+    </div> <!-- cierre div#form-nuevo -->
 
-    <!-- Botón de nuevo trabajador al final de la página -->
-    <a href="trabajadores.php?nuevo=1">
-        <button type="button">+ Nuevo trabajador</button>
-    </a>
+    <!-- Botón para mostrar el formulario de alta con slideDown -->
+    <button type="button" id="btn-nuevo-trabajador">+ Nuevo trabajador</button>
 
 </main>
 

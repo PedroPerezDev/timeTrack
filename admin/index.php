@@ -197,6 +197,11 @@ desconectar($conexion);
 
     ?>
 
+    <!-- Botón para mostrar u ocultar la tabla de fichajes del día -->
+    <button type="button" id="btn-mostrar-fichajes">Ver estado de fichajes de hoy</button>
+
+    <!-- Tabla oculta por defecto -->
+    <div id="tabla-fichajes" style="display:none">
     <h3>Estado de fichajes de hoy</h3>
 
     <div class="tabla-wrapper">
@@ -248,6 +253,7 @@ desconectar($conexion);
         </tbody>
     </table>
     </div>
+    </div> <!-- cierre div#tabla-fichajes -->
 
     <!-- Festivos nacionales -->
     <h3>Festivos nacionales <?php echo date('Y'); ?></h3>

@@ -12,24 +12,7 @@
 
 
 <script src="/js/main.js"></script>
-<script>
-    /* ------------------------------------------------
-       MODO OSCURO / CLARO
-       Activa o desactiva la clase .modo-oscuro en el body
-       y actualiza el texto del botón según el estado
-       ------------------------------------------------ */
-    function toggleModo() {
-        // Añade o quita la clase modo-oscuro del body
-        $('body').toggleClass('modo-oscuro');
 
-        // Cambia el texto del botón según el estado actual
-        if ($('body').hasClass('modo-oscuro')) {
-            $('#btn-modo').text('Modo claro');
-        } else {
-            $('#btn-modo').text('Modo oscuro');
-        }
-    }
-</script>
 
 </body>
 </html>

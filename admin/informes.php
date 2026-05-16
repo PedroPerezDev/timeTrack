@@ -306,6 +306,11 @@ $conexion = conectar();
 
                 if ($incidencias->num_rows > 0) {
 
+                    // Botón para mostrar u ocultar la tabla de incidencias
+                    echo "<button type='button' id='btn-mostrar-incidencias'>Ver incidencias del período (" . $incidencias->num_rows . ")</button>";
+
+                    // Tabla oculta por defecto, se despliega con slideDown al pulsar el botón
+                    echo "<div id='tabla-incidencias' style='display:none'>";
                     echo "<h3>Incidencias del período</h3>";
                     echo "<div class='tabla-wrapper'><table class='tabla-apilable'>
                         <thead>
@@ -328,6 +333,7 @@ $conexion = conectar();
                     }
 
                     echo "</tbody></table></div>";
+                    echo "</div>"; // cierre div#tabla-incidencias
                 }
 
                 // Botón para generar el PDF en nueva pestaña

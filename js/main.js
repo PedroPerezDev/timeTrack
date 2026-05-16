@@ -28,7 +28,6 @@ function actualizarReloj() {
     }
 }
 
-// Espero a que el DOM esté listo antes de llamar al reloj
 $(document).ready(function() {
     actualizarReloj();
     setInterval(actualizarReloj, 1000);
@@ -39,14 +38,8 @@ $(document).ready(function() {
 //------------------ SLIDESHOW ----------------------- |
 //-----------------------------------------------------|
 
-/*
- * Slideshow de imágenes en la pantalla de login
- * Usa fadeIn y fadeOut de jQuery
- * Cambia de imagen cada 2000 milisegundos (2 segundos)
- */
 $(document).ready(function() {
 
-    // Solo ejecuto si hay imágenes en el slideshow
     if ($("#slideshow .slide").length > 0) {
 
         var slides      = $("#slideshow .slide");
@@ -55,10 +48,8 @@ $(document).ready(function() {
 
         setInterval(function() {
 
-            // Calculo cuál es la siguiente imagen
             var siguiente = (actual + 1) % totalSlides;
 
-            // Oculto la actual y muestro la siguiente
             $(slides[actual]).fadeOut("slow", function() {
                 $(slides[siguiente]).fadeIn("slow");
             });
@@ -74,27 +65,14 @@ $(document).ready(function() {
 //------------------- FICHAJE AJAX ------------------- |
 //-----------------------------------------------------|
 
-/*
- * Cuando el trabajador pulsa cualquier botón FICHAR
- * jQuery manda una petición AJAX a ajax/fichar.php
- * sin recargar la página.
- * Ahora hay 4 botones con clase .btn-fichar (uno por tipo)
- * por eso usamos clase en lugar de ID
- */
 $(document).ready(function() {
 
-    // Uso .on() para capturar el click en cualquier .btn-fichar
     $(document).on("click", ".btn-fichar", function() {
 
-        // Guardo referencia al botón pulsado para poder
-        // rehabilitarlo si hay error
         var $boton = $(this);
+        var tipo   = $boton.data("tipo");
+        var hora   = $boton.data("hora");
 
-        // Recojo los datos del botón pulsado
-        var tipo = $boton.data("tipo");
-        var hora = $boton.data("hora");
-
-        // Deshabilito solo este botón para evitar doble clic
         $boton.prop("disabled", true);
         $boton.text("Procesando...");
 
@@ -111,13 +89,10 @@ $(document).ready(function() {
 
                 if (datos.ok) {
 
-                    // Muestro el mensaje de éxito con fadeIn
                     $("#respuesta-fichaje").hide().html(
                         "<p style='color:green'>" + datos.mensaje + "</p>"
                     ).fadeIn("slow");
 
-                    // Recargo la página después de 2 segundos
-                    // para que el botón pase a mostrar la hora fichada
                     setTimeout(function() {
                         location.reload();
                     }, 2000);
@@ -127,7 +102,6 @@ $(document).ready(function() {
                         "<p style='color:red'>" + datos.error + "</p>"
                     ).fadeIn("slow");
 
-                    // Rehabilito el botón si hay error
                     $boton.prop("disabled", false);
                     $boton.text("FICHAR");
                 }
@@ -138,13 +112,11 @@ $(document).ready(function() {
                     "<p style='color:red'>Error de conexión. Inténtalo de nuevo.</p>"
                 ).fadeIn("slow");
 
-                // Rehabilito el botón si hay error de red
                 $boton.prop("disabled", false);
                 $boton.text("FICHAR");
             }
         });
     });
-
 });
 
 
@@ -152,11 +124,6 @@ $(document).ready(function() {
 //---------- API FESTIVOS NACIONALES ----------------- |
 //-----------------------------------------------------|
 
-/*
- * Carga los festivos nacionales de España
- * usando la API Nager.Date mediante AJAX
- * Solo se ejecuta si existe el contenedor #festivos en la página
- */
 $(document).ready(function() {
 
     if ($("#festivos").length > 0) {
@@ -175,19 +142,15 @@ $(document).ready(function() {
                     return;
                 }
 
-                // Construyo las tarjetas de calendario
                 var html = "<div class='festivos-grid'>";
 
                 $.each(festivos, function(i, festivo) {
 
-                    // Separo la fecha en partes
-                    var partes = festivo.date.split("-");
-                    var dia    = partes[2];
-                    var mes    = partes[1];
-
-                    // Nombres de los meses en español
-                    var meses = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
-                                 "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
+                    var partes     = festivo.date.split("-");
+                    var dia        = partes[2];
+                    var mes        = partes[1];
+                    var meses      = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+                                      "JUL", "AGO", "SEP", "OCT", "NOV", "DIC"];
                     var nombre_mes = meses[parseInt(mes) - 1];
 
                     html += "<div class='festivo-card'>" +
@@ -214,11 +177,6 @@ $(document).ready(function() {
 //---------- LOGO RELOJ ------------------------------ |
 //-----------------------------------------------------|
 
-/*
- * Slideshow del logo en la pantalla de login
- * Cambia de imagen cada segundo sin efecto de fundido
- * Simula el movimiento de las agujas de un reloj
- */
 $(document).ready(function() {
 
     if ($("#logo-reloj .logo-frame").length > 0) {
@@ -231,7 +189,6 @@ $(document).ready(function() {
 
             var siguiente = (actual + 1) % totalFrames;
 
-            // Oculto la actual y muestro la siguiente sin fundido
             $(frames[actual]).hide();
             $(frames[siguiente]).show();
 
@@ -241,15 +198,11 @@ $(document).ready(function() {
     }
 });
 
+
 //-----------------------------------------------------|
 //---------- IMPORTAR FESTIVOS AUTO ------------------ |
 //-----------------------------------------------------|
 
-/*
- * Se ejecuta al cargar el dashboard del admin
- * Importa los festivos de la API a la BD automáticamente
- * Solo actúa si existe el elemento #importar-festivos
- */
 $(document).ready(function() {
 
     if ($("#importar-festivos").length > 0) {
@@ -262,7 +215,6 @@ $(document).ready(function() {
                 var datos = JSON.parse(respuesta);
 
                 if (datos.importados > 0) {
-                    // Muestro el mensaje solo si ha importado algo nuevo
                     $("#importar-festivos").hide().html(
                         "<p style='color:green'>" + datos.mensaje + "</p>"
                     ).fadeIn("slow");
@@ -273,25 +225,18 @@ $(document).ready(function() {
 });
 
 
-
 //-----------------------------------------------------|
 //---------- MOSTRAR FORMULARIO DÍA ESPECIAL --------- |
 //-----------------------------------------------------|
 
-/*
- * Al pulsar el botón muestra el formulario con slideDown
- * Al volver a pulsar lo oculta con slideUp
- */
 $(document).ready(function() {
 
     $("#btn-mostrar-especial").click(function() {
 
         if ($("#form-especial").is(":visible")) {
-            // Si está visible lo oculto con slideUp
             $("#form-especial").slideUp("slow");
             $(this).text("+ Añadir día especial");
         } else {
-            // Si está oculto lo muestro con slideDown
             $("#form-especial").slideDown("slow");
             $(this).text("- Cerrar formulario");
         }
@@ -336,6 +281,7 @@ $(document).ready(function() {
     });
 });
 
+
 //-----------------------------------------------------|
 //---------- RESPONDER MENSAJE ADMIN ----------------- |
 //-----------------------------------------------------|
@@ -344,22 +290,21 @@ $(document).ready(function() {
 
     $(".btn-responder").click(function() {
 
-        var id = $(this).data("id");
+        var id  = $(this).data("id");
         var div = $("#respuesta-" + id);
 
         if (div.is(":visible")) {
             div.slideUp("slow");
             $(this).text("Responder");
         } else {
-            // Cierro todos los formularios abiertos primero
             $(".form-respuesta").slideUp("slow");
             $(".btn-responder").text("Responder");
-            // Abro el de este mensaje
             div.slideDown("slow");
             $(this).text("- Cerrar");
         }
     });
 });
+
 
 //-----------------------------------------------------|
 //---------- VALIDACIÓN ALTA TRABAJADOR -------------- |
@@ -369,17 +314,15 @@ $(document).ready(function() {
 
     $(document).on("click", "input[name='alta']", function(e) {
 
-        console.log("click interceptado");
-
         $(".error-campo").remove();
 
         var hayErrores = false;
 
-        var regexNombre    = /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/;
-        var regexEmail     = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        var regexDni       = /^[0-9]{8}[A-Za-z]$/;
-        var regexTelefono  = /^[679][0-9]{8}$/;
-        var regexPassword  = /^.{8,}$/;
+        var regexNombre   = /^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ\s]+$/;
+        var regexEmail    = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        var regexDni      = /^[0-9]{8}[A-Za-z]$/;
+        var regexTelefono = /^[679][0-9]{8}$/;
+        var regexPassword = /^.{8,}$/;
 
         var nombre = $("input[name='nombre']").val().trim();
         if (nombre === "" || !regexNombre.test(nombre)) {
@@ -422,40 +365,155 @@ $(document).ready(function() {
         }
     });
 });
-/*
- * Función auxiliar para mostrar un mensaje de error
- * debajo del campo que no ha pasado la validación
- * selector: el selector jQuery del campo
- * mensaje: el texto del error a mostrar
- */
+
 function mostrarError(selector, mensaje) {
     $(selector).after(
         "<span class='error-campo'>" + mensaje + "</span>"
     );
 }
 
+
 //-----------------------------------------------------|
 //---------- MENÚ HAMBURGUESA ----------------------- |
 //-----------------------------------------------------|
 
-/*
- * Abre y cierra el menú de navegación en móvil y tablet
- * al pulsar el botón hamburguesa
- */
 $(document).ready(function() {
 
     $("#btn-menu").click(function() {
-
-        // Añade o quita la clase activo en el nav
         $("#nav-menu").toggleClass("nav-activo");
-
-        // Cambia el aspecto del botón hamburguesa a X
         $(this).toggleClass("btn-menu-activo");
     });
 
-    // Cierra el menú al pulsar cualquier enlace
     $("#nav-menu a").click(function() {
         $("#nav-menu").removeClass("nav-activo");
         $("#btn-menu").removeClass("btn-menu-activo");
+    });
+});
+
+
+//-----------------------------------------------------|
+//---------- MODO OSCURO ----------------------------- |
+//-----------------------------------------------------|
+
+/*
+ * Activa y desactiva el modo oscuro añadiendo o quitando
+ * la clase .modo-oscuro al body.
+ * Guarda la preferencia en localStorage para mantenerla
+ * entre visitas.
+ * Uso innerHTML con código de entidad HTML para que el
+ * emoji se renderice bien en todos los navegadores.
+ * &#127769; = 🌙   &#9728; = ☀️
+ */
+function toggleModo() {
+
+    $("body").toggleClass("modo-oscuro");
+
+    if ($("body").hasClass("modo-oscuro")) {
+        document.getElementById("btn-modo").innerHTML = "&#9728;";
+        localStorage.setItem("timetrack_modo", "oscuro");
+    } else {
+        document.getElementById("btn-modo").innerHTML = "&#127769;";
+        localStorage.setItem("timetrack_modo", "claro");
+    }
+}
+
+// Al cargar recupero la preferencia guardada en localStorage
+$(document).ready(function() {
+    if (localStorage.getItem("timetrack_modo") === "oscuro") {
+        $("body").addClass("modo-oscuro");
+        document.getElementById("btn-modo").innerHTML = "&#9728;";
+    }
+});
+
+
+//-----------------------------------------------------|
+//---------- MOSTRAR TABLA FICHAJES HOY -------------- |
+//-----------------------------------------------------|
+
+/*
+ * En el dashboard del admin muestra u oculta la tabla
+ * de fichajes del día con slideDown/slideUp
+ */
+$(document).ready(function() {
+
+    $("#btn-mostrar-fichajes").click(function() {
+
+        if ($("#tabla-fichajes").is(":visible")) {
+            $("#tabla-fichajes").slideUp("slow");
+            $(this).text("Ver estado de fichajes de hoy");
+        } else {
+            $("#tabla-fichajes").slideDown("slow");
+            $(this).text("Ocultar fichajes de hoy");
+        }
+    });
+});
+
+
+//-----------------------------------------------------|
+//---------- MOSTRAR INCIDENCIAS DEL PERÍODO --------- |
+//-----------------------------------------------------|
+
+/*
+ * En informes.php muestra u oculta la tabla de incidencias
+ * al pulsar el botón, con efecto slideDown/slideUp
+ */
+$(document).ready(function() {
+
+    $(document).on("click", "#btn-mostrar-incidencias", function() {
+
+        if ($("#tabla-incidencias").is(":visible")) {
+            $("#tabla-incidencias").slideUp("slow");
+            $(this).text($(this).text().replace("Ocultar", "Ver"));
+        } else {
+            $("#tabla-incidencias").slideDown("slow");
+            $(this).text($(this).text().replace("Ver", "Ocultar"));
+        }
+    });
+});
+
+
+//-----------------------------------------------------|
+//---------- FORMULARIO MODIFICAR TRABAJADOR --------- |
+//-----------------------------------------------------|
+
+/*
+ * Al pulsar Modificar en la tabla de trabajadores
+ * el formulario aparece con slideDown
+ * Si ya está visible lo oculta con slideUp
+ */
+$(document).ready(function() {
+
+    $(document).on("click", "input[name='ver_modificar']", function(e) {
+        // Dejo que el form haga POST normalmente
+        // El PHP genera el div#form-modificar oculto
+        // y tras recargar lo mostramos automáticamente
+    });
+
+    // Si existe el div#form-modificar en la página lo mostramos con slideDown
+    if ($("#form-modificar").length > 0) {
+        $("#form-modificar").slideDown("slow");
+    }
+});
+
+
+//-----------------------------------------------------|
+//---------- FORMULARIO NUEVO TRABAJADOR ------------- |
+//-----------------------------------------------------|
+
+/*
+ * Al pulsar + Nuevo trabajador muestra el formulario
+ * con slideDown y cambia el texto del botón
+ */
+$(document).ready(function() {
+
+    $("#btn-nuevo-trabajador").click(function() {
+
+        if ($("#form-nuevo").is(":visible")) {
+            $("#form-nuevo").slideUp("slow");
+            $(this).text("+ Nuevo trabajador");
+        } else {
+            $("#form-nuevo").slideDown("slow");
+            $(this).text("- Cerrar formulario");
+        }
     });
 });
