@@ -2,16 +2,11 @@
 /*
  * Gestión de horarios - Panel de administrador
  * Permite asignar el horario semanal a cada trabajador
- * y gestionar días especiales (cambios, vacaciones, festivos)
- * Solo accesible para usuarios con rol 'admin'
+ * y gestionar días especiales
  */
 
-session_start();
-
-if (!isset($_SESSION['user']) || $_SESSION['rol'] != "admin") {
-    header("Location: ../index.php");
-    exit;
-}
+include "../includes/funciones.php";
+verificarSesion('admin');
 
 include "../config.php";
 
@@ -22,8 +17,7 @@ if (!isset($_GET['id'])) {
     exit;
 }
 
-$id_trabajador = $_GET['id'];
-
+$id_trabajador        = $_GET['id'];
 $resultado_trabajador = $conexion->query("SELECT nombre, apellidos FROM usuarios WHERE id = '$id_trabajador'");
 
 if ($resultado_trabajador->num_rows == 0) {
@@ -42,7 +36,7 @@ $dias = [
 ];
 
 //-----------------------------------------------------|
-//------------- GUARDAR HORARIO SEMANAL --------------|
+//---------- GUARDAR HORARIO SEMANAL -----------------|
 //-----------------------------------------------------|
 
 if (isset($_POST['guardar_horario'])) {
@@ -60,19 +54,19 @@ if (isset($_POST['guardar_horario'])) {
             WHERE usuario_id = '$id_trabajador' AND dia_semana = '$dia'");
 
         if ($check->num_rows > 0) {
-            $update = $conexion->query("UPDATE horarios SET
+            $ok = $conexion->query("UPDATE horarios SET
                 hora_entrada_1 = '$entrada_1',
                 hora_salida_1  = '$salida_1',
                 hora_entrada_2 = '$entrada_2',
                 hora_salida_2  = '$salida_2'
                 WHERE usuario_id = '$id_trabajador' AND dia_semana = '$dia'");
-            if (!$update) $errores++;
         } else {
-            $insert = $conexion->query("INSERT INTO horarios 
+            $ok = $conexion->query("INSERT INTO horarios 
                 (usuario_id, dia_semana, hora_entrada_1, hora_salida_1, hora_entrada_2, hora_salida_2)
                 VALUES ('$id_trabajador', '$dia', '$entrada_1', '$salida_1', '$entrada_2', '$salida_2')");
-            if (!$insert) $errores++;
         }
+
+        if (!$ok) $errores++;
     }
 
     if ($errores == 0) {
@@ -83,7 +77,7 @@ if (isset($_POST['guardar_horario'])) {
 }
 
 //-----------------------------------------------------|
-//----------- GUARDAR DÍA ESPECIAL ------------------|
+//---------- GUARDAR DÍA ESPECIAL ------------------- |
 //-----------------------------------------------------|
 
 if (isset($_POST['guardar_especial'])) {
@@ -91,29 +85,18 @@ if (isset($_POST['guardar_especial'])) {
     $fecha         = $_POST['fecha'];
     $tipo          = $_POST['tipo'];
     $observaciones = $_POST['observaciones'];
-    $entrada_1     = !empty($_POST['esp_entrada_1']) ? $_POST['esp_entrada_1'] : null;
-    $salida_1      = !empty($_POST['esp_salida_1'])  ? $_POST['esp_salida_1']  : null;
-    $entrada_2     = !empty($_POST['esp_entrada_2']) ? $_POST['esp_entrada_2'] : null;
-    $salida_2      = !empty($_POST['esp_salida_2'])  ? $_POST['esp_salida_2']  : null;
+    $e1 = !empty($_POST['esp_entrada_1']) ? "'" . $_POST['esp_entrada_1'] . "'" : 'NULL';
+    $s1 = !empty($_POST['esp_salida_1'])  ? "'" . $_POST['esp_salida_1']  . "'" : 'NULL';
+    $e2 = !empty($_POST['esp_entrada_2']) ? "'" . $_POST['esp_entrada_2'] . "'" : 'NULL';
+    $s2 = !empty($_POST['esp_salida_2'])  ? "'" . $_POST['esp_salida_2']  . "'" : 'NULL';
 
     if (empty($fecha) || empty($tipo)) {
         $mensaje_error = "La fecha y el tipo son obligatorios";
     } else {
 
-        $entrada_1 = $entrada_1 ?? 'NULL';
-        $salida_1  = $salida_1  ?? 'NULL';
-        $entrada_2 = $entrada_2 ?? 'NULL';
-        $salida_2  = $salida_2  ?? 'NULL';
-
         $insert = $conexion->query("INSERT INTO horarios_especiales
             (usuario_id, fecha, tipo, hora_entrada_1, hora_salida_1, hora_entrada_2, hora_salida_2, observaciones, creado_por)
-            VALUES 
-            ('$id_trabajador', '$fecha', '$tipo', 
-            " . ($entrada_1 == 'NULL' ? 'NULL' : "'$entrada_1'") . ",
-            " . ($salida_1  == 'NULL' ? 'NULL' : "'$salida_1'")  . ",
-            " . ($entrada_2 == 'NULL' ? 'NULL' : "'$entrada_2'") . ",
-            " . ($salida_2  == 'NULL' ? 'NULL' : "'$salida_2'")  . ",
-            '$observaciones', '" . $_SESSION['id'] . "')");
+            VALUES ('$id_trabajador', '$fecha', '$tipo', $e1, $s1, $e2, $s2, '$observaciones', '" . $_SESSION['id'] . "')");
 
         if ($insert) {
             $mensaje_ok = "Día especial guardado correctamente";
@@ -124,14 +107,13 @@ if (isset($_POST['guardar_especial'])) {
 }
 
 //-----------------------------------------------------|
-//----------- BORRAR DÍA ESPECIAL ------------------- |
+//---------- BORRAR DÍA ESPECIAL --------------------|
 //-----------------------------------------------------|
 
 if (isset($_POST['borrar_especial'])) {
 
     $id_especial = $_POST['id_especial'];
-
-    $borrar = $conexion->query("DELETE FROM horarios_especiales WHERE id = '$id_especial'");
+    $borrar      = $conexion->query("DELETE FROM horarios_especiales WHERE id = '$id_especial'");
 
     if ($borrar) {
         $mensaje_ok = "Día especial borrado correctamente";
@@ -140,17 +122,14 @@ if (isset($_POST['borrar_especial'])) {
     }
 }
 
-// Recupero el horario semanal actual del trabajador
 $horario_actual = [];
 $resultado_horario = $conexion->query("SELECT * FROM horarios WHERE usuario_id = '$id_trabajador'");
 while ($fila = $resultado_horario->fetch_assoc()) {
     $horario_actual[$fila['dia_semana']] = $fila;
 }
 
-// Recupero los días especiales del trabajador ordenados por fecha
 $especiales = $conexion->query("SELECT * FROM horarios_especiales 
-    WHERE usuario_id = '$id_trabajador' 
-    ORDER BY fecha ASC");
+    WHERE usuario_id = '$id_trabajador' ORDER BY fecha ASC");
 
 desconectar($conexion);
 
@@ -171,8 +150,8 @@ desconectar($conexion);
     <h2>Horario de <?php echo $trabajador['nombre'] . " " . $trabajador['apellidos']; ?></h2>
 
     <?php
-    if (isset($mensaje_ok))    echo "<p style='color:green'>" . $mensaje_ok    . "</p>";
-    if (isset($mensaje_error)) echo "<p style='color:red'>"   . $mensaje_error . "</p>";
+    if (isset($mensaje_ok))    mostrarMensaje($mensaje_ok);
+    if (isset($mensaje_error)) mostrarMensaje($mensaje_error, 'error');
     ?>
 
     <a href="trabajadores.php">
@@ -201,11 +180,11 @@ desconectar($conexion);
             $e2 = isset($horario_actual[$num]) ? $horario_actual[$num]['hora_entrada_2'] : "";
             $s2 = isset($horario_actual[$num]) ? $horario_actual[$num]['hora_salida_2']  : "";
             echo "<tr>
-                <td data-label='Día'><b>" . $nombre . "</b></td>
-                <td data-label='Entrada mañana'><input type='time' name='entrada_1_" . $num . "' value='" . $e1 . "'></td>
-                <td data-label='Salida mañana'><input type='time' name='salida_1_"  . $num . "' value='" . $s1 . "'></td>
-                <td data-label='Entrada tarde'><input type='time' name='entrada_2_" . $num . "' value='" . $e2 . "'></td>
-                <td data-label='Salida tarde'><input type='time' name='salida_2_"  . $num . "' value='" . $s2 . "'></td>
+                <td data-label='Día'><b>$nombre</b></td>
+                <td data-label='Entrada mañana'><input type='time' name='entrada_1_$num' value='$e1'></td>
+                <td data-label='Salida mañana'><input type='time' name='salida_1_$num' value='$s1'></td>
+                <td data-label='Entrada tarde'><input type='time' name='entrada_2_$num' value='$e2'></td>
+                <td data-label='Salida tarde'><input type='time' name='salida_2_$num' value='$s2'></td>
             </tr>";
         endforeach; ?>
 
@@ -215,11 +194,8 @@ desconectar($conexion);
     <input type="submit" name="guardar_horario" value="Guardar horario">
     </form>
 
-    <!-- Botón para mostrar el formulario de día especial -->
-    <!-- Se muestra con slideDown y se oculta con slideUp -->
     <button type="button" id="btn-mostrar-especial">+ Añadir día especial</button>
 
-    <!-- Formulario oculto por defecto -->
     <div id="form-especial" style="display:none">
         <h3>Añadir día especial</h3>
         <form action="horarios.php?id=<?php echo $id_trabajador; ?>" method="POST">
@@ -257,74 +233,57 @@ desconectar($conexion);
         </form>
     </div>
 
-    <?php
+    <?php if ($especiales->num_rows > 0): ?>
 
-    //-----------------------------------------------------|
-    //---------- LISTADO DÍAS ESPECIALES -----------------|
-    //-----------------------------------------------------|
+        <button type="button" id="btn-mostrar-especiales">Ver días especiales registrados</button>
 
-    if ($especiales->num_rows > 0) {
+        <div id="tabla-especiales" style="display:none">
+            <h3>Días especiales registrados</h3>
+            <div class="tabla-wrapper"><table class="tabla-apilable">
+                <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Entrada mañana</th>
+                    <th>Salida mañana</th>
+                    <th>Entrada tarde</th>
+                    <th>Salida tarde</th>
+                    <th>Observaciones</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php while ($esp = $especiales->fetch_assoc()): ?>
+                <tr>
+                    <td data-label="Fecha"><?php echo formatearFecha($esp['fecha']); ?></td>
+                    <td data-label="Tipo"><?php echo ucfirst(str_replace('_', ' ', $esp['tipo'])); ?></td>
+                    <td data-label="Entrada mañana"><?php echo $esp['hora_entrada_1'] ?? '-'; ?></td>
+                    <td data-label="Salida mañana"><?php echo $esp['hora_salida_1']  ?? '-'; ?></td>
+                    <td data-label="Entrada tarde"><?php echo $esp['hora_entrada_2'] ?? '-'; ?></td>
+                    <td data-label="Salida tarde"><?php echo $esp['hora_salida_2']  ?? '-'; ?></td>
+                    <td data-label="Observaciones"><?php echo $esp['observaciones']; ?></td>
+                    <td data-label="Acciones">
+                        <form action="horarios.php?id=<?php echo $id_trabajador; ?>" method="POST" style="display:inline">
+                            <input type="hidden" name="id_especial" value="<?php echo $esp['id']; ?>">
+                            <input type="submit" name="borrar_especial" value="Borrar"
+                                onclick="return confirm('¿Seguro que quieres borrar este día especial?')">
+                        </form>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+                </tbody>
+            </table></div>
+        </div>
 
-        // Botón para mostrar u ocultar la tabla
-        echo "<button type='button' id='btn-mostrar-especiales'>Ver días especiales registrados</button>";
-
-        // Tabla oculta por defecto
-        echo "<div id='tabla-especiales' style='display:none'>";
-        echo "<h3>Días especiales registrados</h3>";
-        echo "<div class='tabla-wrapper'><table class='tabla-apilable'>
-            <thead>
-            <tr>
-                <th>Fecha</th>
-                <th>Tipo</th>
-                <th>Entrada mañana</th>
-                <th>Salida mañana</th>
-                <th>Entrada tarde</th>
-                <th>Salida tarde</th>
-                <th>Observaciones</th>
-                <th>Acciones</th>
-            </tr>
-            </thead>
-            <tbody>";
-
-        while ($esp = $especiales->fetch_assoc()) {
-
-            $fecha_formateada = date('d/m/Y', strtotime($esp['fecha']));
-
-            echo "<tr>
-                <td data-label='Fecha'>" . $fecha_formateada . "</td>
-                <td data-label='Tipo'>" . ucfirst(str_replace('_', ' ', $esp['tipo'])) . "</td>
-                <td data-label='Entrada mañana'>" . ($esp['hora_entrada_1'] ?? '-') . "</td>
-                <td data-label='Salida mañana'>"  . ($esp['hora_salida_1']  ?? '-') . "</td>
-                <td data-label='Entrada tarde'>"  . ($esp['hora_entrada_2'] ?? '-') . "</td>
-                <td data-label='Salida tarde'>"   . ($esp['hora_salida_2']  ?? '-') . "</td>
-                <td data-label='Observaciones'>"  . $esp['observaciones'] . "</td>
-                <td data-label='Acciones'>
-                    <form action='horarios.php?id=" . $id_trabajador . "' method='POST' style='display:inline'>
-                        <input type='hidden' name='id_especial' value='" . $esp['id'] . "'>
-                        <input type='submit' name='borrar_especial' value='Borrar'
-                            onclick='return confirm(\"¿Seguro que quieres borrar este día especial?\")'>
-                    </form>
-                </td>
-            </tr>";
-        }
-
-        echo "</tbody></table></div>";
-        echo "</div>";
-
-    } else {
-        echo "<p>No hay días especiales registrados para este trabajador</p>";
-    }
-
-    ?>
+    <?php else: ?>
+        <p>No hay días especiales registrados para este trabajador</p>
+    <?php endif; ?>
 
     <h3>Festivos nacionales <?php echo date('Y'); ?></h3>
     <p style="font-size:11px; color:var(--color-texto-apagado)">Fuente: API Nager.Date</p>
     <div id="festivos"></div>
 
 </main>
-
-
-
 
 <?php include "../includes/footer.php"; ?>
 

@@ -2,25 +2,15 @@
 /*
  * Perfil del trabajador
  * Muestra los datos personales del trabajador conectado
- * Solo lectura, no se puede editar nada
  */
 
-session_start();
-
-// Si no hay sesión activa o no es trabajador redirige al login
-if (!isset($_SESSION['user']) || $_SESSION['rol'] != "trabajador") {
-    header("Location: ../index.php");
-    exit;
-}
+include "../includes/funciones.php";
+verificarSesion('trabajador');
 
 include "../config.php";
 
-$conexion = conectar();
-
-// Recupero los datos del trabajador conectado usando el id de la sesión
-$resultado = $conexion->query("SELECT * FROM usuarios WHERE id = '" . $_SESSION['id'] . "'");
-$trabajador = $resultado->fetch_assoc();
-
+$conexion  = conectar();
+$trabajador = $conexion->query("SELECT * FROM usuarios WHERE id = '" . $_SESSION['id'] . "'")->fetch_assoc();
 desconectar($conexion);
 
 ?>
@@ -39,17 +29,14 @@ desconectar($conexion);
 <main>
     <h2>Mi perfil</h2>
 
-    <!-- Foto del trabajador -->
     <div class="perfil-foto">
         <?php if (!empty($trabajador['foto'])): ?>
-            <img src="/uploads/fotos_trabajadores/<?php echo $trabajador['foto']; ?>"
-                 alt="Foto de perfil">
+            <img src="/uploads/fotos_trabajadores/<?php echo $trabajador['foto']; ?>" alt="Foto de perfil">
         <?php else: ?>
             <div class="perfil-sin-foto">Sin foto</div>
         <?php endif; ?>
     </div>
 
-    <!-- Datos personales -->
     <div class="perfil-datos">
 
         <h3>Datos personales</h3>
@@ -81,7 +68,7 @@ desconectar($conexion);
 
         <div class="perfil-campo">
             <span class="perfil-label">Fecha de nacimiento</span>
-            <span class="perfil-valor"><?php echo !empty($trabajador['fecha_nacimiento']) ? date('d/m/Y', strtotime($trabajador['fecha_nacimiento'])) : "No especificada"; ?></span>
+            <span class="perfil-valor"><?php echo formatearFecha($trabajador['fecha_nacimiento']); ?></span>
         </div>
 
         <h3>Datos laborales</h3>
@@ -98,13 +85,13 @@ desconectar($conexion);
 
         <div class="perfil-campo">
             <span class="perfil-label">Fecha de incorporación</span>
-            <span class="perfil-valor"><?php echo !empty($trabajador['fecha_incorporacion']) ? date('d/m/Y', strtotime($trabajador['fecha_incorporacion'])) : "No especificada"; ?></span>
+            <span class="perfil-valor"><?php echo formatearFecha($trabajador['fecha_incorporacion']); ?></span>
         </div>
 
         <div class="perfil-campo">
             <span class="perfil-label">Días de vacaciones disponibles</span>
             <span class="perfil-valor">
-                <?php echo ($trabajador['dias_vacaciones_totales'] - $trabajador['dias_vacaciones_gastados']); ?> días
+                <?php echo diasVacacionesDisponibles($trabajador['dias_vacaciones_totales'], $trabajador['dias_vacaciones_gastados']); ?> días
             </span>
         </div>
 

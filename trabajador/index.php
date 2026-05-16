@@ -5,12 +5,8 @@
  * El sistema activa solo el siguiente fichaje pendiente
  */
 
-session_start();
-
-if (!isset($_SESSION['user']) || $_SESSION['rol'] != "trabajador") {
-    header("Location: ../index.php");
-    exit;
-}
+include "../includes/funciones.php";
+verificarSesion('trabajador');
 
 include "../config.php";
 
@@ -26,6 +22,7 @@ $conexion = conectar();
  * Nosotros solo usamos del 1 al 5 (lunes a viernes)
  */
 $dia_semana = date('N'); // 1=Lunes, 5=Viernes
+// $dia_semana = 5; // 1=Lunes, 5=Viernes
 $fecha_hoy  = date('Y-m-d');
 
 // Primero compruebo si hay un día especial para hoy

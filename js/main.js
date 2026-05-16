@@ -263,47 +263,7 @@ $(document).ready(function() {
 });
 
 
-//-----------------------------------------------------|
-//---------- MOSTRAR FORMULARIO NUEVO MENSAJE -------- |
-//-----------------------------------------------------|
 
-$(document).ready(function() {
-
-    $("#btn-nuevo-mensaje").click(function() {
-
-        if ($("#form-mensaje").is(":visible")) {
-            $("#form-mensaje").slideUp("slow");
-            $(this).text("+ Nuevo mensaje");
-        } else {
-            $("#form-mensaje").slideDown("slow");
-            $(this).text("- Cerrar");
-        }
-    });
-});
-
-
-//-----------------------------------------------------|
-//---------- RESPONDER MENSAJE ADMIN ----------------- |
-//-----------------------------------------------------|
-
-$(document).ready(function() {
-
-    $(".btn-responder").click(function() {
-
-        var id  = $(this).data("id");
-        var div = $("#respuesta-" + id);
-
-        if (div.is(":visible")) {
-            div.slideUp("slow");
-            $(this).text("Responder");
-        } else {
-            $(".form-respuesta").slideUp("slow");
-            $(".btn-responder").text("Responder");
-            div.slideDown("slow");
-            $(this).text("- Cerrar");
-        }
-    });
-});
 
 
 //-----------------------------------------------------|

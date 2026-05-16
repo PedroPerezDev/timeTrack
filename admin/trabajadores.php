@@ -2,24 +2,19 @@
 /*
  * Gestión de trabajadores - Panel de administrador
  * Permite buscar, crear, modificar y borrar trabajadores
- * Solo accesible para usuarios con rol 'admin'
  */
 
-session_start();
-
-if (!isset($_SESSION['user']) || $_SESSION['rol'] != "admin") {
-    header("Location: ../index.php");
-    exit;
-}
+include "../includes/funciones.php";
+verificarSesion('admin');
 
 include "../config.php";
 
 $conexion = conectar();
 
-//-----------------------------------------------------|
-//------- FUNCIÓN PARA PINTAR LA TABLA --------------- |
-//-----------------------------------------------------|
 
+/*
+ * Genera la tabla HTML con el listado de trabajadores.
+ */
 function mostrarTabla($resultado) {
 
     echo "<div class='tabla-wrapper'>
@@ -43,13 +38,9 @@ function mostrarTabla($resultado) {
 
     while ($fila = $resultado->fetch_assoc()) {
 
-        $foto_html = !empty($fila['foto'])
-            ? "<img src='/uploads/fotos_trabajadores/" . $fila['foto'] . "' width='40' style='border-radius:50%'>"
-            : "Sin foto";
-
         echo "<tr>
             <td data-label='ID'>" . $fila['id'] . "</td>
-            <td data-label='Foto'>" . $foto_html . "</td>
+            <td data-label='Foto'>" . mostrarFoto($fila['foto'], 40) . "</td>
             <td data-label='Nombre'>" . $fila['nombre'] . "</td>
             <td data-label='Apellidos'>" . $fila['apellidos'] . "</td>
             <td data-label='Email'>" . $fila['email'] . "</td>
@@ -101,7 +92,7 @@ function mostrarTabla($resultado) {
     <?php
 
     //-----------------------------------------------------|
-    //------------------- ALTA TRABAJADOR -----------------|
+    //---------- ALTA DE TRABAJADOR ----------------------|
     //-----------------------------------------------------|
 
     if (isset($_POST['alta'])) {
@@ -120,28 +111,18 @@ function mostrarTabla($resultado) {
         $dias_vac     = $_POST['dias_vacaciones_totales'];
 
         if (empty($nombre) || empty($apellidos) || empty($email) || empty($password)) {
-            echo "<p style='color:red'>Nombre, apellidos, email y contraseña son obligatorios</p>";
+            mostrarMensaje("Nombre, apellidos, email y contraseña son obligatorios", 'error');
 
         } else {
 
-            $check = $conexion->query("SELECT * FROM usuarios WHERE email = '$email'");
+            $check = $conexion->query("SELECT id FROM usuarios WHERE email = '$email'");
 
             if ($check->num_rows > 0) {
-                echo "<p style='color:red'>Ya existe un trabajador con ese email</p>";
+                mostrarMensaje("Ya existe un trabajador con ese email", 'error');
 
             } else {
 
-                $foto = "";
-                if (!empty($_FILES['foto']['name'])) {
-                    $nombre_foto = time() . "_" . $_FILES['foto']['name'];
-                    $ruta_foto   = "../uploads/fotos_trabajadores/" . $nombre_foto;
-                    if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta_foto)) {
-                        $foto = $nombre_foto;
-                    } else {
-                        echo "<p style='color:red'>Error al subir la foto</p>";
-                    }
-                }
-
+                $foto     = subirFoto($_FILES['foto']);
                 $insertar = $conexion->query("INSERT INTO usuarios 
                     (nombre, apellidos, email, password, rol, dni, telefono, direccion, 
                     fecha_nacimiento, fecha_incorporacion, foto, departamento, puesto, dias_vacaciones_totales)
@@ -150,40 +131,36 @@ function mostrarTabla($resultado) {
                     '$direccion', '$fecha_nac', '$fecha_inc', '$foto', '$departamento', '$puesto', '$dias_vac')");
 
                 if ($insertar) {
-                    echo "<p style='color:green'>Trabajador <b>$nombre $apellidos</b> dado de alta correctamente</p>";
+                    mostrarMensaje("Trabajador <b>$nombre $apellidos</b> dado de alta correctamente");
                 } else {
-                    echo "<p style='color:red'>Error al dar de alta: " . $conexion->error . "</p>";
+                    mostrarMensaje("Error al dar de alta: " . $conexion->error, 'error');
                 }
             }
         }
     }
 
     //-----------------------------------------------------|
-    //----------------- BORRADO TRABAJADOR ----------------|
+    //---------- BORRADO DE TRABAJADOR -------------------|
     //-----------------------------------------------------|
 
     if (isset($_POST['borrar'])) {
 
-        $id = $_POST['id'];
+        $id        = $_POST['id'];
+        $fila_foto = $conexion->query("SELECT foto FROM usuarios WHERE id = '$id'")->fetch_assoc();
 
-        $resultado_foto = $conexion->query("SELECT foto FROM usuarios WHERE id = '$id'");
-        $fila_foto      = $resultado_foto->fetch_assoc();
-
-        if (!empty($fila_foto['foto'])) {
-            unlink("../uploads/fotos_trabajadores/" . $fila_foto['foto']);
-        }
+        eliminarFoto($fila_foto['foto']);
 
         $borrar = $conexion->query("DELETE FROM usuarios WHERE id = '$id'");
 
         if ($borrar) {
-            echo "<p style='color:green'>Trabajador borrado correctamente</p>";
+            mostrarMensaje("Trabajador borrado correctamente");
         } else {
-            echo "<p style='color:red'>Error al borrar: " . $conexion->error . "</p>";
+            mostrarMensaje("Error al borrar: " . $conexion->error, 'error');
         }
     }
 
     //-----------------------------------------------------|
-    //---------------- MODIFICAR TRABAJADOR ---------------|
+    //---------- MODIFICACIÓN DE TRABAJADOR --------------|
     //-----------------------------------------------------|
 
     if (isset($_POST['actualizar'])) {
@@ -202,26 +179,16 @@ function mostrarTabla($resultado) {
         $dias_vac     = $_POST['dias_vacaciones_totales'];
 
         if (empty($nombre) || empty($apellidos) || empty($email)) {
-            echo "<p style='color:red'>Nombre, apellidos y email son obligatorios</p>";
+            mostrarMensaje("Nombre, apellidos y email son obligatorios", 'error');
 
         } else {
 
             $sql_foto = "";
             if (!empty($_FILES['foto']['name'])) {
-
-                $resultado_foto = $conexion->query("SELECT foto FROM usuarios WHERE id = '$id'");
-                $fila_foto      = $resultado_foto->fetch_assoc();
-
-                if (!empty($fila_foto['foto'])) {
-                    unlink("../uploads/fotos_trabajadores/" . $fila_foto['foto']);
-                }
-
-                $nombre_foto = time() . "_" . $_FILES['foto']['name'];
-                $ruta_foto   = "../uploads/fotos_trabajadores/" . $nombre_foto;
-
-                if (move_uploaded_file($_FILES['foto']['tmp_name'], $ruta_foto)) {
-                    $sql_foto = ", foto = '$nombre_foto'";
-                }
+                $fila_foto = $conexion->query("SELECT foto FROM usuarios WHERE id = '$id'")->fetch_assoc();
+                eliminarFoto($fila_foto['foto']);
+                $nombre_foto = subirFoto($_FILES['foto']);
+                if ($nombre_foto) $sql_foto = ", foto = '$nombre_foto'";
             }
 
             $update = $conexion->query("UPDATE usuarios SET
@@ -240,15 +207,15 @@ function mostrarTabla($resultado) {
                 WHERE id = '$id'");
 
             if ($update) {
-                echo "<p style='color:green'>Trabajador actualizado correctamente</p>";
+                mostrarMensaje("Trabajador actualizado correctamente");
             } else {
-                echo "<p style='color:red'>Error al actualizar: " . $conexion->error . "</p>";
+                mostrarMensaje("Error al actualizar: " . $conexion->error, 'error');
             }
         }
     }
 
     //-----------------------------------------------------|
-    //------------ BUSCADOR DE TRABAJADORES ---------------|
+    //---------- BUSCADOR DE TRABAJADORES ----------------|
     //-----------------------------------------------------|
 
     ?>
@@ -281,7 +248,7 @@ function mostrarTabla($resultado) {
     <?php
 
     //-----------------------------------------------------|
-    //------------ RESULTADO DE LA BÚSQUEDA --------------|
+    //---------- RESULTADO DE BÚSQUEDA -------------------|
     //-----------------------------------------------------|
 
     if (isset($_POST['buscar'])) {
@@ -289,9 +256,8 @@ function mostrarTabla($resultado) {
         $resultado = null;
 
         if (!empty($_POST['buscar_id'])) {
-            $id_buscar = $_POST['buscar_id'];
             $resultado = $conexion->query("SELECT * FROM usuarios 
-                WHERE id = '$id_buscar' AND rol = 'trabajador'");
+                WHERE id = '" . $_POST['buscar_id'] . "' AND rol = 'trabajador'");
 
         } elseif (!empty($_POST['buscar_nombre'])) {
             $nombre_buscar = $_POST['buscar_nombre'];
@@ -300,35 +266,28 @@ function mostrarTabla($resultado) {
                 AND rol = 'trabajador'");
 
         } else {
-            echo "<p style='color:red'>Introduce un nombre o selecciona un trabajador</p>";
+            mostrarMensaje("Introduce un nombre o selecciona un trabajador", 'error');
         }
 
         if ($resultado && $resultado->num_rows > 0) {
             mostrarTabla($resultado);
         } elseif ($resultado) {
-            echo "<p style='color:red'>No se ha encontrado ningún trabajador</p>";
+            mostrarMensaje("No se ha encontrado ningún trabajador", 'error');
         }
     }
 
     //-----------------------------------------------------|
-    //------------- VER TODOS PAGINADO -------------------|
+    //---------- LISTADO PAGINADO ------------------------|
     //-----------------------------------------------------|
 
     if (isset($_POST['ver_todos']) || isset($_GET['pagina'])) {
 
-        $regxpag = 5;
-
-        $total          = $conexion->query("SELECT * FROM usuarios WHERE rol = 'trabajador'");
+        $regxpag        = 5;
+        $total          = $conexion->query("SELECT id FROM usuarios WHERE rol = 'trabajador'");
         $totalRegistros = $total->num_rows;
         $totalPaginas   = ceil($totalRegistros / $regxpag);
-
-        if (isset($_GET['pagina'])) {
-            $pagina = intval($_GET['pagina']);
-        } else {
-            $pagina = 1;
-        }
-
-        $posInicial = ($pagina - 1) * $regxpag;
+        $pagina         = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
+        $posInicial     = ($pagina - 1) * $regxpag;
 
         $resultado = $conexion->query("SELECT * FROM usuarios 
             WHERE rol = 'trabajador' 
@@ -338,34 +297,23 @@ function mostrarTabla($resultado) {
         if ($resultado->num_rows > 0) {
             mostrarTabla($resultado);
         } else {
-            echo "<p style='color:red'>No hay trabajadores registrados</p>";
+            mostrarMensaje("No hay trabajadores registrados", 'error');
         }
 
-        if ($pagina <= 1) {
-            $anterior = $totalPaginas;
-        } else {
-            $anterior = $pagina - 1;
-        }
+        $anterior  = $pagina <= 1 ? $totalPaginas : $pagina - 1;
+        $siguiente = $pagina >= $totalPaginas ? 1 : $pagina + 1;
 
         echo "<div class='paginacion'>";
-        echo "<a href='trabajadores.php?pagina=" . $anterior . "'> &lt; </a>";
-
+        echo "<a href='trabajadores.php?pagina=$anterior'> &lt; </a>";
         for ($i = 1; $i <= $totalPaginas; $i++) {
-            echo "<a href='trabajadores.php?pagina=" . $i . "'>" . $i . "</a>";
+            echo "<a href='trabajadores.php?pagina=$i'>$i</a>";
         }
-
-        if ($pagina >= $totalPaginas) {
-            $siguiente = 1;
-        } else {
-            $siguiente = $pagina + 1;
-        }
-
-        echo "<a href='trabajadores.php?pagina=" . $siguiente . "'> &gt; </a>";
+        echo "<a href='trabajadores.php?pagina=$siguiente'> &gt; </a>";
         echo "</div>";
     }
 
     //-----------------------------------------------------|
-    //--------- FORMULARIO DE MODIFICACIÓN ---------------|
+    //---------- FORMULARIO DE MODIFICACIÓN --------------|
     //-----------------------------------------------------|
 
     if (isset($_POST['ver_modificar'])) {
@@ -377,7 +325,6 @@ function mostrarTabla($resultado) {
 
             $fila = $resultado_mod->fetch_assoc();
 
-            // El formulario aparece con slideDown al pulsar Modificar
             echo "<div id='form-modificar' style='display:none'>";
             echo "
             <h3>Modificar trabajador</h3>
@@ -422,11 +369,7 @@ function mostrarTabla($resultado) {
 
             <label>Foto actual</label>";
 
-            if (!empty($fila['foto'])) {
-                echo "<img src='/uploads/fotos_trabajadores/" . $fila['foto'] . "' width='80' style='border-radius:var(--radio-mediano);display:block;margin-top:6px'>";
-            } else {
-                echo "<p>Sin foto</p>";
-            }
+            echo mostrarFoto($fila['foto'], 80, 'border-radius:var(--radio-mediano);display:block;margin-top:6px');
 
             echo "
             <label>Cambiar foto (opcional)</label>
@@ -435,18 +378,14 @@ function mostrarTabla($resultado) {
             <input type='submit' name='actualizar' value='Actualizar trabajador'>
             </fieldset>
             </form>";
-            echo "</div>"; // cierre div#form-modificar
+            echo "</div>";
         }
     }
-
-    //-----------------------------------------------------|
-    //--------- FORMULARIO DE ALTA (AL FINAL) ------------|
-    //-----------------------------------------------------|
 
     desconectar($conexion);
     ?>
 
-    <!-- Formulario de alta oculto por defecto, se despliega con slideDown -->
+    <!-- Formulario de alta oculto por defecto -->
     <div id="form-nuevo" style="display:none">
         <h3>Nuevo trabajador</h3>
         <form id="form-alta" action="trabajadores.php" method="POST" enctype="multipart/form-data">
@@ -495,10 +434,8 @@ function mostrarTabla($resultado) {
             <input type="submit" name="alta" value="Dar de alta">
         </fieldset>
         </form>
+    </div>
 
-    </div> <!-- cierre div#form-nuevo -->
-
-    <!-- Botón para mostrar el formulario de alta con slideDown -->
     <button type="button" id="btn-nuevo-trabajador">+ Nuevo trabajador</button>
 
 </main>

@@ -1,28 +1,23 @@
 <?php
 /*
- * Página de vacaciones del trabajador
- * Muestra los días de vacaciones disponibles
- * y los festivos nacionales cargados desde la API
+ * Vacaciones del trabajador
+ * Muestra los días disponibles y los festivos nacionales
  */
 
-session_start();
-
-if (!isset($_SESSION['user']) || $_SESSION['rol'] != "trabajador") {
-    header("Location: ../index.php");
-    exit;
-}
+include "../includes/funciones.php";
+verificarSesion('trabajador');
 
 include "../config.php";
 
-$conexion = conectar();
-
-// Recupero los días de vacaciones del trabajador
+$conexion   = conectar();
 $trabajador = $conexion->query("SELECT dias_vacaciones_totales, dias_vacaciones_gastados 
     FROM usuarios WHERE id = '" . $_SESSION['id'] . "'")->fetch_assoc();
-
 desconectar($conexion);
 
-$dias_disponibles = $trabajador['dias_vacaciones_totales'] - $trabajador['dias_vacaciones_gastados'];
+$dias_disponibles = diasVacacionesDisponibles(
+    $trabajador['dias_vacaciones_totales'],
+    $trabajador['dias_vacaciones_gastados']
+);
 
 ?>
 
@@ -40,7 +35,6 @@ $dias_disponibles = $trabajador['dias_vacaciones_totales'] - $trabajador['dias_v
 <main>
     <h2>Mis vacaciones</h2>
 
-    <!-- Resumen de días de vacaciones -->
     <div class="perfil-datos">
         <h3>Días de vacaciones</h3>
 
@@ -62,19 +56,11 @@ $dias_disponibles = $trabajador['dias_vacaciones_totales'] - $trabajador['dias_v
         </div>
     </div>
 
-    <!-- Festivos nacionales cargados desde la API -->
     <h3>Festivos nacionales <?php echo date('Y'); ?></h3>
-    <p style="font-size:11px; color:var(--color-texto-apagado)">
-        Fuente: API Nager.Date
-    </p>
-
-    <!-- Este div lo rellena jQuery con AJAX -->
+    <p style="font-size:11px; color:var(--color-texto-apagado)">Fuente: API Nager.Date</p>
     <div id="festivos"></div>
 
 </main>
-
-
-
 
 <?php include "../includes/footer.php"; ?>
 
