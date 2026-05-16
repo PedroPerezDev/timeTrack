@@ -59,7 +59,7 @@ if (!isset($_SESSION['user'])) {
             echo "
                 <a href='/admin/trabajadores.php'>Trabajadores</a>
                 <a href='/admin/informes.php'>Informes</a>
-                <a href='/admin/mensajes.php'>Mensajes</a>
+                
             ";
         }
         if ($_SESSION['rol'] === 'trabajador') {
@@ -67,7 +67,7 @@ if (!isset($_SESSION['user'])) {
                 <a href='/trabajador/index.php'>Mi jornada</a>
                 <a href='/trabajador/perfil.php'>Mi perfil</a>
                 <a href='/trabajador/vacaciones.php'>Vacaciones</a>
-                <a href='/trabajador/mensajes.php'>Mensajes</a>
+              
             ";
         }
         ?>
