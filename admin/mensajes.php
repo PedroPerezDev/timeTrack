@@ -107,7 +107,7 @@ desconectar($conexion);
 
                     <!-- Foto del trabajador -->
                     <?php if (!empty($m['foto_remitente'])): ?>
-                        <img src="/timetrack/uploads/fotos_trabajadores/<?php echo $m['foto_remitente']; ?>"
+                        <img src="/uploads/fotos_trabajadores/<?php echo $m['foto_remitente']; ?>"
                              width="35" style="border-radius:50%">
                     <?php endif; ?>
 

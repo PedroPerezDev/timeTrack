@@ -16,7 +16,7 @@ if (!isset($_SESSION['user'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TimeTrack</title>
-    <link rel="stylesheet" href="/timetrack/css/style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
@@ -26,7 +26,7 @@ if (!isset($_SESSION['user'])) {
 
         <!-- Logo y nombre de la aplicación -->
         <div class="header-logo">
-            <img src="/timetrack/img/logo_timetrack.png" alt="Logo TimeTrack">
+            <img src="/img/logo_timetrack.png" alt="Logo TimeTrack">
             <h1>TimeTrack</h1>
         </div>
 
@@ -53,25 +53,25 @@ if (!isset($_SESSION['user'])) {
 
     <!-- Menú de navegación -->
     <nav id="nav-menu">
-        <a href="/timetrack/index.php">Inicio</a>
+        <a href="/index.php">Inicio</a>
         <?php
         if ($_SESSION['rol'] === 'admin') {
             echo "
-                <a href='/timetrack/admin/trabajadores.php'>Trabajadores</a>
-                <a href='/timetrack/admin/informes.php'>Informes</a>
-                <a href='/timetrack/admin/mensajes.php'>Mensajes</a>
+                <a href='/admin/trabajadores.php'>Trabajadores</a>
+                <a href='/admin/informes.php'>Informes</a>
+                <a href='/admin/mensajes.php'>Mensajes</a>
             ";
         }
         if ($_SESSION['rol'] === 'trabajador') {
             echo "
-                <a href='/timetrack/trabajador/index.php'>Mi jornada</a>
-                <a href='/timetrack/trabajador/perfil.php'>Mi perfil</a>
-                <a href='/timetrack/trabajador/vacaciones.php'>Vacaciones</a>
-                <a href='/timetrack/trabajador/mensajes.php'>Mensajes</a>
+                <a href='/trabajador/index.php'>Mi jornada</a>
+                <a href='/trabajador/perfil.php'>Mi perfil</a>
+                <a href='/trabajador/vacaciones.php'>Vacaciones</a>
+                <a href='/trabajador/mensajes.php'>Mensajes</a>
             ";
         }
         ?>
-        <a href="/timetrack/includes/cerrar_sesion.php">Cerrar sesión</a>
+        <a href="/includes/cerrar_sesion.php">Cerrar sesión</a>
     </nav>
 
 </header>

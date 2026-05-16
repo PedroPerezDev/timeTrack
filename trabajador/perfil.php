@@ -42,7 +42,7 @@ desconectar($conexion);
     <!-- Foto del trabajador -->
     <div class="perfil-foto">
         <?php if (!empty($trabajador['foto'])): ?>
-            <img src="/timetrack/uploads/fotos_trabajadores/<?php echo $trabajador['foto']; ?>"
+            <img src="/uploads/fotos_trabajadores/<?php echo $trabajador['foto']; ?>"
                  alt="Foto de perfil">
         <?php else: ?>
             <div class="perfil-sin-foto">Sin foto</div>

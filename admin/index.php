@@ -232,7 +232,7 @@ desconectar($conexion);
 
             // Foto del trabajador
             $foto_html = !empty($t['foto'])
-                ? "<img src='/timetrack/uploads/fotos_trabajadores/" . $t['foto'] . "' width='30' style='border-radius:50%;vertical-align:middle;margin-right:6px'>"
+                ? "<img src='/uploads/fotos_trabajadores/" . $t['foto'] . "' width='30' style='border-radius:50%;vertical-align:middle;margin-right:6px'>"
                 : "";
         ?>
         <tr>

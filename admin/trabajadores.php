@@ -44,7 +44,7 @@ function mostrarTabla($resultado) {
     while ($fila = $resultado->fetch_assoc()) {
 
         $foto_html = !empty($fila['foto'])
-            ? "<img src='/timetrack/uploads/fotos_trabajadores/" . $fila['foto'] . "' width='40' style='border-radius:50%'>"
+            ? "<img src='/uploads/fotos_trabajadores/" . $fila['foto'] . "' width='40' style='border-radius:50%'>"
             : "Sin foto";
 
         echo "<tr>
@@ -421,7 +421,7 @@ function mostrarTabla($resultado) {
             <label>Foto actual</label>";
 
             if (!empty($fila['foto'])) {
-                echo "<img src='/timetrack/uploads/fotos_trabajadores/" . $fila['foto'] . "' width='80' style='border-radius:var(--radio-mediano);display:block;margin-top:6px'>";
+                echo "<img src='/uploads/fotos_trabajadores/" . $fila['foto'] . "' width='80' style='border-radius:var(--radio-mediano);display:block;margin-top:6px'>";
             } else {
                 echo "<p>Sin foto</p>";
             }
