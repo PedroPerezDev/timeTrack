@@ -258,6 +258,20 @@ main h3 {
     color:       var(--color-texto);
 }
 
+/* Cabecera de página con título a la izquierda y acción a la derecha */
+.pagina-cabecera {
+    display:         flex;
+    flex-direction:  row;
+    justify-content: space-between;
+    align-items:     center;
+    gap:             12px;
+}
+
+.pagina-cabecera button {
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
 
 /* ------------------------------------------------
    FOOTER
@@ -679,39 +693,46 @@ table tr:hover td {
    DASHBOARD ADMIN
    ------------------------------------------------ */
 .dashboard-grid {
-    display:               grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap:                   12px;
+    display:        flex;
+    flex-direction: column;
+    gap:            8px;
 }
 
+/* Cards horizontales compactas:
+   número a la izquierda, etiqueta a la derecha */
 .dashboard-card {
     display:         flex;
-    flex-direction:  column;
+    flex-direction:  row;
     align-items:     center;
-    justify-content: center;
-    gap:             8px;
-    padding:         16px 8px;
+    justify-content: space-between;
+    gap:             12px;
+    padding:         12px 16px;
     background:      var(--color-superficie);
     border-radius:   var(--radio-mediano);
-    border:          2px solid var(--color-borde);
+    border:          1px solid var(--color-borde);
+    border-left:     3px solid var(--color-borde);
 }
 
 .dashboard-card-numero {
     font-family: var(--fuente-mono);
-    font-size:   36px;
+    font-size:   22px;
     font-weight: 500;
-    color:       var(--color-principal);
+    color:       var(--color-texto);
     line-height: 1;
+    min-width:   40px;
+    text-align:  right;
+    order:       2;
 }
 
 .dashboard-card-label {
-    font-size:  10px;
+    font-size:  12px;
     color:      var(--color-texto-apagado);
-    text-align: center;
+    text-align: left;
+    order:      1;
 }
 
 .dashboard-card-ok {
-    border-color: var(--color-acento);
+    border-left-color: var(--color-acento);
 }
 
 .dashboard-card-ok .dashboard-card-numero {
@@ -719,7 +740,7 @@ table tr:hover td {
 }
 
 .dashboard-card-error {
-    border-color: var(--color-error);
+    border-left-color: var(--color-error);
 }
 
 .dashboard-card-error .dashboard-card-numero {
@@ -727,7 +748,7 @@ table tr:hover td {
 }
 
 .dashboard-card-warning {
-    border-color: var(--color-advertencia);
+    border-left-color: var(--color-advertencia);
 }
 
 .dashboard-card-warning .dashboard-card-numero {
@@ -1105,11 +1126,17 @@ table tr:hover td {
     }
 
     .dashboard-grid {
-        grid-template-columns: repeat(4, 1fr);
+        flex-direction: row;
+        flex-wrap:      wrap;
+    }
+
+    .dashboard-card {
+        flex:       1;
+        min-width:  200px;
     }
 
     .dashboard-card-numero {
-        font-size: 48px;
+        font-size: 24px;
     }
 
     .jornada-wrapper {
@@ -1247,6 +1274,149 @@ table tr:hover td {
     }
 }
 
+
+
+/* ------------------------------------------------
+   SOLICITUDES DE VACACIONES
+   ------------------------------------------------ */
+.solicitudes-lista {
+    display:        flex;
+    flex-direction: column;
+    gap:            12px;
+    width:          100%;
+}
+
+.solicitud-item {
+    background:    var(--color-superficie);
+    border:        1px solid var(--color-borde);
+    border-radius: var(--radio-mediano);
+    padding:       16px;
+    display:       flex;
+    flex-direction: column;
+    gap:           8px;
+}
+
+/* Las pendientes tienen borde izquierdo de advertencia */
+.solicitud-pendiente {
+    border-left: 3px solid var(--color-advertencia);
+}
+
+.solicitud-cabecera {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     flex-start;
+    gap:             12px;
+    flex-wrap:       wrap;
+}
+
+.solicitud-info {
+    display:        flex;
+    flex-direction: column;
+    gap:            4px;
+}
+
+.solicitud-trabajador {
+    display:     flex;
+    align-items: center;
+    gap:         8px;
+    margin-bottom: 4px;
+}
+
+.solicitud-nombre {
+    font-weight: 500;
+    font-size:   13px;
+    color:       var(--color-texto);
+}
+
+.solicitud-tipo {
+    font-weight: 600;
+    font-size:   13px;
+    color:       var(--color-texto);
+}
+
+.solicitud-fechas {
+    font-family: var(--fuente-mono);
+    font-size:   12px;
+    color:       var(--color-principal);
+}
+
+.solicitud-motivo {
+    font-size:  12px;
+    color:      var(--color-texto-apagado);
+    font-style: italic;
+}
+
+.solicitud-respuesta {
+    font-size:     12px;
+    color:         var(--color-texto-apagado);
+    padding:       8px 12px;
+    background:    var(--color-fondo);
+    border-radius: var(--radio-pequeno);
+    border-left:   3px solid var(--color-borde);
+}
+
+.solicitud-fecha-envio {
+    font-size: 10px;
+    color:     var(--color-texto-apagado);
+}
+
+.solicitud-acciones {
+    margin-top:  8px;
+    padding-top: 12px;
+    border-top:  1px solid var(--color-borde);
+}
+
+.solicitud-acciones form {
+    align-items: flex-start;
+}
+
+.solicitud-acciones textarea {
+    margin-top: 4px;
+    max-width:  500px;
+}
+
+.solicitud-botones {
+    display:    flex;
+    gap:        8px;
+    margin-top: 8px;
+}
+
+.btn-aprobar {
+    background-color: var(--color-acento);
+    color:            var(--color-superficie);
+    border:           none;
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 18px;
+    font-family:      var(--fuente-cuerpo);
+    font-size:        12px;
+    font-weight:      500;
+    cursor:           pointer;
+    margin-top:       0;
+    transition:       background-color 0.2s;
+}
+
+.btn-aprobar:hover {
+    background-color: var(--color-principal);
+}
+
+.btn-denegar {
+    background-color: transparent;
+    color:            var(--color-error);
+    border:           1px solid var(--color-error);
+    border-radius:    var(--radio-pequeno);
+    padding:          8px 18px;
+    font-family:      var(--fuente-cuerpo);
+    font-size:        12px;
+    font-weight:      500;
+    cursor:           pointer;
+    margin-top:       0;
+    transition:       all 0.2s;
+}
+
+.btn-denegar:hover {
+    background-color: var(--color-error);
+    color:            var(--color-superficie);
+}
 
 /* ------------------------------------------------
    MODO OSCURO

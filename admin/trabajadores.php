@@ -87,7 +87,10 @@ function mostrarTabla($resultado) {
 <?php include "../includes/header.php"; ?>
 
 <main>
-    <h2>Gestión de Trabajadores</h2>
+    <div class="pagina-cabecera">
+        <h2>Gestión de Trabajadores</h2>
+        <button type="button" id="btn-nuevo-trabajador">+ Nuevo</button>
+    </div>
 
     <?php
 
@@ -436,7 +439,6 @@ function mostrarTabla($resultado) {
         </form>
     </div>
 
-    <button type="button" id="btn-nuevo-trabajador">+ Nuevo trabajador</button>
 
 </main>
 

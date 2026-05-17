@@ -141,6 +141,30 @@ desconectar($conexion);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horarios - TimeTrack</title>
+
+    <!-- Flatpickr — calendario para selección de fecha en día especial -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .flatpickr-calendar {
+            font-family:   var(--fuente-cuerpo);
+            border-radius: var(--radio-mediano);
+            box-shadow:    0 4px 16px rgba(0,0,0,0.12);
+            border:        1px solid var(--color-borde);
+        }
+        .flatpickr-day.selected,
+        .flatpickr-day.selected:hover {
+            background:   var(--color-principal);
+            border-color: var(--color-principal);
+        }
+        .flatpickr-day:hover { background: var(--color-borde); }
+        .flatpickr-months .flatpickr-month {
+            background: var(--color-principal);
+            color: #fff;
+        }
+        .flatpickr-current-month .flatpickr-monthDropdown-months,
+        .flatpickr-current-month input.cur-year { color: #fff; }
+        .flatpickr-weekday { color: var(--color-texto-apagado); }
+    </style>
 </head>
 <body>
 
@@ -203,13 +227,16 @@ desconectar($conexion);
             <legend>NUEVO DÍA ESPECIAL</legend>
 
             <label>Fecha *</label>
-            <input type="date" name="fecha">
+            <input type="text" name="fecha" id="fecha-especial"
+                placeholder="Selecciona una fecha" readonly>
 
             <label>Tipo *</label>
             <select name="tipo">
                 <option value="vacaciones">Vacaciones</option>
                 <option value="festivo">Festivo</option>
                 <option value="libre">Día libre</option>
+                <option value="medico">Médico</option>
+                <option value="asuntos_propios">Asuntos propios</option>
                 <option value="cambio_horario">Cambio de horario</option>
             </select>
 
@@ -286,6 +313,16 @@ desconectar($conexion);
 </main>
 
 <?php include "../includes/footer.php"; ?>
+
+<!-- Flatpickr JS con localización en español -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+<script>
+flatpickr("#fecha-especial", {
+    locale:     "es",
+    dateFormat: "Y-m-d"
+});
+</script>
 
 </body>
 </html>

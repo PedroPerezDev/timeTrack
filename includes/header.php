@@ -17,6 +17,7 @@ if (!isset($_SESSION['user'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TimeTrack</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
@@ -59,10 +60,12 @@ if (!isset($_SESSION['user'])) {
             echo "
                 <a href='/admin/trabajadores.php'>Trabajadores</a>
                 <a href='/admin/informes.php'>Informes</a>
+                <a href='/admin/solicitudes.php'>Solicitudes</a>
             ";
         }
         if ($_SESSION['rol'] === 'trabajador') {
             echo "
+                
                 <a href='/trabajador/index.php'>Mi jornada</a>
                 <a href='/trabajador/perfil.php'>Mi perfil</a>
                 <a href='/trabajador/vacaciones.php'>Vacaciones</a>
