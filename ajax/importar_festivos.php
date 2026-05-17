@@ -36,9 +36,9 @@ $festivos = array_filter($todos, function($festivo) {
     return empty($festivo['counties']) || in_array('ES-VC', $festivo['counties']);
 });
 
-// Recupero todos los trabajadores activos
+// Recupero todos los trabajadores
 $trabajadores = $conexion->query("SELECT id FROM usuarios 
-    WHERE rol = 'trabajador' AND activo = 1");
+    WHERE rol = 'trabajador'");
 
 while ($t = $trabajadores->fetch_assoc()) {
 

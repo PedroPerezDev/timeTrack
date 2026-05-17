@@ -3,7 +3,7 @@
  * Página principal de TimeTrack
  * Gestiona el login de usuarios
  * Redirige al panel de admin o trabajador según el rol
- * Incluye funcionalidad "Recuérdame" con cookies seguras
+ * Incluye funcionalidad "Recuérdame" con cookie simple
  */
 
 include "./config.php";
@@ -67,37 +67,20 @@ if (isset($_POST['login'])) {
                 //-----------------------------------------------------|
 
                 /*
-                 * Si el usuario ha marcado "Recuérdame" genero un token
-                 * aleatorio seguro y lo guardo en la BD junto con su
-                 * fecha de expiración (30 días desde ahora).
-                 * El token también se guarda en una cookie en el navegador.
+                 * Si el usuario marca "Recuérdame" guardo su nombre
+                 * en una cookie durante 30 días en el navegador.
                  * La próxima vez que entre, el sistema leerá la cookie
-                 * y buscará el token en la BD para logearle automáticamente.
+                 * y rellenará el campo usuario automáticamente.
                  */
                 if (isset($_POST['recordar']) && $_POST['recordar'] == '1') {
 
-                    // Genero un token aleatorio de 64 caracteres
-                    $token      = bin2hex(random_bytes(32));
-                    $expira     = date('Y-m-d H:i:s', strtotime('+30 days'));
-                    $usuario_id = $fila['id'];
+                    // Guardo el nombre del usuario en la cookie 30 días
+                    setcookie('timetrack_usuario', $fila['nombre'], strtotime('+30 days'), '/');
 
-                    // Borro tokens anteriores de este usuario para no acumular
-                    $conexion->query("DELETE FROM recordar_sesion 
-                        WHERE usuario_id = '$usuario_id'");
+                } else {
 
-                    // Guardo el nuevo token en la BD
-                    $conexion->query("INSERT INTO recordar_sesion 
-                        (usuario_id, token, expira) 
-                        VALUES ('$usuario_id', '$token', '$expira')");
-
-                    // Guardo la cookie en el navegador durante 30 días
-                    // El token viaja en la cookie, nunca el ID directamente
-                    setcookie('timetrack_remember', $token, [
-                        'expires'  => strtotime('+30 days'),
-                        'path'     => '/',
-                        'httponly' => true,
-                        'samesite' => 'Lax'
-                    ]);
+                    // Si no marca recuérdame borro la cookie si existía
+                    setcookie('timetrack_usuario', '', time() - 3600, '/');
                 }
 
                 desconectar($conexion);
@@ -124,51 +107,14 @@ if (isset($_SESSION['user'])) {
 }
 
 //-----------------------------------------------------|
-//---------- LOGIN AUTOMÁTICO POR COOKIE ------------- |
+//---------- COOKIE RECUÉRDAME — RELLENAR CAMPO ------|
 //-----------------------------------------------------|
 
 /*
- * Si no hay sesión activa pero existe la cookie "timetrack_remember"
- * busco el token en la BD para verificar que es válido y no ha expirado.
- * Si es válido arranco la sesión automáticamente sin pedir credenciales.
- * Si ha expirado borro la cookie para que no moleste más.
+ * Si existe la cookie con el nombre del usuario
+ * lo paso a la vista para rellenar el campo automáticamente
  */
-if (isset($_COOKIE['timetrack_remember'])) {
-
-    $token    = $_COOKIE['timetrack_remember'];
-    $conexion = conectar();
-
-    if ($conexion) {
-
-        // Busco el token en la BD comprobando que no haya expirado
-        $resultado = $conexion->query("SELECT u.* FROM usuarios u
-            INNER JOIN recordar_sesion r ON u.id = r.usuario_id
-            WHERE r.token = '$token'
-            AND r.expira > NOW()");
-
-        if ($resultado->num_rows == 1) {
-
-            $fila = $resultado->fetch_assoc();
-
-            // Token válido: arranco sesión y redirijo
-            iniciarSesion($fila);
-            desconectar($conexion);
-            redirigirPorRol($fila['rol']);
-
-        } else {
-
-            // Token expirado o no encontrado: borro la cookie
-            setcookie('timetrack_remember', '', [
-                'expires'  => time() - 3600,
-                'path'     => '/',
-                'httponly' => true,
-                'samesite' => 'Lax'
-            ]);
-        }
-
-        desconectar($conexion);
-    }
-}
+$usuario_recordado = isset($_COOKIE['timetrack_usuario']) ? $_COOKIE['timetrack_usuario'] : '';
 ?>
 
 <!DOCTYPE html>
@@ -204,7 +150,7 @@ if (isset($_COOKIE['timetrack_remember'])) {
             <legend>Acceso a la aplicación</legend>
 
             <label>Usuario</label>
-            <input type="text" name="user" placeholder="Tu nombre de usuario">
+            <input type="text" name="user" placeholder="Tu nombre de usuario" value="<?php echo htmlspecialchars($usuario_recordado); ?>">
 
             <label>Contraseña</label>
             <input type="password" name="password" placeholder="Tu contraseña">
