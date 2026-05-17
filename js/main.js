@@ -477,3 +477,26 @@ $(document).ready(function() {
         }
     });
 });
+
+
+//-----------------------------------------------------|
+//---------- MIS HORAS DEL MES ----------------------- |
+//-----------------------------------------------------|
+
+/*
+ * Despliega u oculta la tabla de horas del mes actual
+ * al pulsar el botón, con efecto slideDown/slideUp
+ */
+$(document).ready(function() {
+
+    $("#btn-mis-horas").click(function() {
+
+        if ($("#tabla-mis-horas").is(":visible")) {
+            $("#tabla-mis-horas").slideUp("slow");
+            $(this).text($(this).text().replace("Ocultar", "Ver"));
+        } else {
+            $("#tabla-mis-horas").slideDown("slow");
+            $(this).text($(this).text().replace("Ver", "Ocultar"));
+        }
+    });
+});

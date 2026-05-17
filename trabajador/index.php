@@ -58,6 +58,30 @@ while ($f = $resultado_fichajes->fetch_assoc()) {
     $fichajes_hoy[$f['tipo']] = $f;
 }
 
+//-----------------------------------------------------|
+//---------- HORAS DEL MES ACTUAL ---------------|
+//-----------------------------------------------------|
+
+/*
+ * Recupero todos los fichajes del trabajador en el mes actual
+ * para calcular las horas trabajadas por día y el total del mes
+ */
+$primer_dia_mes = date('Y-m-01');
+$ultimo_dia_mes = date('Y-m-t');
+
+$resultado_mes = $conexion->query("SELECT * FROM fichajes
+    WHERE usuario_id = '" . $_SESSION['id'] . "'
+    AND fecha BETWEEN '$primer_dia_mes' AND '$ultimo_dia_mes'
+    ORDER BY fecha ASC, tipo ASC");
+
+// Indexo los fichajes por fecha y tipo
+$fichajes_mes = [];
+while ($f = $resultado_mes->fetch_assoc()) {
+    $fichajes_mes[$f['fecha']][$f['tipo']] = $f['hora_fichaje'];
+}
+
+$total_minutos_mes = 0;
+
 desconectar($conexion);
 
 /*
@@ -194,6 +218,99 @@ if ($horario) {
         <div id="respuesta-fichaje"></div>
 
         <?php } ?>
+
+    <!-- Botón para desplegar el resumen mensual de horas -->
+    <?php
+    $meses_boton = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    $nombre_mes_boton = $meses_boton[date('n') - 1];
+    ?>
+    <button type="button" id="btn-mis-horas" class="btn-mis-horas">
+        Ver mis horas de <?php echo $nombre_mes_boton; ?>
+    </button>
+
+    <!-- Tabla de horas del mes, oculta por defecto -->
+    <div id="tabla-mis-horas" style="display:none">
+
+        <?php
+
+        // Nombre del mes actual en español
+        $meses_es = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                     'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+        $nombre_mes = $meses_es[date('n') - 1];
+
+        echo "<div class='mis-horas-cabecera'>
+                <span class='mis-horas-titulo'>$nombre_mes " . date('Y') . "</span>
+              </div>";
+
+        echo "<table class='mis-horas-tabla'>
+            <tr>
+                <th>Día</th>
+                <th>Horas</th>
+            </tr>";
+
+        // Recorro todos los días del mes hasta hoy
+        $num_dias = date('t');
+        for ($d = 1; $d <= $num_dias; $d++) {
+
+            $fecha_dia  = date('Y-m-') . str_pad($d, 2, '0', STR_PAD_LEFT);
+            $dia_semana = date('N', strtotime($fecha_dia));
+            $nombre_dia = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'][$dia_semana - 1];
+            $es_hoy     = $fecha_dia === $fecha_hoy;
+            $es_futuro  = $fecha_dia > $fecha_hoy;
+
+            // No muestro días futuros
+            if ($es_futuro) break;
+
+            $fila_class = $es_hoy ? ' class="dia-hoy"' : '';
+
+            // Fin de semana sin datos
+            if ($dia_semana > 5 && !isset($fichajes_mes[$fecha_dia])) {
+                continue;
+            }
+
+            $f = isset($fichajes_mes[$fecha_dia]) ? $fichajes_mes[$fecha_dia] : [];
+
+            // Sumo mañana y tarde
+            $min_dia = 0;
+            if (isset($f['entrada_1'], $f['salida_1'])) {
+                $min_dia += (strtotime($f['salida_1']) - strtotime($f['entrada_1'])) / 60;
+            }
+            if (isset($f['entrada_2'], $f['salida_2'])) {
+                $min_dia += (strtotime($f['salida_2']) - strtotime($f['entrada_2'])) / 60;
+            }
+
+            $total_minutos_mes += $min_dia;
+
+            if ($min_dia > 0) {
+                $h = floor($min_dia / 60); $m = $min_dia % 60;
+                $txt_total = $m > 0 ? $h . 'h ' . $m . 'min' : $h . 'h';
+            } elseif (empty($f)) {
+                $txt_total = '—';
+            } else {
+                $txt_total = 'En curso';
+            }
+
+            echo "<tr$fila_class>
+                <td>$d</td>
+                <td class='horas-col'><b>$txt_total</b></td>
+            </tr>";
+        }
+
+        // Fila de total del mes
+        $h_mes = floor($total_minutos_mes / 60);
+        $m_mes = $total_minutos_mes % 60;
+        $txt_total_mes = $m_mes > 0 ? $h_mes . 'h ' . $m_mes . 'min' : $h_mes . 'h';
+
+        echo "<tr class='fila-total'>
+            <td>Total</td>
+            <td class='horas-col'>$txt_total_mes</td>
+        </tr>";
+
+        echo "</table>";
+        ?>
+
+    </div>
 
     </div>
 

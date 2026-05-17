@@ -1372,3 +1372,121 @@ body.modo-oscuro p[style*="color:red"] {
     color:            #f87171;
     border-color:     #7f1d1d;
 }
+
+/* ------------------------------------------------
+   RESUMEN MENSUAL - Panel del trabajador
+   Botón que despliega tabla de horas del mes
+   ------------------------------------------------ */
+
+.btn-mis-horas {
+    font-size:        12px;
+    padding:          8px 16px;
+    margin-top:       0;
+    background-color: var(--color-fondo);
+    border:           1px solid var(--color-borde);
+    border-radius:    var(--radio-mediano);
+    color:            var(--color-texto-apagado);
+    cursor:           pointer;
+    transition:       all 0.2s;
+    width:            100%;
+    text-align:       center;
+}
+
+.btn-mis-horas:hover {
+    background-color: var(--color-borde);
+    color:            var(--color-texto);
+}
+
+/* Contenedor oculto por defecto, se despliega con slideDown */
+#tabla-mis-horas {
+    width:     100%;
+    max-width: 320px;
+    margin:    0 auto;
+}
+
+/* Anulo el min-width:600px heredado de la regla general de table */
+#tabla-mis-horas .mis-horas-tabla {
+    min-width: 0 !important;
+    width:     100%;
+}
+
+.mis-horas-cabecera {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    padding:         10px 0 6px 0;
+    border-bottom:   2px solid var(--color-borde);
+    margin-bottom:   8px;
+}
+
+.mis-horas-titulo {
+    font-size:   13px;
+    font-weight: 600;
+    color:       var(--color-principal);
+}
+
+.mis-horas-total {
+    font-family: var(--fuente-mono);
+    font-size:   13px;
+    font-weight: 500;
+    color:       var(--color-principal);
+}
+
+/* Tabla de días del mes */
+.mis-horas-tabla {
+    width:           100%;
+    border-collapse: collapse;
+    font-size:       12px;
+}
+
+.mis-horas-tabla th {
+    background-color: var(--color-principal);
+    color:            var(--color-superficie);
+    padding:          6px 10px;
+    text-align:       left;
+    font-weight:      500;
+}
+
+.mis-horas-tabla td {
+    padding:       6px 10px;
+    border-bottom: 1px solid var(--color-borde);
+    color:         var(--color-texto);
+}
+
+.mis-horas-tabla tr:nth-child(even) td {
+    background-color: var(--color-fondo);
+}
+
+/* Fila del día actual resaltada */
+.mis-horas-tabla tr.dia-hoy td {
+    background-color: #e8f5ee;
+    font-weight:      500;
+}
+
+.mis-horas-tabla .horas-col {
+    font-family: var(--fuente-mono);
+    text-align:  right;
+    white-space: nowrap;
+}
+
+.mis-horas-tabla .sin-datos {
+    color: var(--color-texto-apagado);
+}
+
+/* Fila de total al final */
+.mis-horas-tabla tr.fila-total td {
+    border-top:   2px solid var(--color-borde);
+    border-bottom: none;
+    font-weight:  600;
+    color:        var(--color-principal);
+    background:   var(--color-superficie) !important;
+}
+
+/* Responsive - en móvil la tabla ocupa bien */
+@media (max-width: 768px) {
+    .mis-horas-tabla th,
+    .mis-horas-tabla td {
+        padding: 6px 6px;
+        font-size: 11px;
+    }
+}
