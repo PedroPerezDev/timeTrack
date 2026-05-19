@@ -94,7 +94,9 @@ $("#festivos").hide().html(html).fadeIn("slow");
 
 ### Uso en días especiales
 
-Cuando el administrador asigna un día especial de tipo "festivo" a un trabajador, puede basarse en el calendario de festivos importados desde la API. Esto garantiza que los festivos nacionales y autonómicos están siempre actualizados sin necesidad de introducirlos manualmente.
+Cuando el administrador asigna un día especial de tipo "festivo" a un trabajador, puede basarse en el calendario de festivos importados desde la API. En la imagen se pueden ver los festivos ya registrados como días especiales (Año Nuevo, Día de Reyes, Viernes Santo...):
+
+![Días especiales con festivos importados desde la API](img/admin_dias_especiales_registrados_escritorio.png)
 
 ---
 

@@ -55,7 +55,6 @@ La base de datos se llama `timetrack_db` y contiene las siguientes tablas:
 | `horarios_especiales` | Días especiales: vacaciones, festivos, libres y cambios |
 | `fichajes` | Registro de cada fichaje con hora real y diferencia en minutos |
 | `incidencias` | Incidencias generadas automáticamente o por el admin |
-| `recordar_sesion` | Tokens de la funcionalidad "Recuérdame" |
 | `festivos_locales` | Festivos importados desde la API Nager.Date |
 
 ---

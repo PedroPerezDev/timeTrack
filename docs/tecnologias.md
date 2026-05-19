@@ -94,6 +94,12 @@ function toggleModo() {
 }
 ```
 
+La preferencia persiste entre sesiones. Al cargar cualquier página, el script lee `localStorage` y aplica la clase antes de que el navegador pinte la interfaz, evitando el parpadeo.
+
+El botón de modo oscuro es un FAB (Floating Action Button) que aparece en la esquina inferior derecha en todas las pantallas:
+
+![Modo oscuro en el dashboard del administrador](img/admin_dashboard_oscuro_escritorio.png)
+
 ### Validación con expresiones regulares
 
 El formulario de alta de trabajadores valida los campos en el cliente antes de enviar:
@@ -161,6 +167,10 @@ Las tablas se adaptan a móvil convirtiéndose en tarjetas apiladas. Cada `<td>`
     }
 }
 ```
+
+La misma tabla de trabajadores vista en móvil apila cada registro en tarjeta vertical:
+
+![Tabla de trabajadores en móvil](img/admin_trabajadores_apilado_movil_claro.png)
 
 El diseño usa variables CSS personalizadas para los colores, tipografía y radios de borde, lo que facilita el modo oscuro: al añadir la clase `modo-oscuro` al `body`, las variables se sobreescriben y toda la interfaz cambia de tema sin duplicar reglas.
 
