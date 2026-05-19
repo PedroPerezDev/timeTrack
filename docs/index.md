@@ -12,7 +12,7 @@
 
 TimeTrack es una aplicación web para el control horario de los trabajadores de una empresa. Los trabajadores fichan su entrada y salida desde cualquier dispositivo, y el administrador gestiona horarios, vacaciones, incidencias y genera informes en PDF.
 
-![Pantalla de login de TimeTrack](img/login_escritorio.png)
+![Pantalla de login de TimeTrack](img/mockup1.png)
 
 ---
 
