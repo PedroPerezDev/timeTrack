@@ -16,23 +16,6 @@ TimeTrack es una aplicación web para el control horario de los trabajadores de 
 
 ---
 
-## Tecnologías utilizadas
-
-| Tecnología | Uso |
-|---|---|
-| PHP | Lógica del servidor y gestión de usuarios |
-| MySQL | Base de datos |
-| JavaScript | Interacción dinámica en el cliente |
-| jQuery | Efectos visuales y manipulación del DOM |
-| AJAX | Comunicación asíncrona con el servidor |
-| HTML5 | Estructura semántica de la aplicación |
-| CSS3 | Diseño visual y responsive |
-| Git / GitHub | Control de versiones |
-| Plesk / Hosting | Despliegue en producción |
-| FPDF | Generación de informes en PDF |
-
----
-
 ## Índice de la documentación
 
 1. [Funcionalidades](funcionalidades.md) — Pantallas, flujos y casos de uso
@@ -46,3 +29,7 @@ TimeTrack es una aplicación web para el control horario de los trabajadores de 
 ## Repositorio
 
 [github.com/PedroPerezDev/timeTrack](https://github.com/PedroPerezDev/timeTrack)
+
+## Aplicación en producción
+
+[www.mytimetrack.es](https://www.mytimetrack.es)
