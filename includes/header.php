@@ -66,7 +66,7 @@ if (!isset($_SESSION['user'])) {
         if ($_SESSION['rol'] === 'trabajador') {
             echo "
                 
-                <a href='/trabajador/index.php'>Mi jornada</a>
+                
                 <a href='/trabajador/perfil.php'>Mi perfil</a>
                 <a href='/trabajador/vacaciones.php'>Vacaciones</a>
             ";

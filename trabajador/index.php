@@ -21,8 +21,8 @@ $conexion = conectar();
  * date('N') devuelve 1=Lunes hasta 7=Domingo
  * Nosotros solo usamos del 1 al 5 (lunes a viernes)
  */
-$dia_semana = date('N'); // 1=Lunes, 5=Viernes
-// $dia_semana = 5; // 1=Lunes, 5=Viernes
+//$dia_semana = date('N'); // 1=Lunes, 5=Viernes
+$dia_semana = 5; // 1=Lunes, 5=Viernes
 $fecha_hoy  = date('Y-m-d');
 
 // Primero compruebo si hay un día especial para hoy
