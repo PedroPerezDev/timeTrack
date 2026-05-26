@@ -535,15 +535,7 @@ function mostrarTabla($resultado) {
 <script>
 
     // --- Mostrar / ocultar formulario de nuevo trabajador ---
-    document.getElementById('btn-nuevo-trabajador').addEventListener('click', function () {
-        var form = document.getElementById('form-nuevo');
-        // Mostramos u ocultamos según el estado actual de display
-        if (form.style.display === 'none' || form.style.display === '') {
-            form.style.display = 'block';
-        } else {
-            form.style.display = 'none';
-        }
-    });
+    // El botón #btn-nuevo-trabajador ya está gestionado por main.js con slideDown/slideUp
 
     // --- Botón "Rellenar horario estándar" ---
     document.getElementById('btn-horario-estandar').addEventListener('click', function () {
