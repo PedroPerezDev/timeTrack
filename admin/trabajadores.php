@@ -537,9 +537,8 @@ function mostrarTabla($resultado) {
     // --- Mostrar / ocultar formulario de nuevo trabajador ---
     document.getElementById('btn-nuevo-trabajador').addEventListener('click', function () {
         var form = document.getElementById('form-nuevo');
-        // Usamos classList.toggle para mostrar u ocultar el formulario
-        form.classList.toggle('visible');
-        if (form.classList.contains('visible')) {
+        // Mostramos u ocultamos según el estado actual de display
+        if (form.style.display === 'none' || form.style.display === '') {
             form.style.display = 'block';
         } else {
             form.style.display = 'none';
