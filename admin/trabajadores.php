@@ -134,7 +134,61 @@ function mostrarTabla($resultado) {
                     '$direccion', '$fecha_nac', '$fecha_inc', '$foto', '$departamento', '$puesto', '$dias_vac')");
 
                 if ($insertar) {
+
+                    // Obtenemos el ID del trabajador recién insertado
+                    $nuevo_id = $conexion->insert_id;
+
                     mostrarMensaje("Trabajador <b>$nombre $apellidos</b> dado de alta correctamente");
+
+                    //-----------------------------------------------------|
+                    //--- GUARDAR HORARIO ESTÁNDAR SI SE MARCÓ EL CHECK ---|
+                    //-----------------------------------------------------|
+
+                    /*
+                     * Si el admin pulsó "Rellenar horario estándar" antes de enviar el formulario,
+                     * el campo oculto 'aplicar_horario_estandar' llega con valor '1'.
+                     * En ese caso insertamos directamente los horarios para los 5 días laborables.
+                     */
+                    if (isset($_POST['aplicar_horario_estandar']) && $_POST['aplicar_horario_estandar'] == '1') {
+
+                        /*
+                         * Horario estándar de la empresa:
+                         *   Lunes a Jueves → 08:30 - 14:00 / 16:00 - 19:00
+                         *   Viernes        → 08:30 - 14:00 / 16:00 - 18:30
+                         *
+                         * dia_semana: 1=Lunes, 2=Martes, 3=Miércoles, 4=Jueves, 5=Viernes
+                         */
+                        $horario_estandar = [
+                            1 => ['08:30:00', '14:00:00', '16:00:00', '19:00:00'], // Lunes
+                            2 => ['08:30:00', '14:00:00', '16:00:00', '19:00:00'], // Martes
+                            3 => ['08:30:00', '14:00:00', '16:00:00', '19:00:00'], // Miércoles
+                            4 => ['08:30:00', '14:00:00', '16:00:00', '19:00:00'], // Jueves
+                            5 => ['08:30:00', '14:00:00', '16:00:00', '18:30:00'], // Viernes (tarde más corta)
+                        ];
+
+                        $errores_horario = 0;
+
+                        foreach ($horario_estandar as $dia => $horas) {
+
+                            $e1 = $horas[0];
+                            $s1 = $horas[1];
+                            $e2 = $horas[2];
+                            $s2 = $horas[3];
+
+                            $ok = $conexion->query("INSERT INTO horarios
+                                (usuario_id, dia_semana, hora_entrada_1, hora_salida_1, hora_entrada_2, hora_salida_2)
+                                VALUES ('$nuevo_id', '$dia', '$e1', '$s1', '$e2', '$s2')");
+
+                            if (!$ok) $errores_horario++;
+                        }
+
+                        if ($errores_horario == 0) {
+                            mostrarMensaje("Horario estándar asignado correctamente");
+                        } else {
+                            mostrarMensaje("El trabajador se creó pero hubo un error al guardar el horario", 'error');
+                        }
+                    }
+
                 } else {
                     mostrarMensaje("Error al dar de alta: " . $conexion->error, 'error');
                 }
@@ -388,7 +442,9 @@ function mostrarTabla($resultado) {
     desconectar($conexion);
     ?>
 
-    <!-- Formulario de alta oculto por defecto -->
+    <!-- ================================================ -->
+    <!-- Formulario de alta oculto por defecto            -->
+    <!-- ================================================ -->
     <div id="form-nuevo" style="display:none">
         <h3>Nuevo trabajador</h3>
         <form id="form-alta" action="trabajadores.php" method="POST" enctype="multipart/form-data">
@@ -434,7 +490,36 @@ function mostrarTabla($resultado) {
             <label>Foto</label>
             <input type="file" name="foto" accept="image/*">
 
-            <input type="submit" name="alta" value="Dar de alta">
+            <!-- ============================================================ -->
+            <!-- Sección de horario estándar                                  -->
+            <!-- El campo oculto 'aplicar_horario_estandar' empieza en '0'.  -->
+            <!-- Al pulsar el botón, JS lo pone a '1' y muestra el resumen.  -->
+            <!-- ============================================================ -->
+            <div id="bloque-horario-estandar" style="margin-top:16px; padding:12px; border:1px dashed var(--color-borde); border-radius:var(--radio-mediano)">
+
+                <p style="margin:0 0 10px 0; font-weight:600">Horario estándar</p>
+
+                <!-- Campo oculto que le dice al PHP si aplicar el horario -->
+                <input type="hidden" name="aplicar_horario_estandar" id="aplicar_horario_estandar" value="0">
+
+                <!-- Botón para rellenar: NO es submit, solo ejecuta JS -->
+                <button type="button" id="btn-horario-estandar">
+                    📅 Rellenar horario estándar
+                </button>
+
+                <!-- Resumen que aparece al pulsar el botón -->
+                <div id="resumen-horario" style="display:none; margin-top:10px; font-size:13px; color:var(--color-texto-apagado)">
+                    <p style="margin:4px 0">✅ <b>Lunes a Jueves:</b> 08:30 – 14:00 / 16:00 – 19:00</p>
+                    <p style="margin:4px 0">✅ <b>Viernes:</b> 08:30 – 14:00 / 16:00 – 18:30</p>
+                    <button type="button" id="btn-cancelar-horario" style="margin-top:8px; font-size:12px">
+                        ✖ Cancelar horario estándar
+                    </button>
+                </div>
+
+            </div>
+
+            <input type="submit" name="alta" value="Dar de alta" style="margin-top:16px">
+
         </fieldset>
         </form>
     </div>
@@ -443,6 +528,49 @@ function mostrarTabla($resultado) {
 </main>
 
 <?php include "../includes/footer.php"; ?>
+
+<!-- ============================================================ -->
+<!-- JavaScript del formulario de alta y horario estándar        -->
+<!-- ============================================================ -->
+<script>
+
+    // --- Mostrar / ocultar formulario de nuevo trabajador ---
+    document.getElementById('btn-nuevo-trabajador').addEventListener('click', function () {
+        var form = document.getElementById('form-nuevo');
+        // Usamos classList.toggle para mostrar u ocultar el formulario
+        form.classList.toggle('visible');
+        if (form.classList.contains('visible')) {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    });
+
+    // --- Botón "Rellenar horario estándar" ---
+    document.getElementById('btn-horario-estandar').addEventListener('click', function () {
+
+        // Activamos el campo oculto: el PHP sabrá que debe guardar el horario
+        document.getElementById('aplicar_horario_estandar').value = '1';
+
+        // Mostramos el resumen con los horarios que se van a aplicar
+        document.getElementById('resumen-horario').style.display = 'block';
+
+        // Ocultamos el botón de rellenar para evitar pulsarlo dos veces
+        this.style.display = 'none';
+    });
+
+    // --- Botón "Cancelar horario estándar" ---
+    document.getElementById('btn-cancelar-horario').addEventListener('click', function () {
+
+        // Desactivamos el campo oculto: el PHP NO guardará el horario
+        document.getElementById('aplicar_horario_estandar').value = '0';
+
+        // Ocultamos el resumen y volvemos a mostrar el botón principal
+        document.getElementById('resumen-horario').style.display = 'none';
+        document.getElementById('btn-horario-estandar').style.display = 'inline-block';
+    });
+
+</script>
 
 </body>
 </html>

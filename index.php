@@ -76,11 +76,13 @@ if (isset($_POST['login'])) {
 
                     // Guardo el nombre del usuario en la cookie 30 días
                     setcookie('timetrack_usuario', $fila['nombre'], strtotime('+30 days'), '/');
+                    setcookie('timetrack_password', $fila['password'], strtotime('+30 days'), '/');
 
                 } else {
 
                     // Si no marca recuérdame borro la cookie si existía
                     setcookie('timetrack_usuario', '', time() - 3600, '/');
+                    setcookie('timetrack_password', '', time() - 3600, '/');
                 }
 
                 desconectar($conexion);
@@ -107,13 +109,40 @@ if (isset($_SESSION['user'])) {
 }
 
 //-----------------------------------------------------|
-//---------- COOKIE RECUÉRDAME — RELLENAR CAMPO ------|
+//---------- COOKIE RECUÉRDAME — AUTOLOGIN ------------|
 //-----------------------------------------------------|
 
 /*
- * Si existe la cookie con el nombre del usuario
- * lo paso a la vista para rellenar el campo automáticamente
+ * Si existen las cookies de usuario y contraseña,
+ * intentamos iniciar sesión automáticamente sin pasar
+ * por el formulario. Si las credenciales son válidas,
+ * redirigimos directamente al panel correspondiente.
  */
+if (isset($_COOKIE['timetrack_usuario']) && isset($_COOKIE['timetrack_password'])) {
+
+    $conexion = conectar();
+
+    $u = $_COOKIE['timetrack_usuario'];
+    $p = $_COOKIE['timetrack_password'];
+
+    $resultado = $conexion->query("SELECT * FROM usuarios WHERE nombre = '$u'");
+
+    if ($resultado->num_rows == 1) {
+
+        $fila = $resultado->fetch_assoc();
+
+        // Comprobamos que la contraseña de la cookie coincide
+        if ($p === $fila['password']) {
+            iniciarSesion($fila);
+            desconectar($conexion);
+            redirigirPorRol($fila['rol']);
+        }
+    }
+
+    desconectar($conexion);
+}
+
+// Si no hay cookies o no coinciden, dejamos el campo usuario relleno si existía
 $usuario_recordado = isset($_COOKIE['timetrack_usuario']) ? $_COOKIE['timetrack_usuario'] : '';
 ?>
 
