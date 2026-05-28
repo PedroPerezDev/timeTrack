@@ -11,7 +11,7 @@
 </footer>
 
 
-<script src="/js/main.js"></script>
+<script src="/timetrack/js/main.js"></script>
 
 
 </body>

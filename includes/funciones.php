@@ -33,7 +33,7 @@ function mostrarMensaje($texto, $tipo = 'ok') {
  */
 function mostrarFoto($foto, $ancho = 40, $estilo = 'border-radius:50%') {
     if (!empty($foto)) {
-        return "<img src='/uploads/fotos_trabajadores/$foto' width='$ancho' style='$estilo'>";
+        return "<img src='/timetrack/uploads/fotos_trabajadores/$foto' width='$ancho' style='$estilo'>";
     }
     return "Sin foto";
 }

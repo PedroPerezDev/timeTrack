@@ -77,7 +77,7 @@ $(document).ready(function() {
         $boton.text("Procesando...");
 
         $.ajax({
-            url:    "/ajax/fichar.php",
+            url:    "/timetrack/ajax/fichar.php",
             method: "POST",
             data: {
                 tipo: tipo,
@@ -131,7 +131,7 @@ $(document).ready(function() {
         $("#festivos").html("<p>Cargando festivos...</p>");
 
         $.ajax({
-            url:    "/ajax/get_festivos.php",
+            url:    "/timetrack/ajax/get_festivos.php",
             method: "GET",
             success: function(respuesta) {
 
@@ -208,7 +208,7 @@ $(document).ready(function() {
     if ($("#importar-festivos").length > 0) {
 
         $.ajax({
-            url:    "/ajax/importar_festivos.php",
+            url:    "/timetrack/ajax/importar_festivos.php",
             method: "GET",
             success: function(respuesta) {
 

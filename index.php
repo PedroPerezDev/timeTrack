@@ -152,7 +152,7 @@ $usuario_recordado = isset($_COOKIE['timetrack_usuario']) ? $_COOKIE['timetrack_
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TimeTrack - Login</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/timetrack/css/style.css">
 </head>
 <body>
 
@@ -162,7 +162,7 @@ $usuario_recordado = isset($_COOKIE['timetrack_usuario']) ? $_COOKIE['timetrack_
     <!-- Slideshow del logo tipo reloj -->
     <div id="logo-reloj">
         <?php for($i = 1; $i <= 12; $i++): ?>
-            <img src="/img/<?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?>.png"
+            <img src="/timetrack/img/<?php echo str_pad($i, 2, '0', STR_PAD_LEFT); ?>.png"
                  class="logo-frame"
                  alt="TimeTrack">
         <?php endfor; ?>
@@ -197,9 +197,9 @@ $usuario_recordado = isset($_COOKIE['timetrack_usuario']) ? $_COOKIE['timetrack_
 
             <!-- Slideshow de imágenes debajo del formulario -->
             <div id="slideshow">
-                <img src="/img/slide1.jpg" class="slide" alt="Slide 1">
-                <img src="/img/slide2.jpg" class="slide" alt="Slide 2">
-                <img src="/img/slide3.jpg" class="slide" alt="Slide 3">
+                <img src="/timetrack/img/slide1.jpg" class="slide" alt="Slide 1">
+                <img src="/timetrack/img/slide2.jpg" class="slide" alt="Slide 2">
+                <img src="/timetrack/img/slide3.jpg" class="slide" alt="Slide 3">
             </div>
 
         </fieldset>
@@ -208,6 +208,6 @@ $usuario_recordado = isset($_COOKIE['timetrack_usuario']) ? $_COOKIE['timetrack_
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="/js/main.js"></script>
+<script src="/timetrack/js/main.js"></script>
 </body>
 </html>
