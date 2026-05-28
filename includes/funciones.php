@@ -11,7 +11,7 @@
 function verificarSesion($rol) {
     session_start();
     if (!isset($_SESSION['user']) || $_SESSION['rol'] != $rol) {
-        header("Location: ../index.php");
+        header("Location: /index.php");
         exit;
     }
 }
@@ -33,7 +33,7 @@ function mostrarMensaje($texto, $tipo = 'ok') {
  */
 function mostrarFoto($foto, $ancho = 40, $estilo = 'border-radius:50%') {
     if (!empty($foto)) {
-        return "<img src='/timetrack/uploads/fotos_trabajadores/$foto' width='$ancho' style='$estilo'>";
+        return "<img src='/uploads/fotos_trabajadores/$foto' width='$ancho' style='$estilo'>";
     }
     return "Sin foto";
 }

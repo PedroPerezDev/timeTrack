@@ -12,6 +12,6 @@ session_destroy(); // destruye la sesión completamente
 setcookie('timetrack_usuario',  '', time() - 3600, '/');
 setcookie('timetrack_password', '', time() - 3600, '/');
 
-header("Location: ../index.php");
+header("Location: /index.php");
 exit;
 ?>
