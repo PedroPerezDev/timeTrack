@@ -21,9 +21,77 @@ $conexion = conectar();
  * date('N') devuelve 1=Lunes hasta 7=Domingo
  * Nosotros solo usamos del 1 al 5 (lunes a viernes)
  */
-//$dia_semana = date('N'); // 1=Lunes, 5=Viernes
-$dia_semana = 5; // 1=Lunes, 5=Viernes
+$dia_semana = date('N'); // 1=Lunes, 5=Viernes
+
 $fecha_hoy  = date('Y-m-d');
+
+//-----------------------------------------------------|
+//---------- DETECCIÓN AUSENCIA DÍA ANTERIOR ---------|
+//-----------------------------------------------------|
+
+/*
+ * Comprobamos si ayer el trabajador tenía que fichar y no lo hizo
+ * Si es así, creamos una incidencia de tipo 'fichaje_no_realizado'
+ * Solo lo hacemos si ayer era un día laborable (lunes a viernes)
+ * y el trabajador tenía horario asignado ese día
+ * También nos aseguramos de no duplicar la incidencia
+ */
+
+$fecha_ayer    = date('Y-m-d', strtotime('-1 day'));
+$dia_semana_ayer = (int) date('N', strtotime($fecha_ayer)); // 1=Lunes, 7=Domingo
+
+// Solo comprobamos si ayer era laborable (lunes a viernes)
+if ($dia_semana_ayer >= 1 && $dia_semana_ayer <= 5) {
+
+    // Comprobamos si hay un día especial para ayer (vacaciones, festivo, libre, etc.)
+    $especial_ayer = $conexion->query("SELECT tipo FROM horarios_especiales
+        WHERE usuario_id = '" . $_SESSION['id'] . "'
+        AND fecha = '$fecha_ayer'")->fetch_assoc();
+
+    // Si no había día especial, el trabajador debería haber fichado
+    $dia_libre_ayer = $especial_ayer && $especial_ayer['tipo'] != 'cambio_horario';
+
+    if (!$dia_libre_ayer) {
+
+        // Miramos si tenía horario asignado ese día de la semana
+        $horario_ayer = $conexion->query("SELECT id FROM horarios
+            WHERE usuario_id = '" . $_SESSION['id'] . "'
+            AND dia_semana = '$dia_semana_ayer'")->fetch_assoc();
+
+        // Solo actuamos si tenía horario asignado
+        if ($horario_ayer) {
+
+            // Contamos los fichajes que hay de ayer
+            $fichajes_ayer = $conexion->query("SELECT COUNT(*) as total FROM fichajes
+                WHERE usuario_id = '" . $_SESSION['id'] . "'
+                AND fecha = '$fecha_ayer'")->fetch_assoc();
+
+            // Si no fichó nada ayer
+            if ($fichajes_ayer['total'] == 0) {
+
+                // Comprobamos que no exista ya esa incidencia (evitar duplicados)
+                $ya_existe = $conexion->query("SELECT id FROM incidencias
+                    WHERE usuario_id = '" . $_SESSION['id'] . "'
+                    AND fecha = '$fecha_ayer'
+                    AND tipo = 'fichaje_no_realizado'")->fetch_assoc();
+
+                // Si no existe, la creamos
+                if (!$ya_existe) {
+                    $conexion->query("INSERT INTO incidencias
+                        (usuario_id, fecha, tipo, minutos, observaciones, creado_por)
+                        VALUES
+                        ('" . $_SESSION['id'] . "', '$fecha_ayer',
+                        'fichaje_no_realizado', 0,
+                        'Ausencia detectada automáticamente: no se realizó ningún fichaje el día $fecha_ayer',
+                        '" . $_SESSION['id'] . "')");
+                }
+            }
+        }
+    }
+}
+
+
+
 
 // Primero compruebo si hay un día especial para hoy
 $especial = $conexion->query("SELECT * FROM horarios_especiales 

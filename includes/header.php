@@ -60,6 +60,7 @@ if (!isset($_SESSION['user'])) {
             echo "
                 <a href='/admin/trabajadores.php'>Trabajadores</a>
                 <a href='/admin/informes.php'>Informes</a>
+                <a href='/admin/incidencias.php'>Incidencias</a>
                 <a href='/admin/solicitudes.php'>Solicitudes</a>
             ";
         }
