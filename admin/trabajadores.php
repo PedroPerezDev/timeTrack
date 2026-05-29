@@ -363,7 +363,8 @@ function mostrarTabla($resultado) {
         echo "<div class='paginacion'>";
         echo "<a href='trabajadores.php?pagina=$anterior'> &lt; </a>";
         for ($i = 1; $i <= $totalPaginas; $i++) {
-            echo "<a href='trabajadores.php?pagina=$i'>$i</a>";
+            $clase_activa = ($i == $pagina) ? " class='pagina-activa'" : "";
+            echo "<a href='trabajadores.php?pagina=$i'$clase_activa>$i</a>";
         }
         echo "<a href='trabajadores.php?pagina=$siguiente'> &gt; </a>";
         echo "</div>";

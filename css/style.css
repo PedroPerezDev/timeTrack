@@ -611,6 +611,16 @@ table tr:hover td {
     border-color:     var(--color-acento);
 }
 
+/* Página activa en el paginado */
+.paginacion a.pagina-activa {
+    background-color: var(--color-principal);
+    color:            #fff;
+    border-color:     var(--color-principal);
+    cursor:           default;
+    pointer-events:   none;
+    font-weight:      700;
+}
+
 
 /* ------------------------------------------------
    LOGIN
@@ -1750,4 +1760,22 @@ body.modo-oscuro .badge-sin-fichar { background: #4c1d95; color: #e9d5ff; }
 .btn-eliminar-solicitud:hover {
     background-color: var(--color-error);
     color:            #fff;
+}
+
+/* Avatar circular con iniciales para trabajadores sin foto */
+.avatar-iniciales {
+    display:          inline-flex;
+    align-items:      center;
+    justify-content:  center;
+    width:            30px;
+    height:           30px;
+    border-radius:    50%;
+    background-color: var(--color-principal);
+    color:            #fff;
+    font-size:        11px;
+    font-weight:      600;
+    vertical-align:   middle;
+    margin-right:     6px;
+    flex-shrink:      0;
+    letter-spacing:   0;
 }
