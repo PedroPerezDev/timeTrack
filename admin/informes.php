@@ -134,10 +134,12 @@ $conexion = conectar();
                 $salida_1  = strtotime($h['hora_salida_1']);
                 $minutos_semanales += ($salida_1 - $entrada_1) / 60;
 
-                // Minutos de la tarde
-                $entrada_2 = strtotime($h['hora_entrada_2']);
-                $salida_2  = strtotime($h['hora_salida_2']);
-                $minutos_semanales += ($salida_2 - $entrada_2) / 60;
+                // Minutos de la tarde (solo si existe turno de tarde)
+                if (!empty($h['hora_entrada_2']) && !empty($h['hora_salida_2'])) {
+                    $entrada_2 = strtotime($h['hora_entrada_2']);
+                    $salida_2  = strtotime($h['hora_salida_2']);
+                    $minutos_semanales += ($salida_2 - $entrada_2) / 60;
+                }
 
                 // Resto 30 minutos de descanso por día
                 $minutos_semanales -= 30;
