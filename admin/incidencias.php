@@ -220,10 +220,7 @@ $tipos_clase = [
 
     <?php if (!$buscar): ?>
 
-        <!-- Estado inicial: invitamos al admin a filtrar -->
-        <p class="fichaje-mensaje">
-            Selecciona un mes y pulsa <strong>Buscar incidencias</strong> para ver los resultados.
-        </p>
+      
 
     <?php elseif (empty($por_trabajador)): ?>
 

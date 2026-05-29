@@ -291,47 +291,6 @@ $conexion = conectar();
                 echo "  </div>
                 </div>";
 
-                //-----------------------------------------------------|
-                //------------ INCIDENCIAS DEL PERÍODO ---------------- |
-                //-----------------------------------------------------|
-
-                $incidencias = $conexion->query("SELECT * FROM incidencias
-                    WHERE usuario_id = '$id_trabajador'
-                    AND fecha BETWEEN '$fecha_inicio' AND '$fecha_fin'
-                    ORDER BY fecha ASC");
-
-                if ($incidencias->num_rows > 0) {
-
-                    // Botón para mostrar u ocultar la tabla de incidencias
-                    echo "<button type='button' id='btn-mostrar-incidencias'>Ver incidencias del período (" . $incidencias->num_rows . ")</button>";
-
-                    // Tabla oculta por defecto, se despliega con slideDown al pulsar el botón
-                    echo "<div id='tabla-incidencias' style='display:none'>";
-                    echo "<h3>Incidencias del período</h3>";
-                    echo "<div class='tabla-wrapper'><table class='tabla-apilable'>
-                        <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Tipo</th>
-                            <th>Minutos</th>
-                            <th>Observaciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>";
-
-                    while ($inc = $incidencias->fetch_assoc()) {
-                        echo "<tr>
-                            <td data-label='Fecha'>" . date('d/m/Y', strtotime($inc['fecha'])) . "</td>
-                            <td data-label='Tipo'>" . ucfirst(str_replace('_', ' ', $inc['tipo'])) . "</td>
-                            <td data-label='Minutos'>" . $inc['minutos'] . " min</td>
-                            <td data-label='Observaciones'>" . $inc['observaciones'] . "</td>
-                        </tr>";
-                    }
-
-                    echo "</tbody></table></div>";
-                    echo "</div>"; // cierre div#tabla-incidencias
-                }
-
                 // Botón para generar el PDF en nueva pestaña
                 echo "<form action='pdf.php' method='POST' target='_blank'>
                     <input type='submit' name='pdf' value='Generar PDF'>
