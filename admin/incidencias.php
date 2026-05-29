@@ -38,12 +38,32 @@ $todos_trabajadores = $conexion->query("
  * $buscar indica si el admin ha pulsado el botón de buscar
  * Si no ha buscado aún, no mostramos ningún resultado
  */
-$buscar       = isset($_GET['buscar']);
-$mes          = isset($_GET['mes'])          ? (int) $_GET['mes']          : (int) date('n');
-$anyo         = isset($_GET['anyo'])         ? (int) $_GET['anyo']         : (int) date('Y');
+$buscar        = isset($_GET['buscar']);
+$mes           = isset($_GET['mes'])           ? (int) $_GET['mes']           : (int) date('n');
+$anyo          = isset($_GET['anyo'])           ? (int) $_GET['anyo']          : (int) date('Y');
 $trabajador_id = isset($_GET['trabajador_id']) && $_GET['trabajador_id'] !== ''
-                    ? (int) $_GET['trabajador_id']
-                    : null;
+                     ? (int) $_GET['trabajador_id']
+                     : null;
+
+// Búsqueda por nombre escrito: si el admin escribe un nombre buscamos el id
+$buscar_nombre = isset($_GET['buscar_nombre']) ? trim($_GET['buscar_nombre']) : '';
+
+/*
+ * Si hay texto en el buscador de nombre intentamos localizar al trabajador
+ * Buscamos por nombre O apellidos con LIKE para ser flexible
+ * Si encontramos coincidencia usamos ese id como filtro
+ * El select tiene prioridad: si el admin elige del desplegable ignoramos el texto
+ */
+if (!$trabajador_id && $buscar_nombre !== '') {
+    $nombre_escaped = $conexion->real_escape_string($buscar_nombre);
+    $res_nombre = $conexion->query("SELECT id FROM usuarios
+        WHERE rol = 'trabajador' AND activo = 1
+        AND (nombre LIKE '%$nombre_escaped%' OR apellidos LIKE '%$nombre_escaped%')
+        LIMIT 1");
+    if ($res_nombre && $res_nombre->num_rows > 0) {
+        $trabajador_id = (int) $res_nombre->fetch_assoc()['id'];
+    }
+}
 
 // Nombre del mes en español para el título
 $meses_es = [
@@ -165,8 +185,14 @@ $tipos_clase = [
             <label>Año</label>
             <input type="number" name="anyo" value="<?php echo $anyo; ?>" min="2020" max="2099">
 
-            <!-- Filtro por trabajador (opcional) -->
-            <label>Trabajador <span class="label-opcional">(opcional)</span></label>
+            <!-- Buscador de trabajador por nombre escrito -->
+            <label>Buscar por nombre <span class="label-opcional">(opcional)</span></label>
+            <input type="text" name="buscar_nombre"
+                placeholder="Escribe nombre o apellido..."
+                value="<?php echo htmlspecialchars($buscar_nombre); ?>">
+
+            <!-- O seleccionar del desplegable -->
+            <label>O selecciona de la lista <span class="label-opcional">(opcional)</span></label>
             <select name="trabajador_id">
                 <option value="">— Todos los trabajadores —</option>
                 <?php

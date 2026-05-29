@@ -1723,3 +1723,31 @@ body.modo-oscuro .badge-sin-fichar { background: #4c1d95; color: #e9d5ff; }
     font-weight: 400;
     color:       var(--color-texto-apagado);
 }
+
+/* Pie de cada tarjeta de solicitud: fecha + botón eliminar alineados */
+.solicitud-pie {
+    display:         flex;
+    justify-content: space-between;
+    align-items:     center;
+    margin-top:      8px;
+    flex-wrap:       wrap;
+    gap:             8px;
+}
+
+/* Botón eliminar solicitud — rojo discreto */
+.btn-eliminar-solicitud {
+    background-color: transparent;
+    color:            var(--color-error);
+    border:           1px solid var(--color-error);
+    padding:          4px 12px;
+    border-radius:    var(--radio-mediano);
+    font-size:        12px;
+    cursor:           pointer;
+    margin-top:       0;
+    transition:       background-color 0.2s, color 0.2s;
+}
+
+.btn-eliminar-solicitud:hover {
+    background-color: var(--color-error);
+    color:            #fff;
+}

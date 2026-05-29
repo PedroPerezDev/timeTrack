@@ -231,10 +231,11 @@ desconectar($conexion);
                 $estado_css = "estado-en-curso";
             }
 
-            // Foto del trabajador
-            $foto_html = !empty($t['foto'])
-                ? "<img src='/timetrack/uploads/fotos_trabajadores/" . $t['foto'] . "' width='30' style='border-radius:50%;vertical-align:middle;margin-right:6px'>"
-                : "";
+            /*
+             * Usamos mostrarFoto() de funciones.php que ya tiene la ruta correcta
+             * Añadimos margin-right para separarlo del nombre en la tabla
+             */
+            $foto_html = mostrarFoto($t['foto'], 30, 'border-radius:50%;vertical-align:middle;margin-right:6px;', $t['nombre'], $t['apellidos']);
         ?>
         <tr>
             <td data-label="Trabajador"><?php echo $foto_html . $t['apellidos'] . ", " . $t['nombre']; ?></td>

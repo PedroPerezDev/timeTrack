@@ -16,6 +16,15 @@ $conexion = conectar();
 //---------- APROBAR SOLICITUD --------------------- |
 //-----------------------------------------------------|
 
+//-----------------------------------------------------|
+//---------- APROBAR / DENEGAR / ELIMINAR ----------- |
+//-----------------------------------------------------|
+
+/*
+ * Usamos if/elseif para que solo se ejecute una acción por petición
+ * Esto evita que al eliminar también se intente aprobar o denegar
+ */
+
 if (isset($_POST['aprobar'])) {
 
     $id_solicitud    = $_POST['id_solicitud'];
@@ -50,23 +59,17 @@ if (isset($_POST['aprobar'])) {
          */
         $fecha_actual = strtotime($sol['fecha_inicio']);
         $fecha_fin    = strtotime($sol['fecha_fin']);
-
-        // Mapeo el tipo de solicitud al tipo de día especial
-        // Vacaciones y médico conservan su tipo, el resto se marca como libre
-        // El tipo de solicitud coincide directamente con el tipo de día especial
         $tipo_especial = $sol['tipo'];
 
         while ($fecha_actual <= $fecha_fin) {
 
             $dia_semana = date('N', $fecha_actual);
 
-            // Solo creo días especiales en días laborables
             if ($dia_semana <= 5) {
 
                 $fecha_str   = date('Y-m-d', $fecha_actual);
                 $observacion = ucfirst(str_replace('_', ' ', $sol['tipo'])) . " aprobada";
 
-                // Compruebo que no exista ya un día especial para esa fecha
                 $existe = $conexion->query("SELECT id FROM horarios_especiales
                     WHERE usuario_id = '" . $sol['usuario_id'] . "'
                     AND fecha = '$fecha_str'")->fetch_assoc();
@@ -97,13 +100,8 @@ if (isset($_POST['aprobar'])) {
     } else {
         $mensaje_error = "No se encontró la solicitud";
     }
-}
 
-//-----------------------------------------------------|
-//---------- DENEGAR SOLICITUD --------------------- |
-//-----------------------------------------------------|
-
-if (isset($_POST['denegar'])) {
+} elseif (isset($_POST['denegar'])) {
 
     $id_solicitud    = $_POST['id_solicitud'];
     $respuesta_admin = $_POST['respuesta_admin'];
@@ -115,6 +113,25 @@ if (isset($_POST['denegar'])) {
         WHERE id = '$id_solicitud'");
 
     $mensaje_ok = "Solicitud denegada";
+
+} elseif (isset($_POST['eliminar_solicitud'])) {
+
+    $id_solicitud = (int) $_POST['id_solicitud'];
+
+    /*
+     * El admin puede eliminar cualquier solicitud independientemente del estado
+     * Comprobamos que existe antes de borrar
+     */
+    $check = $conexion->query("SELECT id FROM solicitudes
+        WHERE id = '$id_solicitud'")->fetch_assoc();
+
+    if ($check) {
+        $conexion->query("DELETE FROM solicitudes WHERE id = '$id_solicitud'");
+        $mensaje_ok = "Solicitud eliminada correctamente.";
+    } else {
+        $mensaje_error = "No se encontró la solicitud.";
+    }
+
 }
 
 // Recupero todas las solicitudes agrupadas por estado
@@ -218,9 +235,20 @@ $estados_css = [
                 </p>
             <?php endif; ?>
 
-            <span class="solicitud-fecha-envio">
-                Enviada el <?php echo formatearFecha(substr($sol['fecha_solicitud'], 0, 10)); ?>
-            </span>
+            <div class="solicitud-pie">
+
+                <span class="solicitud-fecha-envio">
+                    Enviada el <?php echo formatearFecha(substr($sol['fecha_solicitud'], 0, 10)); ?>
+                </span>
+
+                <!-- El admin puede eliminar cualquier solicitud -->
+                <form action="solicitudes.php" method="POST" style="display:inline"
+                    onsubmit="return confirm('¿Seguro que quieres eliminar esta solicitud? Esta acción no se puede deshacer.')">
+                    <input type="hidden" name="id_solicitud" value="<?php echo $sol['id']; ?>">
+                    <input type="submit" name="eliminar_solicitud" value="Eliminar" class="btn-eliminar-solicitud">
+                </form>
+
+            </div>
 
             <!-- Formulario de respuesta solo si está pendiente -->
             <?php if ($sol['estado'] === 'pendiente'): ?>

@@ -31,11 +31,35 @@ function mostrarMensaje($texto, $tipo = 'ok') {
  * Devuelve el HTML de la foto de un trabajador.
  * Si no tiene foto devuelve texto alternativo.
  */
-function mostrarFoto($foto, $ancho = 40, $estilo = 'border-radius:50%') {
+function mostrarFoto($foto, $ancho = 40, $estilo = 'border-radius:50%', $nombre = '', $apellidos = '') {
     if (!empty($foto)) {
-        return "<img src='/uploads/fotos_trabajadores/$foto' width='$ancho' style='$estilo'>";
+        // Tiene foto: la mostramos con el estilo indicado
+        return "<img src='/uploads/fotos_trabajadores/$foto' width='$ancho' height='$ancho' style='$estilo;object-fit:cover;'>";
     }
-    return "Sin foto";
+
+    /*
+     * Sin foto: mostramos un círculo gris con las iniciales del trabajador
+     * Si no se pasan nombre/apellidos el círculo queda vacío pero mantiene el tamaño
+     * El tamaño del círculo es igual al de la foto para que no descoloque el layout
+     */
+    $ini_n = !empty($nombre)    ? mb_strtoupper(mb_substr($nombre,    0, 1, 'UTF-8'), 'UTF-8') : '';
+    $ini_a = !empty($apellidos) ? mb_strtoupper(mb_substr($apellidos, 0, 1, 'UTF-8'), 'UTF-8') : '';
+    $font  = max(10, (int) ($ancho * 0.38));
+
+    return "<span style='"
+        . "display:inline-flex;"
+        . "align-items:center;"
+        . "justify-content:center;"
+        . "width:{$ancho}px;"
+        . "height:{$ancho}px;"
+        . "border-radius:50%;"
+        . "background-color:var(--color-borde);"
+        . "color:var(--color-texto-apagado);"
+        . "font-size:{$font}px;"
+        . "font-weight:600;"
+        . "vertical-align:middle;"
+        . "flex-shrink:0;"
+        . "'>{$ini_n}{$ini_a}</span>";
 }
 
 

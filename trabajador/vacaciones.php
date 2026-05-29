@@ -16,6 +16,37 @@ $conexion = conectar();
 //---------- ENVIAR SOLICITUD ----------------------- |
 //-----------------------------------------------------|
 
+//-----------------------------------------------------|
+//---------- ELIMINAR SOLICITUD -------------------- |
+//-----------------------------------------------------|
+
+/*
+ * Solo se puede eliminar una solicitud propia y que esté pendiente
+ * Si ya está aprobada o denegada no se permite borrar
+ * Comprobamos que el id pertenece al trabajador actual antes de borrar
+ */
+if (isset($_POST['eliminar_solicitud'])) {
+
+    $id_solicitud = (int) $_POST['id_solicitud'];
+
+    // Buscamos la solicitud: debe ser del trabajador y estar pendiente
+    $check = $conexion->query("SELECT id, estado FROM solicitudes
+        WHERE id = '$id_solicitud'
+        AND usuario_id = '" . $_SESSION['id'] . "'
+        AND estado = 'pendiente'")->fetch_assoc();
+
+    if ($check) {
+        $conexion->query("DELETE FROM solicitudes WHERE id = '$id_solicitud'");
+        $mensaje_ok = "Solicitud eliminada correctamente.";
+    } else {
+        $mensaje_error = "No se puede eliminar esa solicitud.";
+    }
+}
+
+//-----------------------------------------------------|
+//---------- ENVIAR SOLICITUD ----------------------- |
+//-----------------------------------------------------|
+
 if (isset($_POST['solicitar'])) {
 
     $fecha_inicio = $_POST['fecha_inicio'];
@@ -228,9 +259,25 @@ $estados_css = [
                     </p>
                 <?php endif; ?>
 
-                <span class="solicitud-fecha-envio">
-                    Enviada el <?php echo formatearFecha(substr($sol['fecha_solicitud'], 0, 10)); ?>
-                </span>
+                <div class="solicitud-pie">
+
+                    <span class="solicitud-fecha-envio">
+                        Enviada el <?php echo formatearFecha(substr($sol['fecha_solicitud'], 0, 10)); ?>
+                    </span>
+
+                    <?php if ($sol['estado'] === 'pendiente'): ?>
+                        <!--
+                            Solo mostramos el botón eliminar si la solicitud está pendiente
+                            Si ya está aprobada o denegada ya no se puede retirar
+                        -->
+                        <form action="vacaciones.php" method="POST" style="display:inline"
+                            onsubmit="return confirm('¿Seguro que quieres eliminar esta solicitud?')">
+                            <input type="hidden" name="id_solicitud" value="<?php echo $sol['id']; ?>">
+                            <input type="submit" name="eliminar_solicitud" value="Eliminar" class="btn-eliminar-solicitud">
+                        </form>
+                    <?php endif; ?>
+
+                </div>
 
             </div>
             <?php endwhile; ?>

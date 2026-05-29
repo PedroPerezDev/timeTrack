@@ -25,74 +25,6 @@ $dia_semana = date('N'); // 1=Lunes, 5=Viernes
 
 $fecha_hoy  = date('Y-m-d');
 
-//-----------------------------------------------------|
-//---------- DETECCIÓN AUSENCIA DÍA ANTERIOR ---------|
-//-----------------------------------------------------|
-
-/*
- * Comprobamos si ayer el trabajador tenía que fichar y no lo hizo
- * Si es así, creamos una incidencia de tipo 'fichaje_no_realizado'
- * Solo lo hacemos si ayer era un día laborable (lunes a viernes)
- * y el trabajador tenía horario asignado ese día
- * También nos aseguramos de no duplicar la incidencia
- */
-
-$fecha_ayer    = date('Y-m-d', strtotime('-1 day'));
-$dia_semana_ayer = (int) date('N', strtotime($fecha_ayer)); // 1=Lunes, 7=Domingo
-
-// Solo comprobamos si ayer era laborable (lunes a viernes)
-if ($dia_semana_ayer >= 1 && $dia_semana_ayer <= 5) {
-
-    // Comprobamos si hay un día especial para ayer (vacaciones, festivo, libre, etc.)
-    $especial_ayer = $conexion->query("SELECT tipo FROM horarios_especiales
-        WHERE usuario_id = '" . $_SESSION['id'] . "'
-        AND fecha = '$fecha_ayer'")->fetch_assoc();
-
-    // Si no había día especial, el trabajador debería haber fichado
-    $dia_libre_ayer = $especial_ayer && $especial_ayer['tipo'] != 'cambio_horario';
-
-    if (!$dia_libre_ayer) {
-
-        // Miramos si tenía horario asignado ese día de la semana
-        $horario_ayer = $conexion->query("SELECT id FROM horarios
-            WHERE usuario_id = '" . $_SESSION['id'] . "'
-            AND dia_semana = '$dia_semana_ayer'")->fetch_assoc();
-
-        // Solo actuamos si tenía horario asignado
-        if ($horario_ayer) {
-
-            // Contamos los fichajes que hay de ayer
-            $fichajes_ayer = $conexion->query("SELECT COUNT(*) as total FROM fichajes
-                WHERE usuario_id = '" . $_SESSION['id'] . "'
-                AND fecha = '$fecha_ayer'")->fetch_assoc();
-
-            // Si no fichó nada ayer
-            if ($fichajes_ayer['total'] == 0) {
-
-                // Comprobamos que no exista ya esa incidencia (evitar duplicados)
-                $ya_existe = $conexion->query("SELECT id FROM incidencias
-                    WHERE usuario_id = '" . $_SESSION['id'] . "'
-                    AND fecha = '$fecha_ayer'
-                    AND tipo = 'fichaje_no_realizado'")->fetch_assoc();
-
-                // Si no existe, la creamos
-                if (!$ya_existe) {
-                    $conexion->query("INSERT INTO incidencias
-                        (usuario_id, fecha, tipo, minutos, observaciones, creado_por)
-                        VALUES
-                        ('" . $_SESSION['id'] . "', '$fecha_ayer',
-                        'fichaje_no_realizado', 0,
-                        'Ausencia detectada automáticamente: no se realizó ningún fichaje el día $fecha_ayer',
-                        '" . $_SESSION['id'] . "')");
-                }
-            }
-        }
-    }
-}
-
-
-
-
 // Primero compruebo si hay un día especial para hoy
 $especial = $conexion->query("SELECT * FROM horarios_especiales 
     WHERE usuario_id = '" . $_SESSION['id'] . "' 
@@ -152,6 +84,25 @@ desconectar($conexion);
  * Cada uno se activa o desactiva según si ya ha sido pulsado hoy
  * El orden se mantiene solo para mostrarlo en pantalla
  */
+/*
+ * Calculamos cuántos fichajes se esperan hoy según el horario asignado
+ * Si la jornada es partida (mañana + tarde) se esperan 4 fichajes
+ * Si la jornada es continua (solo mañana) se esperan 2 fichajes
+ * Así la jornada se marca como completa en el momento correcto
+ */
+$tiene_jornada_partida = false;
+
+if ($especial && $especial['tipo'] === 'cambio_horario') {
+    // Día especial con horario propio: comprobamos si es partida
+    $tiene_jornada_partida = !empty($especial['hora_entrada_2']);
+} elseif ($horario) {
+    // Horario normal: comprobamos si es jornada partida
+    $tiene_jornada_partida = !empty($horario['hora_entrada_2']);
+}
+
+// Fichajes esperados: 4 si jornada partida, 2 si jornada continua
+$fichajes_esperados = $tiene_jornada_partida ? 4 : 2;
+
 $orden_fichajes = ['entrada_1', 'salida_1', 'entrada_2', 'salida_2'];
 
 // Nombres legibles para mostrar en pantalla
@@ -223,7 +174,7 @@ if ($horario) {
             echo "<p class='fichaje-mensaje'>No tienes horario asignado para hoy. Contacta con el administrador.</p>";
 
         // Si ha completado todos los fichajes del día
-        } elseif (count($fichajes_hoy) === 4) {
+        } elseif (count($fichajes_hoy) >= $fichajes_esperados) {
             echo "<p class='fichaje-mensaje'>¡Jornada completada, hasta mañana!</p>";
 
         // Muestra los 4 botones de fichaje
@@ -233,6 +184,15 @@ if ($horario) {
         <!-- Tabla de fichajes del día -->
         <div class="fichajes-wrapper">
             <?php foreach ($orden_fichajes as $tipo): ?>
+
+            <?php
+            /*
+             * Si el horario no tiene turno tarde saltamos entrada_2 y salida_2
+             * No tiene sentido mostrar botones de fichaje para turnos inexistentes
+             */
+            if (!$tiene_jornada_partida && ($tipo === 'entrada_2' || $tipo === 'salida_2')) continue;
+            ?>
+
             <div class="fichaje-item <?php echo isset($fichajes_hoy[$tipo]) ? 'fichaje-hecho' : ''; ?>">
 
                 <!-- Nombre del fichaje -->
