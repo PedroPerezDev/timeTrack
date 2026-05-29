@@ -201,3 +201,15 @@ Etiquetas creadas:
 
 - `v1.0` — primera versión funcional con login y fichaje
 - `v2.0` — versión con responsive completo, modo oscuro y refactoring
+- `v3.0` — versión con incidencias, informes, solicitudes, resumen mensual y despliegue en producción
+
+---
+
+## Flatpickr
+
+Flatpickr es una librería JavaScript de selección de fechas ligera y sin dependencias, cargada desde CDN. Se usa en dos formularios de la aplicación:
+
+- **Solicitud de vacaciones** (`trabajador/vacaciones.php`) — para seleccionar el rango de fechas de la solicitud
+- **Días especiales** (`admin/horarios.php`) — para seleccionar la fecha del día especial
+
+Se configura en español y con el calendario en formato `d/m/Y` para mostrarlo al usuario, enviando internamente el formato `Y-m-d` que espera la base de datos.

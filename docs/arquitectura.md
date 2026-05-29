@@ -52,9 +52,10 @@ La base de datos se llama `timetrack_db` y contiene las siguientes tablas:
 |---|---|
 | `usuarios` | Trabajadores y administradores con todos sus datos |
 | `horarios` | Horario semanal de cada trabajador (lunes a viernes) |
-| `horarios_especiales` | Días especiales: vacaciones, festivos, libres y cambios |
+| `horarios_especiales` | Días especiales: vacaciones, festivos, libres, médico, asuntos propios y cambios de horario |
 | `fichajes` | Registro de cada fichaje con hora real y diferencia en minutos |
 | `incidencias` | Incidencias generadas automáticamente o por el admin |
+| `solicitudes` | Solicitudes de vacaciones, citas médicas y asuntos propios enviadas por los trabajadores |
 | `festivos_locales` | Festivos importados desde la API Nager.Date |
 
 ---

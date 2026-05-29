@@ -6,7 +6,7 @@
 
 ## Login
 
-La pantalla de acceso es la primera que ve cualquier usuario. Muestra el formulario de usuario y contraseña con el logotipo de TimeTrack.
+La pantalla de acceso es la primera que ve cualquier usuario. Muestra el formulario de usuario y contraseña con el logotipo de TimeTrack animado, un slideshow de imágenes y la opción "Recuérdame" que guarda las credenciales en una cookie durante 30 días.
 
 ![Login en escritorio](img/login_escritorio.png)
 
@@ -23,7 +23,7 @@ Al entrar al panel el administrador ve cuatro indicadores en tiempo real:
 - **Sin fichar hoy** — trabajadores que no han fichado ningún turno
 - **Incidencias hoy** — incidencias generadas en el día actual
 
-Al cargar el panel se ejecuta automáticamente un proceso que revisa si el día anterior hubo trabajadores con fichajes incompletos. Por cada fichaje no realizado se genera una incidencia en la base de datos.
+Al cargar el panel se ejecuta automáticamente un proceso que revisa si el día anterior hubo trabajadores con fichajes incompletos. Por cada fichaje no realizado se genera una incidencia en la base de datos. Además, jQuery lanza una petición AJAX que importa desde la API Nager.Date los festivos nacionales y de la Comunitat Valenciana que no existan todavía en la base de datos.
 
 ![Dashboard del administrador](img/admin_dashboard_escritorio.png)
 
@@ -31,7 +31,7 @@ Al cargar el panel se ejecuta automáticamente un proceso que revisa si el día 
 
 ### Fichajes del día
 
-Desde el panel el administrador puede ver qué trabajadores han fichado hoy y en qué hora lo han hecho.
+Desde el panel el administrador puede desplegar con un botón la tabla de fichajes del día, que muestra el estado de cada trabajador: sin fichar, en curso o jornada completa.
 
 ![Fichajes de hoy](img/admin_fichajes_hoy_escritorio.png)
 
@@ -47,7 +47,7 @@ Desde esta pantalla el administrador puede:
 - **Modificar** los datos de un trabajador existente
 - **Borrar** un trabajador con confirmación
 
-El formulario de alta valida los campos en el cliente antes de enviar los datos al servidor, usando expresiones regulares para nombre, email, DNI, teléfono y contraseña.
+El formulario de alta valida los campos en el cliente antes de enviar los datos al servidor, usando expresiones regulares para nombre, email, DNI, teléfono y contraseña. También permite aplicar el **horario estándar de empresa** (L–J 08:30–14:00 / 16:00–19:00, V 08:30–14:00 / 16:00–18:30) con un solo clic.
 
 ![Gestión de trabajadores](img/admin_trabajadores_escritorio.png)
 
@@ -59,13 +59,15 @@ El formulario de modificación muestra todos los campos del trabajador y permite
 
 ### Horarios
 
-Cada trabajador tiene su propio horario semanal editable de lunes a viernes con jornada partida: entrada y salida de mañana, y entrada y salida de tarde.
+Cada trabajador tiene su propio horario semanal editable de lunes a viernes. El horario puede ser **jornada partida** (mañana y tarde) o **jornada continua** (solo mañana), dejando los campos de tarde vacíos.
 
 Además se pueden registrar **días especiales** para fechas concretas:
 
 - **Vacaciones** — el trabajador ve el mensaje de vacaciones
 - **Festivo** — el trabajador ve el mensaje de festivo
 - **Día libre** — el trabajador ve el mensaje de día libre
+- **Cita médica** — el trabajador ve el mensaje de cita médica
+- **Asuntos propios** — el trabajador ve el mensaje correspondiente
 - **Cambio de horario** — el trabajador ficha con un horario diferente al habitual
 
 ![Días especiales registrados](img/admin_dias_especiales_registrados_escritorio.png)
@@ -74,11 +76,32 @@ Además se pueden registrar **días especiales** para fechas concretas:
 
 ---
 
+### Incidencias
+
+El administrador puede consultar las incidencias de cualquier trabajador filtrando por mes, año y nombre. Las incidencias se generan automáticamente por el sistema en dos situaciones:
+
+- **Retraso o horas extra** — cuando la diferencia entre la hora prevista y la hora fichada supera los 5 minutos
+- **Fichaje no realizado** — cuando al cargar el dashboard se detecta que ayer un trabajador no completó algún fichaje
+
+Cada incidencia muestra la fecha, el tipo con un badge de color, los minutos y las observaciones generadas automáticamente.
+
+![Filtro de incidencias](img/incidencias_filtro_escritorio.png)
+
+![Resultados de incidencias](img/incidencias_resultados_escritorio.png)
+
+---
+
 ### Informes
 
-El administrador puede generar informes de cualquier trabajador en un rango de fechas. El informe muestra para cada fichaje la hora prevista, la hora real y la diferencia en minutos. Al final aparece un resumen con el balance total del período.
+El administrador puede generar informes de cualquier trabajador en un rango de fechas. El informe muestra para cada fichaje la hora prevista, la hora real y la diferencia en minutos. Al final aparece un resumen con el balance total del período:
 
-![Informe de fichajes](img/informes_fichajes_claro_escritorio.png)
+- **Horas semanales previstas** — calculadas a partir del horario asignado
+- **Horas totales previstas en el período**
+- **Minutos a favor del trabajador** — llegadas antes de hora o salidas tardías
+- **Minutos en contra del trabajador** — retrasos o salidas anticipadas
+- **Balance total** — diferencia entre los dos anteriores
+
+![Informe de fichajes — resumen del período](img/informes_resumen_periodo.png)
 
 Desde el informe se puede generar un **PDF** con la librería FPDF que incluye la cabecera de TimeTrack, la tabla de fichajes y el resumen del período:
 
@@ -88,7 +111,7 @@ Desde el informe se puede generar un **PDF** con la librería FPDF que incluye l
 
 ### Solicitudes de vacaciones
 
-El administrador puede ver todas las solicitudes de vacaciones enviadas por los trabajadores, aprobarlas o denegarlas.
+El administrador puede ver todas las solicitudes enviadas por los trabajadores, aprobarlas o denegarlas. Al aprobar una solicitud, el sistema crea automáticamente los días especiales correspondientes en el horario del trabajador y descuenta los días del contador de vacaciones disponibles. Las citas médicas no descuentan días de vacaciones.
 
 ![Solicitudes de vacaciones](img/01_admin_solicitudes_light_desktop.png)
 
@@ -96,22 +119,22 @@ El administrador puede ver todas las solicitudes de vacaciones enviadas por los 
 
 ## Panel del trabajador
 
-El trabajador accede a la aplicación con su usuario y contraseña desde cualquier dispositivo. Una vez dentro ve su jornada del día actual con un reloj en tiempo real y cuatro botones de fichaje.
+El trabajador accede a la aplicación con su usuario y contraseña desde cualquier dispositivo. Una vez dentro ve su jornada del día actual con un reloj en tiempo real y los botones de fichaje correspondientes a su tipo de jornada.
 
 ### Fichaje
 
-La pantalla principal muestra la fecha, el reloj en tiempo real y los cuatro tipos de fichaje:
+La pantalla principal muestra la fecha, el reloj en tiempo real y los fichajes del día. La aplicación adapta los botones al tipo de jornada asignada:
 
-- **Entrada mañana**
-- **Salida mañana**
-- **Entrada tarde**
-- **Salida tarde**
+- **Jornada partida** — muestra los cuatro fichajes: entrada mañana, salida mañana, entrada tarde y salida tarde
+- **Jornada continua** — muestra solo los dos fichajes de mañana
 
-Cada botón muestra la hora prevista según el horario asignado. Al pulsar FICHAR, la acción se registra en el servidor mediante AJAX sin recargar la página, de forma que el reloj no se interrumpe. Una vez fichado, el botón muestra la hora real registrada y la diferencia en minutos respecto a la hora prevista.
+Al pulsar FICHAR, la acción se registra en el servidor mediante AJAX sin recargar la página, de forma que el reloj no se interrumpe. Una vez fichado, el botón muestra la hora real registrada y la diferencia en minutos respecto a la hora prevista.
 
-Los cuatro botones están siempre disponibles e independientes entre sí. No es obligatorio seguir un orden.
+![Jornada del trabajador — jornada continua](img/trabajador_jornada_continua.png)
 
-![Jornada de hoy](img/09_trabajador_jornada_hoy_light.png)
+### Resumen mensual de horas
+
+Debajo de los botones de fichaje el trabajador puede desplegar con un botón la tabla de horas del mes en curso. La tabla muestra las horas trabajadas cada día y el total acumulado del mes.
 
 ### Estados especiales
 
@@ -123,18 +146,20 @@ La aplicación detecta automáticamente situaciones en las que el trabajador no 
 | Vacaciones | Hoy estás de vacaciones |
 | Festivo | Hoy es festivo |
 | Día libre | Hoy tienes el día libre |
+| Cita médica | Hoy tienes cita médica |
+| Asuntos propios | Hoy tienes un permiso por asuntos propios |
 | Sin horario asignado | Contacta con el administrador |
 | Jornada completada | ¡Jornada completada, hasta mañana! |
 
 ### Perfil
 
-El trabajador puede consultar sus datos personales y laborales: nombre, email, DNI, teléfono, dirección, fecha de nacimiento, departamento, puesto y fecha de incorporación.
+El trabajador puede consultar sus datos personales y laborales: nombre, email, DNI, teléfono, dirección, fecha de nacimiento, departamento, puesto, fecha de incorporación y días de vacaciones disponibles.
 
 ![Mi perfil](img/11_trabajador_perfil_light.png)
 
 ### Vacaciones
 
-Muestra los días de vacaciones totales, gastados y disponibles, junto con el formulario para enviar nuevas solicitudes y el calendario de festivos nacionales del año en curso obtenido de la API Nager.Date.
+Muestra los días de vacaciones totales, gastados y disponibles, junto con el formulario para enviar nuevas solicitudes (vacaciones, asuntos propios, cita médica) con selector de fechas Flatpickr y el historial de solicitudes anteriores. También incluye el calendario de festivos nacionales del año en curso obtenido de la API Nager.Date.
 
 ![Vacaciones — solicitud](img/13_trabajador_vacaciones_solicitud.png)
 
@@ -170,7 +195,7 @@ La aplicación está construida con un enfoque **Mobile First**. Todos los panel
 
 ## Modo oscuro
 
-La aplicación incluye un modo oscuro activable desde cualquier pantalla. A continuación se muestran algunos ejemplos comparativos.
+La aplicación incluye un modo oscuro activable desde cualquier pantalla mediante el FAB (Floating Action Button) de la esquina inferior derecha. La preferencia se guarda en `localStorage` y persiste entre visitas.
 
 **Dashboard:**
 

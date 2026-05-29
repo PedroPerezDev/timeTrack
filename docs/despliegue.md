@@ -69,6 +69,7 @@ No es necesario tocar rutas, configuraciones ni archivos al subir los cambios.
 |---|---|
 | `v1.0` | Primera versión funcional: login, fichaje con AJAX y gestión básica |
 | `v2.0` | Versión con responsive completo, modo oscuro y refactoring del código |
+| `v3.0` | Versión con incidencias, informes, solicitudes de vacaciones, resumen mensual de horas, festivos automáticos y despliegue en producción |
 
 ### Archivos excluidos del repositorio
 
