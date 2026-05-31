@@ -48,6 +48,11 @@ $trabajador_id = isset($_GET['trabajador_id']) && $_GET['trabajador_id'] !== ''
 // Búsqueda por nombre escrito: si el admin escribe un nombre buscamos el id
 $buscar_nombre = isset($_GET['buscar_nombre']) ? trim($_GET['buscar_nombre']) : '';
 
+// Filtro por tipo de incidencia (vacío = todos)
+$tipo_filtro = isset($_GET['tipo_incidencia']) && $_GET['tipo_incidencia'] !== ''
+                   ? $_GET['tipo_incidencia']
+                   : '';
+
 /*
  * Si hay texto en el buscador de nombre intentamos localizar al trabajador
  * Buscamos por nombre O apellidos con LIKE para ser flexible
@@ -74,79 +79,7 @@ $meses_es = [
 ];
 $nombre_mes = $meses_es[$mes];
 
-//-----------------------------------------------------|
-//---------- CONSULTA SOLO SI HAY BÚSQUEDA ---------- |
-//-----------------------------------------------------|
-
-$por_trabajador = [];
-
-if ($buscar) {
-
-    // Primer y último día del mes seleccionado
-    $primer_dia = date('Y-m-01', mktime(0, 0, 0, $mes, 1, $anyo));
-    $ultimo_dia = date('Y-m-t',  mktime(0, 0, 0, $mes, 1, $anyo));
-
-    /*
-     * Construimos el WHERE dinámicamente según los filtros activos
-     * Siempre filtramos por mes, y opcionalmente por trabajador
-     */
-    $where = "WHERE i.fecha BETWEEN '$primer_dia' AND '$ultimo_dia'";
-
-    if ($trabajador_id) {
-        $where .= " AND i.usuario_id = '$trabajador_id'";
-    }
-
-    $resultado = $conexion->query("
-        SELECT
-            i.id,
-            i.fecha,
-            i.tipo,
-            i.minutos,
-            i.observaciones,
-            i.fecha_creacion,
-            u.id       AS usuario_id,
-            u.nombre,
-            u.apellidos
-        FROM incidencias i
-        JOIN usuarios u ON u.id = i.usuario_id
-        $where
-        ORDER BY u.apellidos ASC, u.nombre ASC, i.fecha ASC
-    ");
-
-    // Agrupamos por trabajador para mostrar una sección por cada uno
-    while ($fila = $resultado->fetch_assoc()) {
-        $uid = $fila['usuario_id'];
-
-        if (!isset($por_trabajador[$uid])) {
-            $por_trabajador[$uid] = [
-                'nombre'      => $fila['nombre'] . ' ' . $fila['apellidos'],
-                'incidencias' => []
-            ];
-        }
-
-        $por_trabajador[$uid]['incidencias'][] = $fila;
-    }
-}
-
 desconectar($conexion);
-
-//-----------------------------------------------------|
-//---------- ETIQUETAS Y CLASES POR TIPO ----------- |
-//-----------------------------------------------------|
-
-$tipos_etiqueta = [
-    'retraso'              => 'Retraso',
-    'horas_extra'          => 'Horas extra',
-    'ausencia'             => 'Ausencia',
-    'fichaje_no_realizado' => 'Sin fichar'
-];
-
-$tipos_clase = [
-    'retraso'              => 'badge-retraso',
-    'horas_extra'          => 'badge-extra',
-    'ausencia'             => 'badge-ausencia',
-    'fichaje_no_realizado' => 'badge-sin-fichar'
-];
 
 ?>
 
@@ -167,7 +100,7 @@ $tipos_clase = [
     <!-- ------------------------------------------------- -->
     <!-- Formulario de búsqueda: mes + trabajador          -->
     <!-- ------------------------------------------------- -->
-    <form action="incidencias.php" method="GET">
+    <form id="form-incidencias" action="incidencias.php" method="GET">
         <fieldset>
             <legend>Filtrar incidencias</legend>
 
@@ -209,100 +142,80 @@ $tipos_clase = [
                 <?php endwhile; ?>
             </select>
 
+            <!-- Filtro por tipo de incidencia -->
+            <label>Tipo de incidencia <span class="label-opcional">(opcional)</span></label>
+            <select name="tipo_incidencia">
+                <option value="">— Todos los tipos —</option>
+                <?php
+                // Opciones de tipo: las mismas que se usan en el sistema
+                $tipos_opciones = [
+                    'retraso'              => 'Retraso',
+                    'horas_extra'          => 'Horas extra',
+                    
+                    'fichaje_no_realizado' => 'Sin fichar',
+                ];
+                foreach ($tipos_opciones as $val => $etiqueta):
+                    $sel = ($tipo_filtro === $val) ? 'selected' : '';
+                ?>
+                    <option value="<?php echo $val; ?>" <?php echo $sel; ?>>
+                        <?php echo $etiqueta; ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
             <input type="submit" name="buscar" value="Buscar incidencias">
 
         </fieldset>
     </form>
 
     <!-- ------------------------------------------------- -->
-    <!-- Resultados: solo se muestran tras buscar          -->
+    <!-- Resultados: jQuery los inyecta aquí vía AJAX      -->
     <!-- ------------------------------------------------- -->
 
-    <?php if (!$buscar): ?>
-
-      
-
-    <?php elseif (empty($por_trabajador)): ?>
-
-        <!-- Se buscó pero no hay resultados -->
-        <p class="fichaje-mensaje">
-            No hay incidencias en <?php echo $nombre_mes . ' ' . $anyo; ?>
-            <?php echo $trabajador_id ? ' para el trabajador seleccionado' : ''; ?>.
-        </p>
-
-    <?php else: ?>
-
-        <!-- Título del bloque de resultados -->
-        <h3 class="incidencias-titulo-resultado">
-            Resultados: <?php echo $nombre_mes . ' ' . $anyo; ?>
-            <?php if ($trabajador_id): ?>
-                — <?php echo $por_trabajador[array_key_first($por_trabajador)]['nombre']; ?>
-            <?php endif; ?>
-        </h3>
-
-        <!-- Una sección por cada trabajador con incidencias -->
-        <?php foreach ($por_trabajador as $datos): ?>
-
-            <div class="incidencias-trabajador">
-
-                <h3 class="incidencias-nombre"><?php echo $datos['nombre']; ?></h3>
-
-                <div class="tabla-wrapper">
-                    <table class="tabla-apilable">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>Tipo</th>
-                                <th>Minutos</th>
-                                <th>Observaciones</th>
-                                <th>Registrada el</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($datos['incidencias'] as $inc): ?>
-                            <tr>
-
-                                <td data-label="Fecha">
-                                    <?php echo date('d/m/Y', strtotime($inc['fecha'])); ?>
-                                </td>
-
-                                <td data-label="Tipo">
-                                    <span class="badge <?php echo $tipos_clase[$inc['tipo']]; ?>">
-                                        <?php echo $tipos_etiqueta[$inc['tipo']]; ?>
-                                    </span>
-                                </td>
-
-                                <td data-label="Minutos">
-                                    <?php echo $inc['minutos'] > 0 ? $inc['minutos'] . ' min' : '—'; ?>
-                                </td>
-
-                                <td data-label="Observaciones">
-                                    <?php echo $inc['observaciones'] ? $inc['observaciones'] : '—'; ?>
-                                </td>
-
-                                <td data-label="Registrada el">
-                                    <?php echo date('d/m/Y H:i', strtotime($inc['fecha_creacion'])); ?>
-                                </td>
-
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <p class="incidencias-resumen">
-                    Total: <?php echo count($datos['incidencias']); ?> incidencia(s) en <?php echo $nombre_mes; ?>
-                </p>
-
-            </div>
-
-        <?php endforeach; ?>
-
-    <?php endif; ?>
+    <div id="resultados-incidencias"></div>
 
 </main>
 
 <?php include "../includes/footer.php"; ?>
+
+<!-- ============================================================ -->
+<!-- AJAX: busca incidencias sin recargar la página              -->
+<!-- ============================================================ -->
+<script>
+$(document).ready(function() {
+
+    /*
+     * Al enviar el formulario interceptamos el submit con jQuery
+     * Recogemos los datos con serialize() y los mandamos por GET
+     * a get_incidencias.php, que devuelve solo el HTML de resultados
+     * El div #resultados-incidencias se actualiza sin recargar la página
+     */
+    $("#form-incidencias").on("submit", function(e) {
+
+        // Evitamos el submit normal del formulario
+        e.preventDefault();
+
+        var $resultados = $("#resultados-incidencias");
+
+        // Mostramos un indicador de carga mientras esperamos la respuesta
+        $resultados.html("<p style='color:var(--color-texto-apagado)'>Buscando...</p>");
+
+        $.ajax({
+            url:    "/ajax/get_incidencias.php",
+            method: "GET",
+            data:   $(this).serialize(),
+            success: function(html) {
+                // Inyectamos el HTML devuelto por el servidor con fadeIn
+                $resultados.hide().html(html).fadeIn("fast");
+            },
+            error: function() {
+                $resultados.html("<p style='color:red'>Error al cargar las incidencias. Inténtalo de nuevo.</p>");
+            }
+        });
+    });
+
+});
+</script>
 
 </body>
 </html>

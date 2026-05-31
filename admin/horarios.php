@@ -18,7 +18,10 @@ if (!isset($_GET['id'])) {
 }
 
 $id_trabajador        = $_GET['id'];
-$resultado_trabajador = $conexion->query("SELECT nombre, apellidos FROM usuarios WHERE id = '$id_trabajador'");
+/*
+ * Traemos también los días de vacaciones para mostrarlos al admin
+ */
+$resultado_trabajador = $conexion->query("SELECT nombre, apellidos, dias_vacaciones_totales, dias_vacaciones_gastados FROM usuarios WHERE id = '$id_trabajador'");
 
 if ($resultado_trabajador->num_rows == 0) {
     header("Location: trabajadores.php");
@@ -173,6 +176,31 @@ desconectar($conexion);
 <main>
     <h2>Horario de <?php echo $trabajador['nombre'] . " " . $trabajador['apellidos']; ?></h2>
 
+    <!-- Resumen de vacaciones del trabajador -->
+    <?php
+    $dias_disponibles = $trabajador['dias_vacaciones_totales'] - $trabajador['dias_vacaciones_gastados'];
+    ?>
+    <div class="perfil-datos" style="margin-bottom:20px">
+        <h3>Días de vacaciones</h3>
+
+        <div class="perfil-campo">
+            <span class="perfil-label">Días totales</span>
+            <span class="perfil-valor"><?php echo $trabajador['dias_vacaciones_totales']; ?> días</span>
+        </div>
+
+        <div class="perfil-campo">
+            <span class="perfil-label">Días gastados</span>
+            <span class="perfil-valor"><?php echo $trabajador['dias_vacaciones_gastados']; ?> días</span>
+        </div>
+
+        <div class="perfil-campo">
+            <span class="perfil-label">Días disponibles</span>
+            <span class="perfil-valor" style="color:var(--color-principal); font-weight:500">
+                <?php echo $dias_disponibles; ?> días
+            </span>
+        </div>
+    </div>
+
     <?php
     if (isset($mensaje_ok))    mostrarMensaje($mensaje_ok);
     if (isset($mensaje_error)) mostrarMensaje($mensaje_error, 'error');
@@ -232,11 +260,8 @@ desconectar($conexion);
 
             <label>Tipo *</label>
             <select name="tipo">
-                <option value="vacaciones">Vacaciones</option>
-                <option value="festivo">Festivo</option>
-                <option value="libre">Día libre</option>
-                <option value="medico">Médico</option>
-                <option value="asuntos_propios">Asuntos propios</option>
+                <option value="libre">Libre dado por la empresa</option>
+                <option value="festivo">Festivo local</option>
                 <option value="cambio_horario">Cambio de horario</option>
             </select>
 
