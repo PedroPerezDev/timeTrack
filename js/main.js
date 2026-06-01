@@ -46,17 +46,43 @@ $(document).ready(function() {
         var totalSlides = slides.length;
         var actual      = 0;
 
-        setInterval(function() {
+        /*
+         * Precargamos todas las imágenes del slideshow antes de arrancar
+         * Así el navegador las tiene en caché desde el primer ciclo
+         * y no hay parpadeo por carga tardía
+         */
+        var cargadas = 0;
 
-            var siguiente = (actual + 1) % totalSlides;
+        function arrancarSlideshow() {
+            setInterval(function() {
 
-            $(slides[actual]).fadeOut("slow", function() {
-                $(slides[siguiente]).fadeIn("slow");
-            });
+                var siguiente = (actual + 1) % totalSlides;
 
-            actual = siguiente;
+                $(slides[actual]).fadeOut(400, function() {
+                    $(slides[siguiente]).fadeIn(400, function() {
+                        actual = siguiente;
+                    });
+                });
 
-        }, 5000);
+            }, 5000);
+        }
+
+        // Recorremos todos los slides y precargamos su src
+        slides.each(function() {
+            var img  = new Image();
+            img.onload = function() {
+                cargadas++;
+                // Solo arrancamos cuando TODAS las imágenes están listas
+                if (cargadas === totalSlides) {
+                    arrancarSlideshow();
+                }
+            };
+            // Si la imagen ya estaba cacheada onload no dispara, usamos complete
+            img.src = $(this).attr("src");
+            if (img.complete) {
+                img.onload();
+            }
+        });
     }
 });
 
@@ -177,7 +203,12 @@ $(document).ready(function() {
 //---------- LOGO RELOJ ------------------------------ |
 //-----------------------------------------------------|
 
-$(document).ready(function() {
+/*
+ * Usamos window.load en lugar de document.ready para el reloj
+ * window.load espera a que TODAS las imágenes estén descargadas
+ * document.ready solo espera al DOM, las imágenes pueden no estar listas aún
+ */
+$(window).on("load", function() {
 
     if ($("#logo-reloj .logo-frame").length > 0) {
 
@@ -185,12 +216,17 @@ $(document).ready(function() {
         var totalFrames = frames.length;
         var actual      = 0;
 
+        // Arrancamos directamente: window.load garantiza que las imágenes ya están
         setInterval(function() {
 
             var siguiente = (actual + 1) % totalFrames;
 
-            $(frames[actual]).hide();
+            /*
+             * Mostramos el siguiente frame ANTES de ocultar el actual
+             * Así nunca hay un instante sin imagen visible (evita el parpadeo)
+             */
             $(frames[siguiente]).show();
+            $(frames[actual]).hide();
 
             actual = siguiente;
 

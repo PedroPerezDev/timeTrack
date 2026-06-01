@@ -153,6 +153,19 @@ $usuario_recordado = isset($_COOKIE['timetrack_usuario']) ? $_COOKIE['timetrack_
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TimeTrack - Login</title>
     <link rel="stylesheet" href="/css/style.css">
+
+    <?php
+    /*
+     * Precargamos los 12 frames del reloj con máxima prioridad
+     * El navegador los descarga antes de ejecutar nada
+     * Esto evita el parpadeo en el primer ciclo de la animación
+     */
+    for ($i = 1; $i <= 12; $i++):
+        $frame = str_pad($i, 2, '0', STR_PAD_LEFT);
+    ?>
+    <link rel="preload" href="/img/<?php echo $frame; ?>.png" as="image">
+    <?php endfor; ?>
+
 </head>
 <body>
 
