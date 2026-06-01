@@ -85,37 +85,58 @@ if (isset($_POST['guardar_horario'])) {
 
 if (isset($_POST['guardar_especial'])) {
 
-    $fecha         = $_POST['fecha'];
+    $fecha_inicio  = $_POST['fecha_inicio'];
+    $fecha_fin     = $_POST['fecha_fin'];
     $tipo          = $_POST['tipo'];
-    $observaciones = $_POST['observaciones'];
+    $observaciones = $conexion->real_escape_string($_POST['observaciones']);
     $e1 = !empty($_POST['esp_entrada_1']) ? "'" . $_POST['esp_entrada_1'] . "'" : 'NULL';
     $s1 = !empty($_POST['esp_salida_1'])  ? "'" . $_POST['esp_salida_1']  . "'" : 'NULL';
     $e2 = !empty($_POST['esp_entrada_2']) ? "'" . $_POST['esp_entrada_2'] . "'" : 'NULL';
     $s2 = !empty($_POST['esp_salida_2'])  ? "'" . $_POST['esp_salida_2']  . "'" : 'NULL';
 
-    if (empty($fecha) || empty($tipo)) {
+    if (empty($fecha_inicio) || empty($tipo)) {
         $mensaje_error = "La fecha y el tipo son obligatorios";
     } else {
 
-        $insert = $conexion->query("INSERT INTO horarios_especiales
-            (usuario_id, fecha, tipo, hora_entrada_1, hora_salida_1, hora_entrada_2, hora_salida_2, observaciones, creado_por)
-            VALUES ('$id_trabajador', '$fecha', '$tipo', $e1, $s1, $e2, $s2, '$observaciones', '" . $_SESSION['id'] . "')");
+        /*
+         * Recorremos cada día del rango e insertamos un registro por día
+         * Si solo se seleccionó un día, fecha_inicio === fecha_fin y el bucle
+         * se ejecuta una sola vez (comportamiento idéntico al anterior)
+         */
+        $dias_insertados = 0;
+        $fecha_actual    = strtotime($fecha_inicio);
+        $fecha_limite    = strtotime($fecha_fin);
+        $admin_id        = $_SESSION['id'];
 
-        if ($insert) {
-            $mensaje_ok = "Día especial guardado correctamente";
+        while ($fecha_actual <= $fecha_limite) {
 
-            /*
-             * Si el tipo es vacaciones, sumamos 1 día a los gastados del trabajador
-             * Los tipos libre y festivo NO tocan el contador de vacaciones
-             */
-            if ($tipo === 'vacaciones') {
-                $conexion->query("UPDATE usuarios
-                    SET dias_vacaciones_gastados = dias_vacaciones_gastados + 1
-                    WHERE id = '$id_trabajador'");
+            $fecha_dia = date('Y-m-d', $fecha_actual);
+
+            $insert = $conexion->query("INSERT INTO horarios_especiales
+                (usuario_id, fecha, tipo, hora_entrada_1, hora_salida_1, hora_entrada_2, hora_salida_2, observaciones, creado_por)
+                VALUES ('$id_trabajador', '$fecha_dia', '$tipo', $e1, $s1, $e2, $s2, '$observaciones', '$admin_id')");
+
+            if ($insert) {
+                $dias_insertados++;
+
+                // Si es vacaciones sumamos 1 día gastado por cada día del rango
+                if ($tipo === 'vacaciones') {
+                    $conexion->query("UPDATE usuarios
+                        SET dias_vacaciones_gastados = dias_vacaciones_gastados + 1
+                        WHERE id = '$id_trabajador'");
+                }
             }
 
+            // Avanzamos al día siguiente
+            $fecha_actual = strtotime('+1 day', $fecha_actual);
+        }
+
+        if ($dias_insertados > 0) {
+            $mensaje_ok = $dias_insertados === 1
+                ? "Día especial guardado correctamente"
+                : "$dias_insertados días especiales guardados correctamente";
         } else {
-            $mensaje_error = "Error al guardar el día especial: " . $conexion->error;
+            $mensaje_error = "Error al guardar los días especiales";
         }
     }
 }
@@ -282,8 +303,11 @@ desconectar($conexion);
             <legend>NUEVO DÍA ESPECIAL</legend>
 
             <label>Fecha *</label>
-            <input type="text" name="fecha" id="fecha-especial"
-                placeholder="Selecciona una fecha" readonly>
+            <input type="text" id="fecha-especial"
+                placeholder="Selecciona un día o un rango" readonly>
+            <!-- Flatpickr rellena estos dos campos ocultos con las fechas del rango -->
+            <input type="hidden" name="fecha_inicio" id="fecha-inicio">
+            <input type="hidden" name="fecha_fin"    id="fecha-fin">
 
             <label>Tipo *</label>
             <select name="tipo">
@@ -373,7 +397,26 @@ desconectar($conexion);
 <script>
 flatpickr("#fecha-especial", {
     locale:     "es",
-    dateFormat: "Y-m-d"
+    mode:       "range",
+    dateFormat: "Y-m-d",
+    /*
+     * Al seleccionar el rango rellenamos los dos campos ocultos
+     * selectedDates[0] = fecha inicio, selectedDates[1] = fecha fin
+     * Si solo se selecciona un día, fecha_fin = fecha_inicio
+     */
+    onChange: function(selectedDates) {
+        var fmt = function(d) {
+            return d.getFullYear() + '-'
+                 + String(d.getMonth() + 1).padStart(2, '0') + '-'
+                 + String(d.getDate()).padStart(2, '0');
+        };
+        if (selectedDates.length >= 1) {
+            document.getElementById('fecha-inicio').value = fmt(selectedDates[0]);
+            document.getElementById('fecha-fin').value    = selectedDates[1]
+                ? fmt(selectedDates[1])
+                : fmt(selectedDates[0]);
+        }
+    }
 });
 </script>
 
