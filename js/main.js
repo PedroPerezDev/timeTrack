@@ -222,11 +222,12 @@ $(window).on("load", function() {
             var siguiente = (actual + 1) % totalFrames;
 
             /*
-             * Mostramos el siguiente frame ANTES de ocultar el actual
-             * Así nunca hay un instante sin imagen visible (evita el parpadeo)
+             * Usamos opacity en lugar de display:none/block
+             * display provoca un repaint que genera flash blanco entre frames
+             * opacity solo cambia la transparencia sin tocar el layout
              */
-            $(frames[siguiente]).show();
-            $(frames[actual]).hide();
+            $(frames[actual]).css("opacity", 0);
+            $(frames[siguiente]).css("opacity", 1);
 
             actual = siguiente;
 

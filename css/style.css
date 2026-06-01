@@ -664,11 +664,11 @@ table tr:hover td {
     left:     0;
     width:    120px;
     height:   120px;
-    display:  none;
+    opacity:  0;
 }
 
 #logo-reloj .logo-frame:first-child {
-    display: block;
+    opacity: 1;
 }
 
 
