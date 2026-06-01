@@ -103,6 +103,17 @@ if (isset($_POST['guardar_especial'])) {
 
         if ($insert) {
             $mensaje_ok = "Día especial guardado correctamente";
+
+            /*
+             * Si el tipo es vacaciones, sumamos 1 día a los gastados del trabajador
+             * Los tipos libre y festivo NO tocan el contador de vacaciones
+             */
+            if ($tipo === 'vacaciones') {
+                $conexion->query("UPDATE usuarios
+                    SET dias_vacaciones_gastados = dias_vacaciones_gastados + 1
+                    WHERE id = '$id_trabajador'");
+            }
+
         } else {
             $mensaje_error = "Error al guardar el día especial: " . $conexion->error;
         }
@@ -116,10 +127,26 @@ if (isset($_POST['guardar_especial'])) {
 if (isset($_POST['borrar_especial'])) {
 
     $id_especial = $_POST['id_especial'];
-    $borrar      = $conexion->query("DELETE FROM horarios_especiales WHERE id = '$id_especial'");
+
+    /*
+     * Antes de borrar comprobamos el tipo del día especial
+     * Si era vacaciones, hay que restar 1 del contador para que cuadre
+     */
+    $res_tipo = $conexion->query("SELECT tipo FROM horarios_especiales WHERE id = '$id_especial'");
+    $tipo_especial = ($res_tipo && $res_tipo->num_rows > 0) ? $res_tipo->fetch_assoc()['tipo'] : '';
+
+    $borrar = $conexion->query("DELETE FROM horarios_especiales WHERE id = '$id_especial'");
 
     if ($borrar) {
         $mensaje_ok = "Día especial borrado correctamente";
+
+        // Si era vacaciones, devolvemos el día al contador
+        if ($tipo_especial === 'vacaciones') {
+            $conexion->query("UPDATE usuarios
+                SET dias_vacaciones_gastados = GREATEST(dias_vacaciones_gastados - 1, 0)
+                WHERE id = '$id_trabajador'");
+        }
+
     } else {
         $mensaje_error = "Error al borrar el día especial";
     }
@@ -260,6 +287,7 @@ desconectar($conexion);
 
             <label>Tipo *</label>
             <select name="tipo">
+                <option value="vacaciones">Vacaciones</option>
                 <option value="libre">Libre dado por la empresa</option>
                 <option value="festivo">Festivo local</option>
                 <option value="cambio_horario">Cambio de horario</option>
